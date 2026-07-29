@@ -20,6 +20,7 @@ indexer = load_module("index_codebase")
 sandbox = load_module("sandbox")
 feedback = load_module("feedback")
 project_actions = load_module("project_actions")
+feedback_prep = load_module("../lora-finetune/scripts/prepare_feedback")
 
 
 class CodeIntelligenceTests(unittest.TestCase):
@@ -86,3 +87,10 @@ class CodeIntelligenceTests(unittest.TestCase):
         source = (ROOT / "code_intelligence" / "embed_chunks.py").read_text(encoding="utf-8")
         self.assertIn('microsoft/codebert-base', source)
         self.assertIn('source.get("chunks", [])', source)
+
+    def test_feedback_preparation_uses_only_approved_corrections_or_answers(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "feedback.jsonl"
+            path.write_text('{"prompt":"fix it","response":"bad","rating":"down","correction":"good"}\n{"prompt":"explain","response":"answer","rating":"up"}\n', encoding="utf-8")
+            result = feedback_prep.convert(path)
+        self.assertEqual([item["output"] for item in result], ["good", "answer"])

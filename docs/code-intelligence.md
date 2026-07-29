@@ -107,6 +107,12 @@ Approved feedback is written to the git-ignored
 `lora-finetune/data/feedback.jsonl`; review and redact it before converting it
 to a training dataset.
 
+The **Monthly Approved Feedback LoRA** workflow runs on the first day of each
+month on a self-hosted GPU runner. Set its `LOCAL_AI_FEEDBACK_FILE` and
+`LOCAL_AI_APPROVED_DATA_FILE` repository variables to absolute runner paths,
+or provide both paths when dispatching it manually. It converts candidates but
+refuses to train until the approved data file exists.
+
 ## Self-hosted quality gate
 
 The **Local Code Quality Evaluation** workflow is manually dispatched on a

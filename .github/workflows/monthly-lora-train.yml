@@ -1,0 +1,39 @@
+name: Monthly Approved Feedback LoRA
+
+on:
+  schedule:
+    - cron: '0 2 1 * *'
+  workflow_dispatch:
+    inputs:
+      feedback_file:
+        description: Absolute path to the approved feedback JSONL on the self-hosted runner
+        required: true
+        type: string
+      approved_data_file:
+        description: Absolute path to the human-reviewed training JSON on the self-hosted runner
+        required: true
+        type: string
+      model:
+        description: Hugging Face base model
+        required: false
+        default: Qwen/Qwen3-8B
+        type: string
+
+jobs:
+  train:
+    runs-on: [self-hosted, gpu]
+    env:
+      FEEDBACK_FILE: ${{ inputs.feedback_file || vars.LOCAL_AI_FEEDBACK_FILE }}
+      APPROVED_DATA_FILE: ${{ inputs.approved_data_file || vars.LOCAL_AI_APPROVED_DATA_FILE }}
+      MODEL: ${{ inputs.model || vars.LOCAL_AI_LORA_MODEL || 'Qwen/Qwen3-8B' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare reviewed feedback candidates
+        run: python lora-finetune/scripts/prepare_feedback.py --input "$FEEDBACK_FILE" --output lora-finetune/data/review-candidates.json
+      - name: Require human review before training
+        run: |
+          test -f "$APPROVED_DATA_FILE" || { echo 'Set a human-reviewed approved-data JSON path.' >&2; exit 1; }
+      - name: Train LoRA adapter
+        run: |
+          pip install -r lora-finetune/requirements.txt
+          python lora-finetune/scripts/train.py --model "$MODEL" --data "$APPROVED_DATA_FILE" --output lora-finetune/outputs/monthly
