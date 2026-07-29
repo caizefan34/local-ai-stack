@@ -125,3 +125,16 @@ self-hosted runner labeled `ollama`. It runs a local benchmark and can compare
 against a baseline JSON. The default regression limit is 3%; a larger decline
 returns a failing workflow. Replace `benchmarks/codegen-smoke.json` with a
 licensed HumanEval/MBPP-compatible dataset for a broader release gate.
+
+On Windows, register the local machine once (requires an authenticated `gh`
+CLI and Ollama) and then keep the runner process open:
+
+```powershell
+.\scripts\setup-actions-runner.ps1
+& 'C:\local-ai-stack-runner\run.cmd'
+```
+
+The setup script obtains a short-lived registration token without printing or
+persisting it, and registers labels `ollama,gpu`. After the runner appears
+online in the repository's **Settings → Actions → Runners**, dispatch **Local
+Code Quality Evaluation** from the Actions tab.

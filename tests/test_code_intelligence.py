@@ -96,6 +96,11 @@ class CodeIntelligenceTests(unittest.TestCase):
         source = (ROOT / "code_intelligence" / "evaluate_codegen.py").read_text(encoding="utf-8")
         self.assertIn('args.output.parent.mkdir(parents=True, exist_ok=True)', source)
 
+    def test_runner_setup_script_registers_ollama_label(self):
+        source = (ROOT / "scripts" / "setup-actions-runner.ps1").read_text(encoding="utf-8")
+        self.assertIn("actions/runners/registration-token", source)
+        self.assertIn("--labels 'ollama,gpu'", source)
+
     def test_feedback_preparation_uses_only_approved_corrections_or_answers(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "feedback.jsonl"
