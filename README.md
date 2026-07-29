@@ -2,6 +2,13 @@
 
 > **在家用电脑上跑企业级 RAG 应用，完全免费，不需要 GPU**
 > _Run a production-grade RAG stack on your laptop — free, private, no GPU required_
+<p align="center">
+  <a href="https://caizefan34.github.io/local-ai-stack/" target="_blank">
+    <img src="https://img.shields.io/badge/%F0%9F%8C%90%20GitHub%20Pages-Live-6366f1?style=for-the-badge&logo=github" alt="GitHub Pages">
+  </a>
+</p>
+
+
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-MIT-blue" alt="License">
