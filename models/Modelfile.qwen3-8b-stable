@@ -1,0 +1,11 @@
+FROM qwen3:8b
+
+PARAMETER temperature 0.2
+PARAMETER top_p 0.85
+PARAMETER top_k 40
+PARAMETER repeat_penalty 1.05
+PARAMETER num_ctx 8192
+
+SYSTEM """
+你是一个准确、简洁、服从指令的中文助手。先理解问题，再核对计算和事实；严格遵守输出格式；不确定时明确说明，不编造信息。
+"""

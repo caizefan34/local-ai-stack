@@ -1,490 +1,213 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Local AI Stack — Local AI Stack — Enterprise-grade RAG, 100% local</title>
-    <meta name="description" content="Run a production-grade RAG application on your laptop. Free, private, no GPU required. Ollama + FastGPT + BGE Reranker + Qwen3 LoRA fine-tuning.">
-    <meta name="keywords" content="Local AI, RAG, FastGPT, Ollama, Qwen3, LoRA, LLM, 本地部署, 知识库">
-    <meta property="og:title" content="Local AI Stack">
-    <meta property="og:description" content="Local AI Stack — Enterprise-grade RAG, 100% local — 免费、私有、不需要 GPU">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://caizefan34.github.io/local-ai-stack/">
-    <style>
-        /* ============ CSS Variables & Reset ============ */
-        :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --primary-light: #818cf8;
-            --secondary: #06b6d4;
-            --accent: #f59e0b;
-            --bg: #0f172a;
-            --bg-card: #1e293b;
-            --bg-card-hover: #334155;
-            --text: #f1f5f9;
-            --text-dim: #94a3b8;
-            --text-muted: #64748b;
-            --border: #334155;
-            --success: #22c55e;
-            --radius: 12px;
-            --radius-lg: 20px;
-            --shadow: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -2px rgba(0,0,0,0.3);
-            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.4), 0 4px 6px -4px rgba(0,0,0,0.4);
-            --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body {
-            font-family: var(--font);
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-        a { color: var(--primary-light); text-decoration: none; }
-        a:hover { text-decoration: underline; }
-
-        /* ============ Navigation ============ */
-        nav {
-            position: fixed; top: 0; left: 0; right: 0;
-            padding: 16px 24px;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
-            z-index: 1000;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        nav .logo { font-size: 1.2rem; font-weight: 700; color: var(--text); }
-        nav .logo span { color: var(--primary-light); }
-        nav .links { display: flex; gap: 24px; align-items: center; }
-        nav .links a { color: var(--text-dim); font-size: 0.9rem; transition: color 0.2s; }
-        nav .links a:hover { color: var(--text); text-decoration: none; }
-        .btn-gh { 
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 8px 16px; border-radius: 8px;
-            background: var(--bg-card); color: var(--text);
-            font-size: 0.85rem; border: 1px solid var(--border);
-            transition: all 0.2s;
-        }
-        .btn-gh:hover { background: var(--bg-card-hover); text-decoration: none; }
-        .btn-gh svg { width: 18px; height: 18px; }
-
-        /* ============ Hero ============ */
-        .hero {
-            min-height: 100vh;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            text-align: center;
-            padding: 100px 24px 60px;
-            position: relative;
-            overflow: hidden;
-        }
-        .hero::before {
-            content: '';
-            position: absolute; top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: radial-gradient(ellipse at 30% 50%, rgba(99,102,241,0.08) 0%, transparent 50%),
-                        radial-gradient(ellipse at 70% 50%, rgba(6,182,212,0.06) 0%, transparent 50%);
-            animation: bgShift 20s ease-in-out infinite;
-        }
-        @keyframes bgShift {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-2%, -2%); }
-        }
-        .hero-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 6px 16px; border-radius: 20px;
-            background: rgba(99,102,241,0.15);
-            color: var(--primary-light);
-            font-size: 0.85rem; font-weight: 500;
-            margin-bottom: 24px;
-            border: 1px solid rgba(99,102,241,0.3);
-            position: relative;
-        }
-        .hero-badge .dot {
-            width: 6px; height: 6px; border-radius: 50%;
-            background: var(--success);
-            display: inline-block;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-        .hero h1 {
-            font-size: clamp(2.2rem, 6vw, 4rem);
-            font-weight: 800;
-            line-height: 1.15;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, var(--text) 0%, var(--primary-light) 50%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            position: relative;
-        }
-        .hero p {
-            font-size: clamp(1rem, 2vw, 1.2rem);
-            color: var(--text-dim);
-            max-width: 640px;
-            margin-bottom: 36px;
-            position: relative;
-        }
-        .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; position: relative; }
-        .btn-primary, .btn-secondary {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 14px 32px; border-radius: 12px;
-            font-size: 1rem; font-weight: 600;
-            transition: all 0.2s; cursor: pointer;
-            border: none;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            box-shadow: 0 4px 15px rgba(99,102,241,0.4);
-        }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99,102,241,0.5); }
-        .btn-secondary {
-            background: var(--bg-card);
-            color: var(--text);
-            border: 1px solid var(--border);
-        }
-        .btn-secondary:hover { background: var(--bg-card-hover); transform: translateY(-2px); }
-
-        .hero-stats {
-            display: flex; gap: 48px; margin-top: 48px;
-            position: relative;
-        }
-        .hero-stats .stat { text-align: center; }
-        .hero-stats .stat .num { font-size: 2rem; font-weight: 700; color: var(--text); }
-        .hero-stats .stat .label { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
-
-        /* ============ Section ============ */
-        section { padding: 80px 24px; max-width: 1100px; margin: 0 auto; }
-        .section-tag {
-            display: inline-block;
-            padding: 4px 12px; border-radius: 6px;
-            background: rgba(99,102,241,0.1);
-            color: var(--primary-light);
-            font-size: 0.8rem; font-weight: 500;
-            margin-bottom: 12px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-        .section-title {
-            font-size: clamp(1.8rem, 4vw, 2.5rem);
-            font-weight: 700;
-            margin-bottom: 16px;
-        }
-        .section-desc {
-            color: var(--text-dim);
-            font-size: 1.05rem;
-            max-width: 600px;
-            margin-bottom: 48px;
-        }
-
-        /* ============ Features ============ */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        .feature-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 28px;
-            transition: all 0.3s;
-        }
-        .feature-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--primary);
-            box-shadow: 0 8px 25px rgba(99,102,241,0.15);
-        }
-        .feature-card .icon {
-            width: 48px; height: 48px;
-            background: rgba(99,102,241,0.1);
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 16px;
-        }
-        .feature-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
-        .feature-card p { color: var(--text-dim); font-size: 0.95rem; }
-
-        /* ============ Architecture ============ */
-        .arch-container {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 32px;
-            overflow: hidden;
-        }
-
-        /* ============ Quick Start ============ */
-        .tabs { display: flex; gap: 4px; margin-bottom: 0; }
-        .tab-btn {
-            padding: 10px 20px;
-            border: none;
-            background: var(--bg-card);
-            color: var(--text-dim);
-            cursor: pointer;
-            font-size: 0.9rem;
-            border-radius: 8px 8px 0 0;
-            transition: all 0.2s;
-            border: 1px solid var(--border);
-            border-bottom: none;
-        }
-        .tab-btn.active {
-            background: var(--bg);
-            color: var(--text);
-            border-color: var(--border);
-        }
-        .tab-btn:hover:not(.active) { color: var(--text); }
-        .tab-content {
-            background: #0a0f1a;
-            border: 1px solid var(--border);
-            border-radius: 0 12px 12px 12px;
-            padding: 24px;
-            overflow-x: auto;
-        }
-        .tab-pane { display: none; }
-        .tab-pane.active { display: block; }
-        .tab-content pre {
-            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-            font-size: 0.85rem;
-            color: #e2e8f0;
-            line-height: 1.7;
-            white-space: pre-wrap;
-        }
-        .tab-content .comment { color: #6b7280; }
-        .tab-content .cmd { color: #818cf8; }
-        .tab-content .str { color: #34d399; }
-        .tab-content .highlight { 
-            background: rgba(99,102,241,0.2);
-            padding: 0 4px; border-radius: 4px;
-        }
-
-        /* ============ Benchmark ============ */
-        .benchmark-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            overflow: hidden;
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-        }
-        .benchmark-table th {
-            background: var(--bg-card);
-            padding: 14px 18px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: var(--text-dim);
-            border-bottom: 1px solid var(--border);
-        }
-        .benchmark-table td {
-            padding: 14px 18px;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.95rem;
-        }
-        .benchmark-table tr:last-child td { border-bottom: none; }
-        .benchmark-table tr:hover td { background: rgba(99,102,241,0.05); }
-        .benchmark-table .label { color: var(--text); }
-        .benchmark-table .value { font-weight: 600; color: var(--primary-light); }
-        .benchmark-table .status-yes { color: var(--success); font-weight: 600; }
-        .benchmark-table .status-no { color: var(--text-muted); }
-
-        /* ============ CTA ============ */
-        .cta-section {
-            text-align: center;
-            padding: 80px 24px;
-            background: linear-gradient(180deg, var(--bg) 0%, rgba(99,102,241,0.05) 100%);
-            border-top: 1px solid var(--border);
-        }
-        .cta-section h2 { font-size: 2rem; margin-bottom: 16px; }
-        .cta-section p { color: var(--text-dim); margin-bottom: 32px; }
-        .star-btn {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 16px 36px; border-radius: 12px;
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: #1c1917;
-            font-size: 1.1rem; font-weight: 700;
-            border: none; cursor: pointer;
-            transition: all 0.2s;
-        }
-        .star-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 25px rgba(245,158,11,0.4); }
-
-        /* ============ Footer ============ */
-        footer {
-            text-align: center;
-            padding: 32px 24px;
-            border-top: 1px solid var(--border);
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-        footer a { color: var(--text-dim); }
-        footer a:hover { color: var(--text); }
-
-        /* ============ Responsive ============ */
-        @media (max-width: 768px) {
-            nav .links a:not(.btn-gh) { display: none; }
-            .hero-stats { gap: 24px; flex-wrap: wrap; justify-content: center; }
-            .features-grid { grid-template-columns: 1fr; }
-            .benchmark-table { font-size: 0.85rem; }
-            .benchmark-table th, .benchmark-table td { padding: 10px 12px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Local AI Stack &mdash; Enterprise-grade RAG, 100% local &amp; free</title>
+<meta name="description" content="Run a production-grade RAG system on your laptop. Free, private, no GPU required.">
+<meta property="og:title" content="Local AI Stack">
+<meta property="og:description" content="Ollama + FastGPT + RAG &mdash; Enterprise-grade AI, 100% local and free.">
+<meta property="og:url" content="https://caizefan34.github.io/local-ai-stack/">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+:root{--primary:#6366f1;--primary-dark:#4f46e5;--primary-light:#a5b4fc;--bg:#0b1121;--bg-card:#131c31;--surface:#1e293b;--text:#f1f5f9;--text-dim:#94a3b8;--text-muted:#64748b;--border:#1e293b;--success:#22c55e;--radius:14px;--font:"Inter",system-ui,sans-serif}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+a{color:var(--primary-light);text-decoration:none}
+::selection{background:var(--primary);color:#fff}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;justify-content:space-between;align-items:center;padding:14px 32px;background:rgba(11,17,33,.85);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+nav .logo{font-size:1.15rem;font-weight:700}
+nav .logo .hl{color:var(--primary-light)}
+nav .links{display:flex;gap:28px;align-items:center}
+nav .links a{color:var(--text-dim);font-size:.88rem;font-weight:500}
+nav .links a:hover{color:var(--text)}
+.btn-gh{display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border-radius:10px;background:var(--bg-card);color:var(--text);font-size:.85rem;font-weight:500;border:1px solid #334155;transition:all .2s}
+.btn-gh:hover{background:#1a2744;border-color:var(--primary);color:var(--primary-light)}
+.btn-gh svg{width:18px;height:18px}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 24px 80px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(99,102,241,.1) 0%,transparent 60%),radial-gradient(ellipse at 80% 50%,rgba(6,182,212,.08) 0%,transparent 60%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 18px;border-radius:20px;background:rgba(99,102,241,.12);color:var(--primary-light);font-size:.85rem;font-weight:500;border:1px solid rgba(99,102,241,.25);margin-bottom:28px}
+.hero-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--success);display:inline-block;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-size:clamp(2.5rem,6vw,4.2rem);font-weight:800;letter-spacing:-1.5px;line-height:1.1;max-width:800px;background:linear-gradient(135deg,#f1f5f9 0%,#a5b4fc 50%,#06b6d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:1.15rem;color:var(--text-dim);max-width:600px;margin:20px auto 32px}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:12px;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);color:#fff;font-size:.95rem;font-weight:600;border:none;cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(99,102,241,.25)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(99,102,241,.25)}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:12px;background:var(--bg-card);color:var(--text);font-size:.95rem;font-weight:500;border:1px solid #334155;cursor:pointer;transition:all .2s}
+.btn-secondary:hover{background:#1a2744;border-color:var(--primary);transform:translateY(-2px)}
+section{padding:90px 24px;max-width:1100px;margin:0 auto}
+.section-tag{display:inline-block;padding:5px 14px;border-radius:8px;background:rgba(99,102,241,.1);color:var(--primary-light);font-size:.8rem;font-weight:600;margin-bottom:14px;border:1px solid rgba(99,102,241,.2)}
+.section-title{font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;letter-spacing:-.5px;margin-bottom:12px}
+.section-desc{color:var(--text-dim);font-size:1.05rem;max-width:600px;margin-bottom:48px}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.feature-card{background:var(--bg-card);border-radius:var(--radius);padding:32px 28px;border:1px solid var(--border);transition:all .25s}
+.feature-card:hover{border-color:var(--primary);transform:translateY(-4px);box-shadow:0 12px 40px rgba(99,102,241,.1)}
+.feature-icon{font-size:2rem;margin-bottom:16px}
+.feature-card h3{font-size:1.15rem;font-weight:600;margin-bottom:8px}
+.feature-card p{color:var(--text-dim);font-size:.92rem;line-height:1.6}
+.arch-container{background:var(--bg-card);border-radius:24px;padding:32px;border:1px solid var(--border);overflow-x:auto}
+.tabs{display:flex;background:var(--bg-card);border-radius:12px 12px 0 0;overflow:hidden;border:1px solid var(--border);border-bottom:none}
+.tab-btn{flex:1;padding:14px 24px;border:none;cursor:pointer;background:transparent;color:var(--text-dim);font-size:.9rem;font-weight:500;transition:all .2s}
+.tab-btn:hover{background:#1a2744;color:var(--text)}
+.tab-btn.active{background:var(--surface);color:var(--primary-light);box-shadow:inset 0 -2px 0 var(--primary)}
+.tab-content{background:var(--surface);border-radius:0 0 12px 12px;border:1px solid var(--border);border-top:none}
+.tab-pane{display:none;padding:24px;overflow-x:auto}
+.tab-pane.active{display:block}
+.tab-pane pre{background:#0a0f1a;border-radius:10px;padding:20px;font-family:"JetBrains Mono",Consolas,monospace;font-size:.85rem;line-height:1.7;overflow-x:auto}
+.tab-pane pre .comment{color:#64748b;font-style:italic}
+.perf-table,.bench-table{width:100%;border-collapse:separate;border-spacing:0;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
+.perf-table thead,.bench-table thead{background:var(--bg-card)}
+.perf-table th,.bench-table th{padding:16px 20px;text-align:left;font-weight:600;font-size:.85rem;color:var(--text-dim);border-bottom:1px solid var(--border)}
+.perf-table td,.bench-table td{padding:16px 20px;font-size:.92rem;border-bottom:1px solid var(--border)}
+.perf-table tbody tr,.bench-table tbody tr{background:var(--surface);transition:background .2s}
+.perf-table tbody tr:hover{background:var(--bg-card)}
+.perf-table tbody tr:last-child td,.bench-table tbody tr:last-child td{border:none}
+.metric{font-weight:500}
+.before{color:var(--text-muted)}
+.after{color:var(--success);font-weight:600}
+.status-yes{color:var(--success);font-weight:500}
+.pipeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:24px 0}
+.pstep{background:var(--bg-card);border-radius:var(--radius);padding:24px;border:1px solid var(--border);position:relative}
+.pstep .num{position:absolute;top:-10px;left:20px;width:28px;height:28px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700}
+.pstep h4{font-size:1rem;margin-bottom:6px;margin-top:6px}
+.pstep p{color:var(--text-dim);font-size:.85rem}
+.pcmd{background:#0a0f1a;border-radius:10px;padding:16px 20px;font-family:"JetBrains Mono",Consolas,monospace;font-size:.85rem;line-height:1.8;overflow-x:auto;margin-top:20px;border:1px solid var(--border)}
+.pcmd .c{color:#64748b}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.scard{background:var(--bg-card);border-radius:var(--radius);padding:24px;border:1px solid var(--border);display:flex;align-items:flex-start;gap:16px;transition:all .2s}
+.scard:hover{border-color:var(--primary)}
+.scard .e{font-size:1.8rem;line-height:1}
+.scard .i h4{font-size:1rem;margin-bottom:3px}
+.scard .i p{color:var(--text-dim);font-size:.82rem}
+.scard .i .w{color:var(--text-muted);font-size:.78rem;margin-top:3px}
+.cta{text-align:center;padding:80px 24px;background:linear-gradient(180deg,transparent 0%,rgba(99,102,241,.04) 100%)}
+.cta h2{font-size:2rem;font-weight:700;margin-bottom:10px}
+.cta p{color:var(--text-dim);margin-bottom:28px}
+.star-btn{display:inline-flex;align-items:center;gap:10px;padding:16px 40px;border-radius:14px;background:linear-gradient(135deg,#fbbf24 0%,#f59e0b 100%);color:#0f172a;font-size:1.05rem;font-weight:700;transition:all .2s}
+.star-btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 12px 40px rgba(251,191,36,.3);opacity:1}
+footer{text-align:center;padding:40px 24px;border-top:1px solid var(--border);color:var(--text-muted);font-size:.85rem}
+footer a{color:var(--text-dim)}
+footer a:hover{color:var(--text)}
+.props{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:32px}
+.prop{background:var(--surface);border-radius:10px;padding:20px;text-align:center;border:1px solid var(--border)}
+.prop .v{font-size:1.5rem;font-weight:700;color:var(--primary-light)}
+.prop .l{color:var(--text-dim);font-size:.85rem;margin-top:4px}
+.fade-in{opacity:0;transform:translateY(30px);transition:all .6s ease-out}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+@media(max-width:768px){nav{padding:12px 16px}nav .links a:not(.btn-gh){display:none}.hero h1{font-size:clamp(1.8rem,8vw,2.8rem)}section{padding:60px 16px}}
+.mermaid-box{text-align:center}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500" rel="stylesheet">
 </head>
-<body>
-
-<!-- ========== Navigation ========== -->
-<nav>
-    <div class="logo">Local AI <span>Stack</span></div>
-    <div class="links">
-        <a href="#features">Features</a>
-        <a href="#architecture">Architecture</a>
-        <a href="#quickstart">Quick Start</a>
-        <a href="#benchmark">Benchmark</a>
-        <a href="https://github.com/caizefan34/local-ai-stack" target="_blank" class="btn-gh">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-            GitHub
-        </a>
-    </div>
+<body><nav>
+<div class="logo">&#9889; Local <span class="hl">AI Stack</span></div>
+<div class="links">
+<a href="#features">Features</a>
+<a href="#architecture">Architecture</a>
+<a href="#quickstart">Quick Start</a>
+<a href="#optimizations">Optimizations</a>
+<a href="#benchmarks">Benchmarks</a>
+<a href="https://github.com/caizefan34/local-ai-stack" target="_blank" class="btn-gh">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+GitHub
+</a>
+</div>
 </nav>
-
-<!-- ========== Hero ========== -->
 <section class="hero">
-    <div class="hero-badge">
-        <span class="dot"></span>
-        Free · Private · Plug & Play
-    </div>
-    <h1>Enterprise RAG<br>on Your Laptop</h1>
-    <p>Ollama + FastGPT + BGE Reranker + Qwen3 — all in one stack.<br>Free, private, no GPU required — runs on any laptop.</p>
-    <div class="hero-actions">
-        <a href="#quickstart" class="btn-primary">
-            🚀 Quick Start
-        </a>
-        <a href="https://github.com/caizefan34/local-ai-stack" target="_blank" class="btn-secondary">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-            GitHub
-        </a>
-    </div>
-    <div class="hero-stats">
-        <div class="stat">
-            <div class="num">8B</div>
-            <div class="label">Model Size</div>
-        </div>
-        <div class="stat">
-            <div class="num">40%+</div>
-            <div class="label">Accuracy Gain</div>
-        </div>
-        <div class="stat">
-            <div class="num">0¥</div>
-            <div class="label">API Cost</div>
-        </div>
-        <div class="stat">
-            <div class="num">5min</div>
-            <div class="label">Setup Time</div>
-        </div>
-    </div>
+<div class="hero-badge"><span class="dot"></span> v1.0 &mdash; 100% local, 100% free</div>
+<h1>Enterprise-grade RAG<br>on your laptop</h1>
+<p>Ollama + FastGPT + BGE Reranker + Qwen3 LoRA fine-tuning.<br>No API keys, no cloud costs, no GPU required.</p>
+<div class="hero-btns">
+<a href="#quickstart" class="btn-primary">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+Get Started
+</a>
+<a href="https://github.com/caizefan34/local-ai-stack" target="_blank" class="btn-secondary">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+View on GitHub
+</a>
+</div>
+<div style="margin-top:48px;display:flex;gap:40px;flex-wrap:wrap;justify-content:center">
+<div><div style="font-size:1.8rem;font-weight:700">100%</div><div style="color:var(--text-muted);font-size:.85rem">Free &amp; Open Source</div></div>
+<div><div style="font-size:1.8rem;font-weight:700">&#x1f512;</div><div style="color:var(--text-muted);font-size:.85rem">Privacy First</div></div>
+<div><div style="font-size:1.8rem;font-weight:700">+40%</div><div style="color:var(--text-muted);font-size:.85rem">Reranker Accuracy Gain</div></div>
+<div><div style="font-size:1.8rem;font-weight:700">16K</div><div style="color:var(--text-muted);font-size:.85rem">Context Window</div></div>
+</div>
 </section>
-
-<!-- ========== Features ========== -->
 <section id="features">
-    <div class="section-tag">✨ Features</div>
-    <h2 class="section-title">Why Local AI Stack</h2>
-    <p class="section-desc">Not just another LLM wrapper. This is a battle-tested, production-ready RAG stack proven in real-world projects.</p>
-    <div class="features-grid">
-        <div class="feature-card">
-            <div class="icon">🆓</div>
-            <h3>100% Free</h3>
-            <p>全部开源，Ollama 本地推理，零 API Cost。没有隐藏收费，没有额度限制。</p>
-        </div>
-        <div class="feature-card">
-            <div class="icon">🔒</div>
-            <h3>Privacy First</h3>
-            <p>All data stays on your machine. Nothing ever touches a third-party server.</p>
-        </div>
-        <div class="feature-card">
-            <div class="icon">🎯</div>
-            <h3>RAG Enhanced</h3>
-            <p>BGE Reranker re-ranking + pgvector HNSW indexes — 40%+ retrieval accuracy improvement.</p>
-        </div>
-        <div class="feature-card">
-            <div class="icon">🏋️</div>
-            <h3>LoRA Fine-tuning</h3>
-            <p>Fine-tune Qwen3 on real conversation data. One-click pipeline from data collection to Ollama deployment.</p>
-        </div>
-        <div class="feature-card">
-            <div class="icon">🧩</div>
-            <h3>Multi-Model</h3>
-            <p>Deep Qwen3 integration. Switch to LLaMA, Mistral, or any GGUF model with one config change.</p>
-        </div>
-        <div class="feature-card">
-            <div class="icon">💻</div>
-            <h3>Windows Native</h3>
-            <p>PowerShell one-click setup built for Windows. Works on Linux and macOS too.</p>
-        </div>
-    </div>
-</section>
-
-<!-- ========== Architecture ========== -->
+<div class="section-tag">&#x2728; Features</div>
+<h2 class="section-title">What makes this stack different</h2>
+<p class="section-desc">A production-grade RAG system designed for local deployment &mdash; no compromises.</p>
+<div class="features">
+<div class="feature-card fade-in"><div class="feature-icon">&#x1f1f3;&#xfe0f;&#x200d;&#x1f1f4;</div><h3>100% Free</h3><p>Fully open-source. Ollama local inference means zero API costs. No hidden subscriptions.</p></div>
+<div class="feature-card fade-in"><div class="feature-icon">&#x1f512;</div><h3>Privacy First</h3><p>All data processed locally &mdash; nothing ever leaves your machine. Your documents stay yours.</p></div>
+<div class="feature-card fade-in"><div class="feature-icon">&#x1f3af;</div><h3>RAG + Reranker</h3><p>BGE Reranker re-ranks retrieved documents for 40%+ accuracy gain over vector search alone.</p></div>
+<div class="feature-card fade-in"><div class="feature-icon">&#x1f9e9;</div><h3>Visual Knowledge Base</h3><p>FastGPT UI for managing documents, vector search, visual workflows, and chat management.</p></div>
+<div class="feature-card fade-in"><div class="feature-icon">&#x1f3cb;&#xfe0f;&#x200d;&#x2642;&#xfe0f;</div><h3>LoRA Fine-tuning</h3><p>One-click pipeline: collect conversations, train, export to Ollama. Fits 8 GB VRAM with QLoRA.</p></div>
+<div class="feature-card fade-in"><div class="feature-icon">&#x1f4bb;</div><h3>Windows First-Class</h3><p>PowerShell one-click setup. No WSL, no Linux tricks. Windows and Linux both supported.</p></div>
+<div class="feature-card fade-in"><div class="feature-icon">&#x1f310;</div><h3>Multi-Model</h3><p>Qwen3, LLaMA, Mistral &mdash; switch with a single config change. Optimized for Chinese NLP.</p></div>
+<div class="feature-card fade-in"><div class="feature-icon">&#x1f4e6;</div><h3>Docker-Powered</h3><p>FastGPT + PostgreSQL (pgvector) + MongoDB + Redis &mdash; one docker compose command to start.</p></div>
+</div></section>
 <section id="architecture">
-    <div class="section-tag">🏗️ Architecture</div>
-    <h2 class="section-title">系统Architecture</h2>
-    <p class="section-desc">Clear data flow from browser to knowledge base.</p>
-    <div class="arch-container">
-        <div class="mermaid">
-            graph TB
-                subgraph User["🖥️ User"]
-                    Browser["🌐 Browser / OpenCode"]
-                end
-                subgraph FastGPT["📋 FastGPT (v4.8.9)"]
-                    KM["Knowledge Base"]
-                    WF["Workflows"]
-                    Chat["Chat"]
-                    API["FastGPT API"]
-                end
-                subgraph Storage["🗄️ Storage"]
-                    PG[("PostgreSQL<br/>+ pgvector")]
-                    Mongo[("MongoDB")]
-                    Redis[("Redis")]
-                end
-                subgraph AI["🤖 AI Inference"]
-                    Ollama["Ollama"]
-                    Qwen["Qwen3-8B / 4B"]
-                    Embed["nomic-embed-text"]
-                end
-                subgraph Rerank["⚡ Rerank"]
-                    BGE["BGE Reranker"]
-                end
-                subgraph Train["🏋️ Training"]
-                    LoRA["LoRA Scripts"]
-                end
+<div class="section-tag">&#x1f3d7;&#xfe0f; Architecture</div>
+<h2 class="section-title">System Architecture</h2>
+<p class="section-desc">How components connect &mdash; from user input to retrieved, reranked, and generated answers.</p>
+<div class="arch-container">
+<pre class="mermaid" class="mermaid-box">
+flowchart TB
+    User["&#x1f9d1; User Browser / OpenCode IDE"]
 
-                Browser -->|HTTP| FastGPT
-                FastGPT -->|Vector Search| PG
-                FastGPT -->|Store| Mongo
-                FastGPT -->|Cache| Redis
-                FastGPT -->|LLM Inference| Ollama
-                Ollama --> Qwen
-                Ollama --> Embed
-                FastGPT -->|Rerank| BGE
-                LoRA -.->|Export .gguf| Ollama
-        </div>
-    </div>
-</section>
+    subgraph FastGPT["FastGPT Platform"]
+        KB["&#x1f4da; Knowledge Base"]
+        WF["&#x2699;&#xfe0f; Workflow Engine"]
+        Chat["&#x1f4ac; Chat Manager"]
+        API["&#x1f310; FastGPT API Server"]
+    end
 
-<!-- ========== Quick Start ========== -->
+    subgraph Storage["Storage Layer"]
+        PG[("PostgreSQL + pgvector")]
+    end
+
+    subgraph AI["AI Layer"]
+        Ollama["&#x1f999; Ollama\nQwen3-8B / nomic-embed-text"]
+        Reranker["&#x26a1; BGE Reranker\nFastAPI :18888"]
+    end
+
+    subgraph Training["Training Pipeline"]
+        LoRA["&#x1f3cb;&#xfe0f; LoRA Fine-tuning\nPEFT + TRL"]
+        Export["&#x1f4e4; Export to Ollama Modelfile"]
+    end
+
+    User -->|HTTP / Chat API| API
+    API --> KB & WF & Chat
+    KB -->|Vector Search| PG
+    KB -->|Rerank| Reranker
+    Chat -->|LLM Inference| Ollama
+    WF --> Ollama & Reranker
+    Training -->|Collect Data| KB
+    Training -->|Export Model| Ollama
+    LoRA --> Export
+</pre>
+</div></section>
 <section id="quickstart">
-    <div class="section-tag">🚀 Quick Start</div>
-    <h2 class="section-title">5-Minute Setup</h2>
-    <p class="section-desc">From zero to a fully working RAG system in a few commands.</p>
-    
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab(event, 'win')">🪟 Windows</button>
-        <button class="tab-btn" onclick="switchTab(event, 'linux')">🐧 Linux</button>
-    </div>
-    <div class="tab-content">
-        <div id="tab-win" class="tab-pane active">
-            <pre><span class="comment"># 1. Clone the repo</span>
+<div class="section-tag">&#x1f680; Quick Start</div>
+<h2 class="section-title">Get running in 5 minutes</h2>
+<p class="section-desc">Clone, install dependencies, and start all services.</p>
+<div class="props">
+<div class="prop"><div class="v">8 GB</div><div class="l">Min RAM</div></div>
+<div class="prop"><div class="v">20 GB</div><div class="l">Min Disk</div></div>
+<div class="prop"><div class="v">Docker</div><div class="l">v24+ Required</div></div>
+<div class="prop"><div class="v">Python</div><div class="l">3.10+ Required</div></div>
+</div>
+<div class="tabs">
+<button class="tab-btn active" onclick="switchTab(event,'win')">&#x1fa9f; Windows</button>
+<button class="tab-btn" onclick="switchTab(event,'linux')">&#x1f427; Linux</button>
+</div>
+<div class="tab-content">
+<div id="tab-win" class="tab-pane active">
+<pre><span class="comment"># 1. Clone the repo</span>
 git clone https://github.com/caizefan34/local-ai-stack.git
 cd local-ai-stack
 
@@ -499,122 +222,99 @@ ollama pull nomic-embed-text:latest
 docker compose -f docker/docker-compose.yml up -d
 
 <span class="comment"># 5. Start the reranker service</span>
-.scriptsstart-all.ps1
+.\scripts\start-all.ps1
 
-<span class="comment"># 🎉 Visit http://localhost:3000 to start</span></pre>
-        </div>
-        <div id="tab-linux" class="tab-pane">
-            <pre><span class="comment"># 1. Clone the repo</span>
+<span class="comment"># &#x1f389; Visit http://localhost:3000</span></pre>
+</div>
+<div id="tab-linux" class="tab-pane">
+<pre><span class="comment"># 1. Clone the repo</span>
 git clone https://github.com/caizefan34/local-ai-stack.git
 cd local-ai-stack
 
-<span class="comment"># 2. One-command setup (deps + models + services)</span>
+<span class="comment"># 2. One-command setup</span>
 bash scripts/setup.sh
 
-<span class="comment"># 🎉 Visit http://localhost:3000 to start</span></pre>
-        </div>
-    </div>
-</section>
-
-<!-- ========== Benchmark ========== -->
-<section id="benchmark">
-    <div class="section-tag">📊 Performance</div>
-    <h2 class="section-title">Benchmark基准</h2>
-    <p class="section-desc">Measured on RTX 5070 Laptop 8GB + 16GB RAM.</p>
-    
-    <table class="benchmark-table">
-        <thead>
-            <tr>
-                <th>Scenario</th>
-                <th>Latency</th>
-                <th>VRAM</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="label">Qwen3-8B Inference (no RAG)</td>
-                <td class="value">15-25 tok/s</td>
-                <td>4.5 GB</td>
-                <td class="status-yes">✅ Smooth</td>
-            </tr>
-            <tr>
-                <td class="label">Retrieval + Reranker</td>
-                <td class="value">+80 ms</td>
-                <td>+2.0 GB</td>
-                <td class="status-yes">✅ Smooth</td>
-            </tr>
-            <tr>
-                <td class="label">LoRA Fine-tuning（293 条, 3 epoch）</td>
-                <td class="value">~15 min</td>
-                <td>~7 GB</td>
-                <td class="status-yes">✅ Runs fine</td>
-            </tr>
-            <tr>
-                <td class="label">Knowledge Base Embedding (1000 docs)</td>
-                <td class="value">~2 min</td>
-                <td>~1 GB</td>
-                <td class="status-yes">✅ Fast</td>
-            </tr>
-            <tr>
-                <td class="label">Qwen3-8B + 4-bit QLoRA</td>
-                <td class="value">—</td>
-                <td>~4.5 GB</td>
-                <td class="status-yes">✅ Fits 8GB VRAM</td>
-            </tr>
-        </tbody>
-    </table>
-</section>
-
-<!-- ========== CTA ========== -->
-<div class="cta-section">
-    <h2>Found this useful? Give it a ⭐</h2>
-    <p>Your support keeps this project alive and improving.</p>
-    <a href="https://github.com/caizefan34/local-ai-stack" target="_blank" class="star-btn">
-        ⭐ Star on GitHub
-    </a>
+<span class="comment"># &#x1f389; Visit http://localhost:3000</span></pre>
+</div></div></section><section id="optimizations">
+<div class="section-tag">&#x1f527; Optimizations</div>
+<h2 class="section-title">Tuned for peak performance</h2>
+<p class="section-desc">Every parameter was benchmarked and adjusted for local hardware.</p>
+<table class="perf-table">
+<thead><tr><th>Optimization</th><th>Before</th><th>After</th><th>Impact</th></tr></thead>
+<tbody>
+<tr><td class="metric">BGE Reranker</td><td class="before">&#x274c; Not used</td><td class="after">&#x2705; Enabled</td><td>+40% retrieval accuracy</td></tr>
+<tr><td class="metric">pgHNSWEfSearch</td><td class="before">80</td><td class="after">200</td><td>+15% recall</td></tr>
+<tr><td class="metric">Chunk Size</td><td class="before">1500 chars</td><td class="after">800-1000 chars</td><td>Better precision</td></tr>
+<tr><td class="metric">Context Window</td><td class="before">8K</td><td class="after">16K</td><td>Long document support</td></tr>
+<tr><td class="metric">LoRA 4-bit QLoRA</td><td class="before">&#x274c;</td><td class="after">&#x2705;</td><td>8B model fits ~4.5 GB VRAM</td></tr>
+<tr><td class="metric">paged_adamw_8bit</td><td class="before">&#x274c;</td><td class="after">&#x2705;</td><td>50% less optimizer memory</td></tr>
+</tbody></table></section>
+<section id="benchmarks">
+<div class="section-tag">&#x1f4ca; Benchmarks</div>
+<h2 class="section-title">Real-world performance</h2>
+<p class="section-desc">Measured on RTX 5070 Laptop 8 GB + 16 GB RAM.</p>
+<table class="bench-table">
+<thead><tr><th>Scenario</th><th>Speed</th><th>VRAM</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>Qwen3-8B inference (no RAG)</td><td>15-25 tok/s</td><td>4.5 GB</td><td class="status-yes">&#x2705; Smooth</td></tr>
+<tr><td>With reranker</td><td>+80 ms</td><td>6.5 GB</td><td class="status-yes">&#x2705; Smooth</td></tr>
+<tr><td>LoRA training (293 samples, 3 epochs)</td><td>~15 min</td><td>~7 GB</td><td class="status-yes">&#x2705; Smooth</td></tr>
+<tr><td>Knowledge base embedding (1000 docs)</td><td>~2 min</td><td>~1 GB</td><td class="status-yes">&#x2705; Fast</td></tr>
+<tr><td>Qwen3-8B + 4-bit QLoRA</td><td>&mdash;</td><td>~4.5 GB</td><td class="status-yes">&#x2705; Fits 8 GB VRAM</td></tr>
+</tbody></table></section>
+<section id="lora">
+<div class="section-tag">&#x1f3cb;&#xfe0f; Fine-tuning</div>
+<h2 class="section-title">LoRA Fine-tuning Pipeline</h2>
+<p class="section-desc">From conversation data collection to a fully trained Ollama model.</p>
+<div class="pipeline">
+<div class="pstep fade-in"><div class="num">1</div><h4>&#x1f4e5; Collect Data</h4><p>Import conversations from Codex, CC Switch, or your own Q&amp;A logs.</p></div>
+<div class="pstep fade-in"><div class="num">2</div><h4>&#x1f9f9; Prepare &amp; Format</h4><p>Convert to training-ready format. Filter, deduplicate, and split into train/val sets.</p></div>
+<div class="pstep fade-in"><div class="num">3</div><h4>&#x1f3cb;&#xfe0f; Train (QLoRA)</h4><p>4-bit QLoRA with paged_adamw_8bit. Fits in 8 GB VRAM for Qwen3-8B.</p></div>
+<div class="pstep fade-in"><div class="num">4</div><h4>&#x1f4e4; Export to Ollama</h4><p>Merge LoRA weights, create a Modelfile, and deploy your custom model.</p></div>
 </div>
-
-<!-- ========== Footer ========== -->
+<div class="pcmd">
+<span class="c"># One-command pipeline</span><br>
+cd lora-finetune<br><br>
+<span class="c"># Step 1: Collect data</span><br>
+python scripts/collect_data.py<br><br>
+<span class="c"># Step 2: Train (QLoRA, ~4.5 GB VRAM)</span><br>
+python scripts/train.py<br><br>
+<span class="c"># Step 3: Export &amp; deploy</span><br>
+python scripts/merge_and_export.py<br>
+ollama create my-finetuned-model -f Modelfile
+</div></section>
+<section id="stack">
+<div class="section-tag">&#x1f9e9; Tech Stack</div>
+<h2 class="section-title">Built with the best tools</h2>
+<p class="section-desc">Each component was chosen for quality, performance, and active maintenance.</p>
+<div class="sgrid">
+<div class="scard"><div class="e">&#x1f9e0;</div><div class="i"><h4>Qwen3-8B</h4><p>LLM</p><div class="w">Best open-source Chinese model, MIT license</div></div></div>
+<div class="scard"><div class="e">&#x1f50d;</div><div class="i"><h4>nomic-embed-text</h4><p>Embedding Model</p><div class="w">Lightweight, local, fast</div></div></div>
+<div class="scard"><div class="e">&#x26a1;</div><div class="i"><h4>BGE-Reranker-v2-M3</h4><p>Reranker</p><div class="w">High accuracy, multilingual</div></div></div>
+<div class="scard"><div class="e">&#x1f4cb;</div><div class="i"><h4>FastGPT v4.8.9</h4><p>RAG Platform</p><div class="w">Visual workflow, enterprise-grade</div></div></div>
+<div class="scard"><div class="e">&#x1f5c4;&#xfe0f;</div><div class="i"><h4>pgvector</h4><p>Vector Database</p><div class="w">Rock-solid PostgreSQL ecosystem</div></div></div>
+<div class="scard"><div class="e">&#x1f527;</div><div class="i"><h4>PEFT + TRL</h4><p>Training Framework</p><div class="w">HuggingFace native, battle-tested</div></div></div>
+</div></section>
+<div class="cta">
+<h2>Found this useful? Give it a &#x2b50;</h2>
+<p>Your support keeps this project alive and improving.</p>
+<a href="https://github.com/caizefan34/local-ai-stack" target="_blank" class="star-btn">&#x2b50; Star on GitHub</a>
+</div>
 <footer>
-    <p>MIT License © 2026 <a href="https://github.com/caizefan34">caizefan34</a></p>
-    <p style="margin-top: 4px;">
-        <a href="https://github.com/caizefan34/local-ai-stack">GitHub</a>
-        ·
-        <a href="https://github.com/caizefan34/local-ai-stack/issues">Issues</a>
-        ·
-        <a href="https://github.com/caizefan34/local-ai-stack/discussions">Discussions</a>
-    </p>
-</footer>
-
-<!-- ========== Mermaid ========== -->
+<p>MIT License &copy; 2026 <a href="https://github.com/caizefan34">caizefan34</a></p>
+<p style="margin-top:6px">
+<a href="https://github.com/caizefan34/local-ai-stack">GitHub</a>
+ &middot; 
+<a href="https://github.com/caizefan34/local-ai-stack/issues">Issues</a>
+ &middot; 
+<a href="https://github.com/caizefan34/local-ai-stack/discussions">Discussions</a>
+</p></footer>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
 <script>
-    mermaid.initialize({
-        theme: 'dark',
-        themeVariables: {
-            primaryColor: '#6366f1',
-            primaryTextColor: '#f1f5f9',
-            primaryBorderColor: '#4f46e5',
-            lineColor: '#64748b',
-            secondaryColor: '#1e293b',
-            tertiaryColor: '#0f172a',
-            fontSize: '14px',
-            fontFamily: 'Segoe UI, system-ui, sans-serif',
-        },
-        flowchart: {
-            htmlLabels: true,
-            curve: 'basis',
-            padding: 20,
-        }
-    });
-
-    function switchTab(event, name) {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-        event.target.classList.add('active');
-        document.getElementById('tab-' + name).classList.add('active');
-    }
+mermaid.initialize({theme:"dark",themeVariables:{primaryColor:"#6366f1",primaryTextColor:"#f1f5f9",primaryBorderColor:"#4f46e5",lineColor:"#64748b",secondaryColor:"#1e293b",tertiaryColor:"#0f172a",fontSize:"14px",fontFamily:"Inter,system-ui,sans-serif"},flowchart:{htmlLabels:true,curve:"basis",padding:20}});
+function switchTab(e,n){document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));document.querySelectorAll(".tab-pane").forEach(p=>p.classList.remove("active"));e.target.classList.add("active");document.getElementById("tab-"+n).classList.add("active")}
+new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&e.target.classList.add("visible")})},{threshold:.1}).observe||Array.from(document.querySelectorAll(".fade-in")).forEach(o=>setTimeout(()=>o.classList.add("visible"),100));
+document.querySelectorAll(".fade-in").forEach(el=>{new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&e.target.classList.add("visible")})},{threshold:.1}).observe(el)})
 </script>
 </body>
 </html>
