@@ -30,6 +30,7 @@ def main() -> None:
         results.append({"id": case.get("id", ""), "passed": case["expected_substring"] in answer, "response": answer})
     score = sum(item["passed"] for item in results) / len(results) if results else 0
     report = {"model": args.model, "score": score, "results": results}
+    args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     if args.baseline:
         baseline = json.loads(args.baseline.read_text(encoding="utf-8"))

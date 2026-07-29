@@ -92,6 +92,10 @@ class CodeIntelligenceTests(unittest.TestCase):
         self.assertIn('microsoft/codebert-base', source)
         self.assertIn('source.get("chunks", [])', source)
 
+    def test_codegen_evaluation_creates_its_output_directory(self):
+        source = (ROOT / "code_intelligence" / "evaluate_codegen.py").read_text(encoding="utf-8")
+        self.assertIn('args.output.parent.mkdir(parents=True, exist_ok=True)', source)
+
     def test_feedback_preparation_uses_only_approved_corrections_or_answers(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "feedback.jsonl"
