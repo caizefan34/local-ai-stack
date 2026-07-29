@@ -87,11 +87,14 @@ python code_intelligence/lsp_server.py
 
 Point an LSP-capable editor at this stdio command. It implements
 `textDocument/completion` and calls only the local Ollama API. A VS Code client
-can use the same command through its LSP extension settings.
+can use the same command through its LSP extension settings. The server keeps a
+small in-memory LRU cache for identical recent prefix requests; it never writes
+editor content to disk.
 
 The included [`ide/vscode`](../ide/vscode) extension provides inline completion
-and **Local AI: Explain Selection** using the local Ollama API. It never applies
-an edit or executes a command on behalf of the user.
+and **Local AI: Explain Selection** / **Suggest Fix for Selection** using the
+local Ollama API. Fixes are displayed as an unapplied diff; it never applies an
+edit or executes a command on behalf of the user.
 
 Store fine-tuning feedback only after explicit approval:
 

@@ -61,6 +61,7 @@ class CodeIntelligenceTests(unittest.TestCase):
         extension = (ROOT / "ide" / "vscode" / "extension.js").read_text(encoding="utf-8")
         self.assertIn('localAiStack.completionModel', manifest)
         self.assertIn('registerInlineCompletionItemProvider', extension)
+        self.assertIn('localAiStack.fixSelection', extension)
 
     def test_fastgpt_exposes_code_models(self):
         config = (ROOT / "config" / "fastgpt-config.json").read_text(encoding="utf-8")
@@ -76,6 +77,7 @@ class CodeIntelligenceTests(unittest.TestCase):
         prompt = lsp_server.completion_prompt("line0\nline1", 1, 5)
         self.assertIn("line1", prompt)
         self.assertIn("Complete only the next code tokens", prompt)
+        self.assertIn('MAX_CACHE_ENTRIES', (ROOT / "code_intelligence" / "lsp_server.py").read_text(encoding="utf-8"))
 
     def test_codebert_embedder_consumes_ast_index(self):
         source = (ROOT / "code_intelligence" / "embed_chunks.py").read_text(encoding="utf-8")

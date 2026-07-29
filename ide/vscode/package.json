@@ -9,7 +9,8 @@
   "activationEvents": ["onStartupFinished"],
   "contributes": {
     "commands": [
-      { "command": "localAiStack.explainSelection", "title": "Local AI: Explain Selection" }
+      { "command": "localAiStack.explainSelection", "title": "Local AI: Explain Selection" },
+      { "command": "localAiStack.fixSelection", "title": "Local AI: Suggest Fix for Selection" }
     ],
     "configuration": {
       "title": "Local AI Stack",

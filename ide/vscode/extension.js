@@ -23,6 +23,16 @@ function activate(context) {
       await vscode.window.showTextDocument(document, { preview: true });
     } catch (error) { vscode.window.showErrorMessage(`Local AI request failed: ${error.message}`); }
   }));
+  context.subscriptions.push(vscode.commands.registerCommand('localAiStack.fixSelection', async () => {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor || editor.selection.isEmpty) return vscode.window.showInformationMessage('Select an error, stack trace, or code region first.');
+    try {
+      const text = editor.document.getText(editor.selection);
+      const answer = await generate(`Diagnose this code or error. Return a minimal unified diff only; do not apply it.\n\n${text}`, settings().codeModel);
+      const document = await vscode.workspace.openTextDocument({ content: answer, language: 'diff' });
+      await vscode.window.showTextDocument(document, { preview: true });
+    } catch (error) { vscode.window.showErrorMessage(`Local AI request failed: ${error.message}`); }
+  }));
   context.subscriptions.push(vscode.languages.registerInlineCompletionItemProvider({ pattern: '**' }, {
     async provideInlineCompletionItems(document, position) {
       const prefix = document.getText(new vscode.Range(new vscode.Position(Math.max(0, position.line - 80), 0), position)).slice(-12000);

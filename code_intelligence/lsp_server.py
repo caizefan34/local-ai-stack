@@ -10,6 +10,7 @@ import json
 import os
 import sys
 import urllib.request
+from collections import OrderedDict
 
 try:
     from .router import COMPLETION_MODEL
@@ -20,6 +21,8 @@ except ImportError:  # Running directly as a stdio server.
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434/api/generate")
 MODEL = os.getenv("CODE_COMPLETION_MODEL", COMPLETION_MODEL)
 DOCUMENTS: dict[str, str] = {}
+COMPLETION_CACHE: OrderedDict[str, str] = OrderedDict()
+MAX_CACHE_ENTRIES = 32
 
 
 def read_message() -> dict | None:
@@ -49,10 +52,17 @@ def completion_prompt(text: str, line: int, character: int) -> str:
 
 
 def ollama_completion(prompt: str) -> str:
+    if prompt in COMPLETION_CACHE:
+        COMPLETION_CACHE.move_to_end(prompt)
+        return COMPLETION_CACHE[prompt]
     data = json.dumps({"model": MODEL, "prompt": prompt, "stream": False, "options": {"temperature": 0.1, "num_predict": 160}}).encode("utf-8")
     request = urllib.request.Request(OLLAMA_URL, data=data, headers={"Content-Type": "application/json"})
     with urllib.request.urlopen(request, timeout=20) as response:
-        return json.load(response).get("response", "")
+        completion = json.load(response).get("response", "")
+    COMPLETION_CACHE[prompt] = completion
+    if len(COMPLETION_CACHE) > MAX_CACHE_ENTRIES:
+        COMPLETION_CACHE.popitem(last=False)
+    return completion
 
 
 def handle(message: dict) -> dict | None:
