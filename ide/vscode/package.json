@@ -3,7 +3,7 @@
   "publisher": "caizefan34",
   "displayName": "Local AI Stack",
   "description": "Local Ollama-backed code chat, completion, explanation, and safe fix suggestions.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "engines": { "vscode": "^1.85.0" },
   "categories": ["Programming Languages", "Machine Learning"],
   "main": "./extension.js",
@@ -34,7 +34,7 @@
     },
     "views": {
       "localAiStack": [
-        { "id": "localAiStack.chat", "name": "Local AI Chat" }
+        { "type": "webview", "id": "localAiStack.chat", "name": "Local AI Chat" }
       ]
     },
     "configuration": {
