@@ -1,15 +1,15 @@
 ﻿"""
-数据采集工具 — 支持多种来源导入训练数据
+Data Collection Tool - Import training data from multiple sources
 
-用法:
+Usage:
   python scripts/collect_data.py
 
-支持的来源:
-  1. JSON 文件导入（标准格式）
-  2. CSV 文件导入
-  3. 手动输入问答对
-  4. 从 FastGPT API 导出对话
-  5. 从 Markdown 对话记录提取
+Supported sources:
+  1. JSON file import (standard format)
+  2. CSV file import
+  3. Manual Q&A pair input
+  4. FastGPT API export
+  5. Markdown conversation extract
 """
 import json, os, sys, csv, glob
 from datetime import datetime
@@ -23,12 +23,12 @@ def load_json(path):
 
 def save_data(data):
     os.makedirs(DATA_DIR, exist_ok=True)
-    # 合并现有数据
+    # Merge with existing data
     existing = []
     if os.path.exists(OUTPUT_FILE):
         existing = load_json(OUTPUT_FILE)
     all_data = existing + data
-    # 去重（按 instruction 去重）
+    # Deduplicate by instruction
     seen = set()
     unique = []
     for item in all_data:
@@ -38,15 +38,15 @@ def save_data(data):
             unique.append(item)
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(unique, f, ensure_ascii=False, indent=2)
-    print(f"[OK] 已保存 {len(data)} 条新数据到 {OUTPUT_FILE}")
-    print(f"    去重后总量: {len(unique)} 条")
+    print(f"[OK] Saved {len(data)} new records to {OUTPUT_FILE}")
+    print(f"    Total after dedup: {len(unique)}  records")
     return unique
 
 def convert_ccswitch_format(raw_data):
-    """尝试解析 CC Switch 可能的导出格式"""
+    """Parse CC Switch export format"""
     converted = []
     for item in raw_data:
-        # 支持多种 Key 命名
+        # Support multiple key names
         q = item.get("query") or item.get("question") or item.get("user") or item.get("prompt") or ""
         a = item.get("answer") or item.get("response") or item.get("assistant") or item.get("completion") or ""
         if isinstance(q, list):
@@ -59,20 +59,20 @@ def convert_ccswitch_format(raw_data):
 
 def main():
     print("=" * 60)
-    print("训练数据采集工具")
+    print("Training Data Collection Tool")
     print("=" * 60)
     print()
-    print("支持的输入格式:")
-    print("  1. JSON 文件 (标准 Alpaca 格式)")
-    print("  2. JSON 文件 (CC Switch / ChatGPT 导出)")
-    print("  3. CSV 文件 (query,answer 两列)")
-    print("  4. 纯文本对话记录")
-    print("  5. 从 FastGPT 对话日志导入")
+    print("Supported input formats:")
+    print("  1. JSON file (standard Alpaca format)")
+    print("  2. JSON file (CC Switch / ChatGPT export)")
+    print("  3. CSV file (query,answer columns)")
+    print("  4. Plain text conversation logs")
+    print("  5. FastGPT dialogue log import")
     print()
-    path = input("输入文件路径（拖拽文件到窗口）: ").strip().strip("'\"")
+    path = input("Input file path (drag file here): ").strip().strip("'\"")
 
     if not os.path.exists(path):
-        print(f"[ERR] 文件不存在: {path}")
+        print(f"[ERR] File not found: {path}")
         return
 
     ext = os.path.splitext(path)[1].lower()
@@ -80,10 +80,10 @@ def main():
 
     if ext == ".json":
         raw = load_json(path)
-        # 自动检测格式
+        # Auto-detect format
         if isinstance(raw, list):
             if raw and "messages" in raw[0]:
-                # ShareGPT 格式
+                # ShareGPT format
                 for item in raw:
                     msgs = item.get("messages", [])
                     user = [m for m in msgs if m.get("role") == "user"]
@@ -91,10 +91,10 @@ def main():
                     for u, a in zip(user, asst):
                         data.append({"instruction": u["content"], "output": a["content"]})
             elif raw and "instruction" in raw[0]:
-                data = raw  # 标准 Alpaca
+                data = raw  # Standard Alpaca
             else:
                 data = convert_ccswitch_format(raw)
-        print(f"  解析到 {len(data)} 条问答对")
+        print(f"  Parsed {len(data)} Q&A pairs")
 
     elif ext == ".csv":
         with open(path, "r", encoding="utf-8") as f:
@@ -104,7 +104,7 @@ def main():
                 a = row.get("answer") or row.get("response") or row.get("assistant") or ""
                 if q.strip() and a.strip():
                     data.append({"instruction": q.strip(), "output": a.strip()})
-        print(f"  解析到 {len(data)} 条问答对")
+        print(f"  Parsed {len(data)} Q&A pairs")
 
     elif ext == ".txt" or ext == ".md":
         with open(path, "r", encoding="utf-8") as f:
@@ -115,35 +115,35 @@ def main():
             q = ""
             a = ""
             for line in lines_b:
-                if line.startswith("Q:") or line.startswith("问:") or line.startswith("用户:"):
+                if line.startswith("Q:") or line.startswith("Q:") or line.startswith("User:"):
                     q = line.split(":", 1)[1].strip()
-                elif line.startswith("A:") or line.startswith("答:") or line.startswith("AI:") or line.startswith("助手:"):
+                elif line.startswith("A:") or line.startswith("A:") or line.startswith("AI:") or line.startswith("Assistant:"):
                     a = line.split(":", 1)[1].strip()
             if q and a:
                 data.append({"instruction": q, "output": a})
-        print(f"  解析到 {len(data)} 条问答对")
+        print(f"  Parsed {len(data)} Q&A pairs")
     else:
-        print(f"[ERR] 不支持的文件格式: {ext}")
+        print(f"[ERR] Unsupported file format: {ext}")
         return
 
     if data:
-        # 显示前 3 条预览
+        # Show preview of first 3 items
         print()
-        print("预览前 3 条:")
+        print("Preview first 3 items:")
         for i, item in enumerate(data[:3]):
             print(f"  [{i+1}] Q: {item['instruction'][:60]}...")
             print(f"       A: {item['output'][:60]}...")
             print()
-        confirm = input("确认导入？(Y/n): ").strip().lower() or "y"
+        confirm = input("Confirm import? (Y/n): ").strip().lower() or "y"
         if confirm == "y":
             save_data(data)
         else:
-            print("已取消")
+            print("Cancelled")
     else:
-        print("[WARN] 没有解析到有效的问答对")
-        print("  支持的格式示例:")
-        print('  [{"instruction": "问题", "output": "回答"}]')
-        print('  [{"query": "问题", "answer": "回答"}]')
+        print("[WARN] No valid Q&A pairs found")
+        print("  Supported format examples:")
+        print('  [{"instruction": "question", "output": "answer"}]')
+        print('  [{"query": "question", "answer": "answer"}]')
         print('  CSV: query,answer')
 
 if __name__ == "__main__":

@@ -23,8 +23,8 @@ python import_ccswitch_logs.py --output ./train_data.json
 All tools output Alpaca-format JSON:
 ```json
 {
-  "instruction": "用户的提问",
-  "input": "额外上下文（可选）",
-  "output": "模型的回答"
+  "instruction": "user question",
+  "input": "additional context (optional)",
+  "output": "model response"
 }
 ```
