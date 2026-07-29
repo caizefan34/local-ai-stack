@@ -132,9 +132,12 @@ CLI and Ollama) and then keep the runner process open:
 ```powershell
 .\scripts\setup-actions-runner.ps1
 & 'C:\local-ai-stack-runner\run.cmd'
+.\scripts\install-runner-startup.ps1
 ```
 
 The setup script obtains a short-lived registration token without printing or
 persisting it, and registers labels `ollama,gpu`. After the runner appears
 online in the repository's **Settings → Actions → Runners**, dispatch **Local
-Code Quality Evaluation** from the Actions tab.
+Code Quality Evaluation** from the Actions tab. The startup helper creates a
+current-user shortcut, so the runner starts after Windows sign-in without
+requiring administrator permission.

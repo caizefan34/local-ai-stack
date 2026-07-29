@@ -26,4 +26,4 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Write-Host "Registered $RunnerName for $Repository."
 Write-Host "Start it in a dedicated terminal: & '$RunnerDir\run.cmd'"
-Write-Host "For persistence across reboots, run '$RunnerDir\svc.cmd install' from an elevated terminal."
+Write-Host "For automatic start after sign-in, run .\scripts\install-runner-startup.ps1."

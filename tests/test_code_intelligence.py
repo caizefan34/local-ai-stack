@@ -101,6 +101,11 @@ class CodeIntelligenceTests(unittest.TestCase):
         self.assertIn("actions/runners/registration-token", source)
         self.assertIn("--labels 'ollama,gpu'", source)
 
+    def test_runner_startup_script_creates_current_user_shortcut(self):
+        source = (ROOT / "scripts" / "install-runner-startup.ps1").read_text(encoding="utf-8")
+        self.assertIn("GetFolderPath('Startup')", source)
+        self.assertIn("Local AI Stack Runner.lnk", source)
+
     def test_quality_workflow_uses_windows_powershell_on_windows_runner(self):
         workflow = (ROOT / ".github" / "workflows" / "code-quality-eval.yml").read_text(encoding="utf-8")
         self.assertIn("shell: powershell", workflow)
