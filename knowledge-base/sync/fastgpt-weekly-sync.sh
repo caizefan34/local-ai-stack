@@ -18,8 +18,20 @@ logn "Step 2: Extracting text from documents..."
 python3 ${KB_HOME:-$HOME/knowledge-base}/_scripts/extract-docs.py ${KB_HOME:-$HOME/knowledge-base} 2>&1 | tail -3 >> "$LOG_FILE" || true
 logn "  Done"
 
-# Step 3: Copy KB to containers
-logn "Step 3: Updating containers..."
+# Step 3: Optionally index source code by functions/classes and imports.
+if [ "${CODE_INDEX_ENABLED:-false}" = "true" ]; then
+    if [ -z "${LOCAL_AI_STACK_ROOT:-}" ]; then
+        logn "  Code index skipped: set LOCAL_AI_STACK_ROOT to this repository"
+    else
+        logn "Step 3: Building AST-aware code index..."
+        mkdir -p "${KB_HOME:-$HOME/knowledge-base}/03_code"
+        python3 "$LOCAL_AI_STACK_ROOT/code_intelligence/index_codebase.py" "${CODE_INDEX_ROOT:-${KB_HOME:-$HOME/knowledge-base}}" --output "${KB_HOME:-$HOME/knowledge-base}/03_code/code-index.json" 2>&1 | tail -3 >> "$LOG_FILE"
+        logn "  Done"
+    fi
+fi
+
+# Step 4: Copy KB to containers
+logn "Step 4: Updating containers..."
 docker exec fastgpt rm -rf /app/kb 2>/dev/null || true
 timeout 30 docker cp ${KB_HOME:-$HOME/knowledge-base} fastgpt:/app/kb 2>/dev/null
 docker exec fastgpt-mongo rm -rf /tmp/kb-files 2>/dev/null || true
@@ -27,11 +39,11 @@ docker exec fastgpt-mongo mkdir -p /tmp/kb-files
 docker exec fastgpt tar -cf - -C /app/kb . | docker exec -i fastgpt-mongo tar -xf - -C /tmp/kb-files
 logn "  Done"
 
-# Step 4: Import new files into FastGPT
-logn "Step 4: Importing to FastGPT..."
+# Step 5: Import new files into FastGPT
+logn "Step 5: Importing to FastGPT..."
 RESULT=$(docker exec -i fastgpt-mongo mongosh --quiet --file /tmp/fastgpt-mongo-import.js 2>/dev/null)
 logn "  $RESULT"
 
-# Step 5: Verify and cleanup
+# Step 6: Verify and cleanup
 docker exec fastgpt-mongo rm -rf /tmp/kb-files 2>/dev/null || true
 logn "=== Done ==="

@@ -1,3 +1,7 @@
+param(
+    [switch]$CodeMode
+)
+
 @"
 ================================================
    Local AI Stack - Windows Setup
@@ -48,6 +52,13 @@ ollama pull qwen3:8b
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 ollama pull nomic-embed-text:latest
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+if ($CodeMode) {
+    Write-Host "  Pulling code generation and completion models..." -ForegroundColor Yellow
+    ollama pull qwen2.5-coder:7b
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    ollama pull qwen2.5-coder:1.5b
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
 Write-Host "  [v] Models ready" -ForegroundColor Green
 
 # Start Docker stack

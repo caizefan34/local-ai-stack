@@ -1,0 +1,23 @@
+{
+  "name": "local-ai-stack",
+  "displayName": "Local AI Stack",
+  "description": "Local Ollama-backed code completion and explain-selection commands.",
+  "version": "0.1.0",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["Programming Languages", "Machine Learning"],
+  "main": "./extension.js",
+  "activationEvents": ["onStartupFinished"],
+  "contributes": {
+    "commands": [
+      { "command": "localAiStack.explainSelection", "title": "Local AI: Explain Selection" }
+    ],
+    "configuration": {
+      "title": "Local AI Stack",
+      "properties": {
+        "localAiStack.ollamaUrl": { "type": "string", "default": "http://127.0.0.1:11434/api/generate" },
+        "localAiStack.codeModel": { "type": "string", "default": "qwen2.5-coder:7b" },
+        "localAiStack.completionModel": { "type": "string", "default": "qwen2.5-coder:1.5b" }
+      }
+    }
+  }
+}

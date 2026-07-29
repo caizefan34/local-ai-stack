@@ -27,6 +27,22 @@
             "output": 4096
           }
         },
+        "qwen2.5-coder:7b": {
+          "name": "Qwen2.5-Coder 7B Local",
+          "limit": {
+            "context": 16384,
+            "output": 4096
+          },
+          "system": "You are a senior software engineer. Diagnose bugs precisely, write minimal safe patches, and include tests when appropriate."
+        },
+        "qwen2.5-coder:1.5b": {
+          "name": "Qwen2.5-Coder 1.5B Completion",
+          "limit": {
+            "context": 4096,
+            "output": 512
+          },
+          "system": "Complete the current code only. Return the smallest syntactically valid continuation."
+        },
         "qwen3-1.7b-stable": {
           "name": "Qwen3 1.7B Fast",
           "limit": {

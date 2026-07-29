@@ -1,6 +1,14 @@
 #!/bin/bash
 set -e
 
+CODE_MODE=false
+if [ "${1:-}" = "--code-mode" ]; then
+    CODE_MODE=true
+elif [ "$#" -gt 0 ]; then
+    echo "Usage: bash scripts/setup.sh [--code-mode]"
+    exit 1
+fi
+
 echo "=== Local AI Stack Setup ==="
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
@@ -27,6 +35,11 @@ fi
 echo "Pulling models..."
 ollama pull qwen3:8b
 ollama pull nomic-embed-text:latest
+if [ "$CODE_MODE" = true ]; then
+    echo "Pulling code generation and completion models..."
+    ollama pull qwen2.5-coder:7b
+    ollama pull qwen2.5-coder:1.5b
+fi
 
 # Start docker stack
 echo "Starting FastGPT..."

@@ -5,6 +5,7 @@
 # Usage:  bash scripts/pull-models.sh
 #         bash scripts/pull-models.sh --all    (download all)
 #         bash scripts/pull-models.sh qwen3:8b (download specific)
+#         bash scripts/pull-models.sh --code-mode (code generation + completion)
 # ============================================================
 set -e
 
@@ -45,12 +46,15 @@ MODELS["qwen3:8b"]="Qwen3 8B — Main LLM for RAG (default, ~4.7 GB)"
 MODELS["qwen3:0.6b"]="Qwen3 0.6B — Fast lightweight (~600 MB)"
 MODELS["qwen3:1.7b"]="Qwen3 1.7B — Lightweight (~1 GB)"
 MODELS["qwen2.5:14b"]="Qwen2.5 14B — Fallback, higher accuracy (~8 GB)"
+MODELS["qwen2.5-coder:7b"]="Qwen2.5-Coder 7B — Code generation and bug fixing (~4.7 GB)"
+MODELS["qwen2.5-coder:1.5b"]="Qwen2.5-Coder 1.5B — Low-latency code completion (~1 GB)"
 MODELS["deepseek-r1:7b"]="DeepSeek R1 7B — Reasoning model (~4.5 GB)"
 MODELS["nomic-embed-text:latest"]="Nomic Embed Text — Embeddings for RAG (~274 MB)"
 MODELS["llama3.2:3b"]="LLaMA 3.2 3B — Lightweight (~2 GB)"
 MODELS["mistral:7b"]="Mistral 7B — Alternative main model (~4.1 GB)"
 
 RECOMMENDED=("qwen3:8b" "nomic-embed-text:latest" "qwen3:0.6b" "deepseek-r1:7b" "qwen2.5:14b")
+CODE_MODELS=("qwen2.5-coder:7b" "qwen2.5-coder:1.5b")
 
 # If --all flag, download all
 if [[ "$1" == "--all" ]]; then
@@ -67,6 +71,14 @@ if [[ "$1" == "--all" ]]; then
     echo -e "${GREEN}   All models downloaded!${NC}"
     echo -e "${GREEN}============================================${NC}"
     ollama list
+    exit 0
+fi
+
+if [[ "$1" == "--code-mode" ]]; then
+    echo -e "${YELLOW}Downloading code generation and completion models...${NC}"
+    for model in "${CODE_MODELS[@]}"; do
+        ollama pull "$model"
+    done
     exit 0
 fi
 

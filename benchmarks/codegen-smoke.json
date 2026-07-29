@@ -1,0 +1,4 @@
+[
+  {"id": "python-function", "prompt": "Write Python code only: define add(a, b) that returns their sum.", "expected_substring": "def add"},
+  {"id": "javascript-function", "prompt": "Write JavaScript code only: define a function named greet that returns 'hello'.", "expected_substring": "greet"}
+]

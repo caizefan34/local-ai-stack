@@ -4,10 +4,12 @@
 # Usage:  .\scripts\pull-models.ps1
 #         .\scripts\pull-models.ps1 -All
 #         .\scripts\pull-models.ps1 -Model qwen3:8b
+#         .\scripts\pull-models.ps1 -CodeMode
 # ============================================================
 
 param(
     [switch]$All,
+    [switch]$CodeMode,
     [string]$Model = ""
 )
 
@@ -42,6 +44,8 @@ $models = @(
     @{Name = "qwen3:0.6b"; Desc = "Qwen3 0.6B - Fast lightweight (~600 MB)"}
     @{Name = "qwen3:1.7b"; Desc = "Qwen3 1.7B - Lightweight (~1 GB)"}
     @{Name = "qwen2.5:14b"; Desc = "Qwen2.5 14B - Fallback, higher accuracy (~8 GB)"}
+    @{Name = "qwen2.5-coder:7b"; Desc = "Qwen2.5-Coder 7B - Code generation and bug fixing (~4.7 GB)"}
+    @{Name = "qwen2.5-coder:1.5b"; Desc = "Qwen2.5-Coder 1.5B - Low-latency code completion (~1 GB)"}
     @{Name = "deepseek-r1:7b"; Desc = "DeepSeek R1 7B - Reasoning model (~4.5 GB)"}
     @{Name = "nomic-embed-text:latest"; Desc = "Nomic Embed Text - Embeddings for RAG (~274 MB)"}
     @{Name = "llama3.2:3b"; Desc = "LLaMA 3.2 3B - Lightweight (~2 GB)"}
@@ -49,6 +53,7 @@ $models = @(
 )
 
 $recommended = @("qwen3:8b", "nomic-embed-text:latest", "qwen3:0.6b", "deepseek-r1:7b", "qwen2.5:14b")
+$codeModels = @("qwen2.5-coder:7b", "qwen2.5-coder:1.5b")
 
 function Pull-Model($modelName) {
     $desc = ($models | Where-Object { $_.Name -eq $modelName }).Desc
@@ -77,6 +82,12 @@ if ($All) {
     Write-Color "   All models downloaded!" "Green"
     Write-Color "============================================" "Green"
     ollama list
+    exit 0
+}
+
+if ($CodeMode) {
+    Write-Color "Downloading code generation and completion models..." "Yellow"
+    foreach ($m in $codeModels) { Pull-Model $m }
     exit 0
 }
 

@@ -1,0 +1,31 @@
+name: Local Code Quality Evaluation
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: Ollama model to evaluate
+        required: true
+        default: qwen2.5-coder:7b
+      baseline:
+        description: Optional path to a prior result JSON on the runner
+        required: false
+        default: ''
+
+jobs:
+  evaluate:
+    # A GitHub-hosted runner cannot access a private local Ollama instance.
+    runs-on: [self-hosted, ollama]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify model availability
+        run: ollama show "${{ inputs.model }}"
+      - name: Run local code benchmark
+        run: |
+          BASELINE_ARG=""
+          if [ -n "${{ inputs.baseline }}" ]; then BASELINE_ARG="--baseline ${{ inputs.baseline }}"; fi
+          python code_intelligence/evaluate_codegen.py benchmarks/codegen-smoke.json --model "${{ inputs.model }}" $BASELINE_ARG --output codegen-eval.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: codegen-eval
+          path: codegen-eval.json

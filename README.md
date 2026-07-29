@@ -58,6 +58,8 @@ bash scripts/setup.sh
 
 > 🔐 **Credentials:** `scripts/setup.sh` / `scripts/setup.ps1` creates a local `.env` with random credentials. If starting Compose manually, copy `.env.example` to `.env` and replace both placeholder values first.
 
+> 💻 **Code mode:** add `-CodeMode` on Windows or `--code-mode` on Linux/WSL to pull Qwen2.5-Coder 7B (generation) and 1.5B (inline completion). See the [code intelligence guide](docs/code-intelligence.md).
+
 <p align="center">
 <a href="https://caizefan34.github.io/local-ai-stack/" style="display:inline-block;padding:10px 28px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;font-size:16px;font-weight:600;text-decoration:none">▶ Explore the walkthrough</a>
 <a href="https://github.com/caizefan34/local-ai-stack" style="display:inline-block;padding:10px 28px;border-radius:8px;background:#1a1a2e;color:#fff;font-size:16px;font-weight:600;text-decoration:none;margin-left:8px">⭐ Star on GitHub</a>
