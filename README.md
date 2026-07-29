@@ -1,27 +1,35 @@
-﻿# Local AI Stack — Ollama + FastGPT + RAG
+# Local AI Stack
+> **Production-grade RAG. 100% local. 100% free. No GPU required.** 
+Build a private AI knowledge base on your laptop with zero cloud costs.
 
-> **Enterprise-grade RAG. 100% local. 100% free.** No API keys, no cloud costs, no GPU required. Windows + Linux + WSL.
-
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-6366f1?style=for-the-badge)](https://caizefan34.github.io/local-ai-stack/)
-[![License](https://img.shields.io/badge/License-MIT-blue)]()
-[![GitHub Stars](https://img.shields.io/github/stars/caizefan34/local-ai-stack?style=social)](https://github.com/caizefan34/local-ai-stack)
+<p align="center">
+<a href="https://github.com/caizefan34/local-ai-stack"><img src="https://img.shields.io/github/stars/caizefan34/local-ai-stack?style=for-the-badge&logo=github&color=6366f1" alt="Stars"></a> <a href="https://caizefan34.github.io/local-ai-stack/"><img src="https://img.shields.io/badge/GitHub%20Pages-Live-6366f1?style=for-the-badge" alt="Pages"></a> <a href="https://github.com/caizefan34/local-ai-stack/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License"></a></p>
 
 <p align="center">
   <img src="docs/og-image.svg" alt="Local AI Stack" width="100%">
 </p>
-[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)]()
-[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python)]()
+
+<p align="center">
+<a href="#-quick-start">Quick Start</a> . <a href="#-features">Features</a> . <a href="#-demo">Demo</a> . <a href="#-use-cases">Use Cases</a> . <a href="https://caizefan34.github.io/local-ai-stack/">GitHub Pages</a></p>
 
 ---
 
-## Prerequisites
+## ✨ Why Local AI Stack?
 
-- Windows 10/11, Linux, or macOS with WSL2
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- At least 8GB RAM (16GB recommended for LoRA training)
-- 20GB free disk space
+Most RAG solutions are either:
+- **Cloud-dependent** (OpenAI, Claude) - costs, privacy risks, rate limits
+- **Complex to set up** - Kubernetes, multiple services, days of configuration
+- **GPU-hungry** - requires expensive hardware
 
-## Quick Start
+This stack solves all three:
+- ✅ **100% offline** - No API keys, no data leaves your machine
+- ✅ **One-command setup** - Docker Compose + PowerShell/Bash
+- ✅ **Runs on 8GB RAM / CPU** - No GPU required (GPU just makes it faster)
+- ✅ **Fine-tune your model** - LoRA training pipeline included
+
+## ⚡ Quick Start
+
+Get your AI knowledge base running in under 5 minutes:
 
 ### Windows
 ```powershell
@@ -40,147 +48,88 @@ git clone https://github.com/caizefan34/local-ai-stack.git
 cd local-ai-stack && bash scripts/setup.sh
 ```
 
-Then open **http://localhost:3000** (default password: "1234")
+Open **http://localhost:3000** (default password: 1234)
 
 ---
 
-## Features
+## ✨ Features
 
-| Feature | Description |
-|---|---|
-| 100% Free | Fully open-source, zero API costs |
-| Privacy First | All data processed locally |
-| RAG + Reranker | BGE reranker boosts accuracy by 40% |
-| Visual Knowledge Base | FastGPT UI for document management |
-| LoRA Fine-Tuning | PEFT + TRL pipeline, fits 8GB VRAM |
-| Multi-Model Support | Qwen3, LLaMA, Mistral |
-| One-Click Setup | PowerShell + Bash automation |
-| **Knowledge Base Auto-Sync** | **Automatically sync folders → FastGPT (weekly)** |
-| **Desktop Dashboard** | **Real-time service monitor with live status** |
+<table>
+<tr><td width="50%"><h3>🔒 Privacy First</h3><p>All data processed locally. No API calls. Your documents never leave your machine.</p></td>
+<td width="50%"><h3>🎹 Production RAG</h3><p>Visual workflow engine with reranker that boosts accuracy by 40%. BGE-Reranker-v2-M3 included.</p></td></tr>
+<tr><td><h3>💪 LoRA Fine-Tuning</h3><p>PEFT + TRL pipeline. Fine-tune Qwen3-8B on 8GB VRAM with QLoRA. Turn your conversations into a custom model.</p></td>
+<td><h3>🔄 Auto-Sync Pipeline</h3><p>Weekly sync from Windows folders to FastGPT. Import papers, courses, and GitHub repos automatically.</p></td></tr>
+<tr><td><h3>💻 Desktop Dashboard</h3><p>Real-time service monitor with one-click controls. Check status, start/stop services, trigger KB sync.</p></td>
+<td><h3>🌐 Multi-Model</h3><p>Switch between Qwen3, LLaMA, Mistral via config. 4 models pre-configured for different workloads.</p></td></tr>
+</table>
 
-## What's Included
+## 🎬 Demo
 
-| Module | Description |
-|---|---|
-| FastGPT v4.8.9 | Visual RAG platform with workflow engine |
-| PostgreSQL + pgvector | Vector database (HNSW index) |
-| MongoDB + Redis | Session and cache storage |
-| Ollama + Qwen3-8B | Local LLM with 32K context window |
-| BGE Reranker v2 M3 | Retrieval accuracy booster |
-| LoRA Fine-Tuning | PEFT + TRL, QLoRA 4-bit |
-| OpenCode Config | Pre-configured AI coding assistant |
-| **Desktop Dashboard** | **HTML dashboard with service monitoring** |
-| **KB Auto-Sync Pipeline** | **WSL scripts for automated knowledge base syncing** |
+### Service Dashboard
+Monitor all services in real time:
 
-## Knowledge Base Auto-Sync
-
-Automatically sync your local documents, course materials, and research papers into FastGPT.
-
-```bash
-# Sync Windows folders to WSL
-cd knowledge-base/sync
-python3 sync-from-windows.py
-
-# Full weekly sync
-bash fastgpt-weekly-sync.sh
+```
+⚫ ollama    ✔️ online     FastGPT:  http://localhost:3000
+⚫ fastgpt   ✔️ online     Reranker: http://localhost:18888
+⚫ reranker  ✔️ online     Ollama:   http://localhost:11434
+⚫ docker    ✔️ running
 ```
 
-**Windows Scheduled Task** (run as Admin):
-```powershell
-.\scripts\setup_kb_sync_task.ps1
-```
-
-Scheduled: **Every Sunday at 03:00**
-
-### Import Tools
-
-```bash
-# Import a paper (auto-extracts metadata)
-python3 knowledge-base/sync/add_paper.py paper.pdf
-
-# Clone and import a GitHub repo
-python3 knowledge-base/sync/add_github.py https://github.com/user/repo
-
-# Import course materials
-python3 knowledge-base/sync/add_course.py lecture1.pdf lecture2.pptx
-```
-
-## Desktop Dashboard
-
-Open the real-time dashboard to monitor and control your stack:
-
+Open the live dashboard:
 ```powershell
 start desktop-app/dashboard.html
 ```
 
-Or serve via Python: `python -m http.server 8080` then visit `http://localhost:8080/desktop-app/dashboard.html`
+## 📈 Use Cases
 
-**Features:**
-- Live service status (Ollama, FastGPT, Reranker, Docker)
-- One-click Start/Stop all services
-- Knowledge Base sync trigger
-- Auto-refresh every 15 seconds
+| Scenario | How This Helps |
+|----------|---------------|
+| Research Papers | Import PDFs, auto-extract metadata, search with reranker |
+| Course Notes | Sync folders, chunk documents, query with RAG |
+| GitHub Repos | Clone and index repo docs, search code with context |
+| Team Wiki | Local knowledge base, no cloud dependency |
+| Model Fine-Tuning | Collect conversation logs, train LoRA, deploy custom model |
 
-## Project Structure
+## 🧩 Tech Stack
+
+| Layer | Choice | Why |
+|-------|--------|-----|
+| LLM | Qwen3-8B | Best open-source Chinese/English model, MIT license |
+| Embedding | nomic-embed-text | Lightweight, local, no GPU needed |
+| Reranker | BGE-Reranker-v2-M3 | +40% retrieval accuracy |
+| RAG Platform | FastGPT v4.8.9 | Visual workflow, enterprise-grade |
+| Vector DB | pgvector (PostgreSQL) | Rock-solid, HNSW indexing |
+| Training | PEFT + TRL (HuggingFace) | 4-bit QLoRA, fits 8GB VRAM |
+| AI Coding | OpenCode | Pre-configured local AI assistant |
+
+## 📁 Project Structure
 
 ```
 local-ai-stack/
-├── config/              FastGPT & OpenCode configs
-├── docker/              Docker Compose (with resource limits)
-├── docs/                Documentation & GitHub Pages site
-├── knowledge-base/      Import tools (GitHub, CC Switch)
-│   └── sync/            Auto-sync pipeline (WSL scripts)
-├── lora-finetune/       LoRA training pipeline
-├── models/              Ollama Modelfiles
-├── reranker/            BGE Reranker FastAPI service
-├── scripts/             Setup, start, automation
-│   └── automation/      Health checks, config updaters
-├── desktop-app/         Desktop dashboard (HTML)
-└── tests/               E2E tests & evaluation
+├── config/  FastGPT & OpenCode configs
+├── docker/  Docker Compose (with resource limits)
+├── docs/  Documentation & GitHub Pages
+├── knowledge-base/  Import tools + auto-sync pipeline
+├── lora-finetune/  LoRA training (collect, train, export)
+├── models/  Ollama Modelfiles
+├── reranker/  BGE Reranker FastAPI service
+├── scripts/  Setup, start, automation scripts
+├── desktop-app/  Dashboard (HTML) + API server
+├── tests/  E2E tests & model evaluation
 ```
 
-## Automation Scripts
+---
 
-| Script | Purpose |
-|---|---|
-| scripts/automation/check_fastgpt.py | Health check all services |
-| scripts/automation/fastgpt_login.py | Auto-login for config changes |
-| scripts/automation/update_fastgpt_config.py | Deploy updated settings |
-| scripts/automation/prepare_lora_data.py | Extract Q&A for training |
-| scripts/automation/check_fastgpt_api.py | Verify API endpoints |
-| scripts/automation/find_fastgpt_api.py | Discover API configuration |
-| scripts/automation/find_opencode.py | Locate OpenCode integration |
-| scripts/setup_kb_sync_task.ps1 | Install Windows scheduled task |
-| knowledge-base/sync/sync-from-windows.py | Sync Windows folders to WSL |
-| knowledge-base/sync/fastgpt-weekly-sync.sh | Full weekly sync orchestrator |
+## 🌟 Star the Project
 
-## Running Tests
+If you find this useful, consider giving it a star on GitHub:
 
-```bash
-python tests/e2e_test.py
-python tests/evaluate.py --model qwen3-8b-stable
-```
+<p align="center">
+<a href="https://github.com/caizefan34/local-ai-stack" class="star-btn" style="display:inline-block;padding:14px 40px;border-radius:12px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;font-size:18px;font-weight:700;text-decoration:none;box-shadow:0 4px 20px rgba(99,102,241,.25)">⭐ Star on GitHub</a>
+</p>
 
-## Configuration
-
-1. Copy `.env.example` to `.env` and adjust settings
-2. Edit `config/fastgpt-config.json` for RAG parameters
-3. Edit `config/opencode-config.json` for IDE integration
-4. Review `docker/docker-compose.override.yml` for resource limits
-
-See [docs/optimization-guide.md](docs/optimization-guide.md) for detailed tuning.
-
-## Tech Stack
-
-| Layer | Choice |
-|---|---|
-| LLM | Qwen3-8B (MIT license) |
-| Embedding | nomic-embed-text |
-| Reranker | BGE-Reranker-v2-M3 |
-| RAG Platform | FastGPT v4.8.9 |
-| Vector DB | pgvector (PostgreSQL) |
-| Training | PEFT + TRL (HuggingFace) |
+<p align="center">Questions? <a href="https://github.com/caizefan34/local-ai-stack/discussions">Join the discussion</a> . <a href="https://github.com/caizefan34/local-ai-stack/issues">Report an issue</a></p>
 
 ## License
 
-MIT License © 2026 [caizefan34](https://github.com/caizefan34)
+MIT License © 2026 [caizefan34](https://github.com/caizefan34). Free to use, modify, and distribute.
