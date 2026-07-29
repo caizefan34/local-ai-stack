@@ -1,52 +1,67 @@
-# 🏗️ 架构详解 / Architecture Deep Dive
+# Architecture Deep Dive
 
-## 数据流
+## Data Flow
 
+```
+User Query -> FastGPT
+  |- Intent Classification (Qwen3 0.6B)
+  |- Query Expansion (rewrite optimization)
+  |- Vector Search (nomic-embed -> pgvector)
+  |    L- BGE Reranker re-ranking (port 18888)
+  |- Context Assembly
+  L- LLM generates answer (Qwen3-8B fia Ollama :11434)
 ```
-用户提问 → FastGPT
-  ├─ 意图识别（小模型 0.6B）
-  ├─ 查询扩展（改写优化）
-  ├─ 向量检索（nomic-embed → pgvector）
-  │    └─ BGE Reranker 重排序
-  ├─ 上下文组装
-  └─ LLM 生成回答（Qwen3-8B via Ollama）
-```
 
-## 组件说明
+## Component Details
 
 ### FastGPT (v4.8.9)
-
-- 知识库管理：支持文档上传、QA 拆分、向量化
-- 工作流编排：可视化拖拽搭建 AI 工作流
-- 对话管理：多轮对话、上下文管理
+- **Knowledge Base**: Document upload, QA splitting, vectorization
+- **Workflow Engine**: Visual drag-and-drop AI workflow builder
+- **Chat Management**: Multi-turn conversation, context management
 
 ### PostgreSQL + pgvector
+- Vector search engine with HNSW index acceleration
+- Supports both exact and approximate nearest neighbor search
+- Optimized with `pgHNSWEfSearch=200` for +15% recall
 
-- 向量搜索引擎
-- HNSW 索引加速
-- 支持精确和近似最近邻搜索
+### BGE Reranker (port 18888)
+- Cross-encoder architecture for second-pass ranking
+- Receives top-K results from vector search, re-ranks for relevance
+- Adds ~80 ms latency but improves accuracy by 40%+
 
-### BGE Reranker
+### Ollama (port 11434)
+- Local LLM inference engine with OpenAI-compatible API
+- Supports model import/export and Modelfile customization
+- Recommended models: Qwen3-8B, nomic-embed-text
 
-- Cross-encoder 架构
-- 对向量检索结果二次排序
-- 支持中英文混合
+### LoRA Fine-tuning Pipeline
+- Collects conversation data from Codex/CC Switch sessions
+- Trains via QLoRA (4-bit quantization, fits 8 GB VRAM)
+- Exports adapter -> merges with base model -> Ollama Modelfile
 
-### Ollama
+## Network Topology
 
-- 本地 LLM 推理引擎
-- OpenAI 兼容 API
-- 支持模型导入导出
-
-## 网络拓扑
-
+```
+Browser (:3000) <-> FastGPT Container
+                    |
+              PostgreSQL (:5432)  [vector storage]
+              MongoDB (:27017)    [session storage]
+              Redis (:6379)       [cache]
+                    |
+              Ollama Host (:11434)       LLM inference]
+              BGE Reranker (:18888)     [re-ranking]
 ```
-浏览器 (3000) ←→ FastGPT Container
-                        ↓
-              PostgreSQL (5432)
-              MongoDB (27017)
-              Redis (6379)
-                        ↓
-              Ollama Host (11434)
-              Reranker Host (18888)
-```
+
+## File Structure
+
+| Directory | Purpose |
+|---------|-------|
+| `config/` | FastGPT & OpenCode configuration |
+| `docker/` | Docker Compose files for the FastGPT stack |
+| `docs/` | Documentation and GitHub Pages site |
+| `knowledge-base/` | Import tools for CC Switch, GitHub repos |
+| `lora-finetune/` | LoRA training pipeline (data, scripts, outputs) |
+| `models/` | Ollama Modelfiles for custom models |
+| `reranker/` | BGE Reranker FastAPI service |
+| `scripts/` | Setup, start, and automation utilities |
+| `tests/` | Integration tests and model evaluation |

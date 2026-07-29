@@ -1,51 +1,131 @@
-# 🛠️ 安装指南 / Setup Guide
+# Setup Guide
 
-## Windows
+## Prerequisites
 
-### 1. 安装依赖
+| Requirement | Minimum | Recommended |
+|-------------|---------|-------------|
+| RAM | 8 GB | 16 GB+ |
+| Disk | 20 GB | 50 GB+ |
+| GPU (optional) | — | RTX 3060+ (8 GB VRAM) |
+| Docker | v24+ | v27+ |
+| Python | 3.10+ | 3.11+ |
 
-```powershell
-# 安装 Docker Desktop
+## Windows Setup
+
+### 1. Install Dependencies
+
+`powershell
+# Install Docker Desktop
 # https://www.docker.com/products/docker-desktop/
 
-# 安装 Ollama
+# Install Ollama
 winget install Ollama.Ollama
 
-# 安装 Python 3.11+
+# Install Python 3.11+
 # https://www.python.org/downloads/
-```
+`
 
-### 2. 下载模型
+### 2. Clone and Pull Models
 
-```powershell
-ollama pull qwen3:8b      # 主模型（8B）
-ollama pull nomic-embed-text:latest  # 向量模型
-```
+`powershell
+git clone https://github.com/caizefan34/local-ai-stack.git
+cd local-ai-stack
 
-### 3. 启动 FastGPT
+ollama pull qwen3:8b
+ollama pull nomic-embed-text:latest
+`
 
-```powershell
+### 3. Configure Environment (Optional)
+
+Copy .env.example to .env and adjust settings:
+
+`powershell
+cp .env.example .env
+# Edit .env to set custom passwords and keys
+`
+
+### 4. Start FastGPT
+
+`powershell
 docker compose -f docker/docker-compose.yml up -d
-```
+`
 
-访问 http://localhost:3000，默认密码 `1234`
+Visit **http://localhost:3000** — default password: 1234
 
-### 4. 创建知识库
+### 5. Start the Reranker Service
 
-1. 登录 FastGPT
-2. 新建知识库 → 选择向量模型 `nomic-embed-text`
-3. 上传文档或使用导入脚本
+`powershell
+.\scripts\start-all.ps1
+`
 
-## Linux
+This starts:
+- **BGE Reranker** on port 18888
+- Configures FastGPT with optimized settings
 
-```bash
-# 安装 Docker & Ollama
+### 6. Create a Knowledge Base
+
+1. Log in to FastGPT at http://localhost:3000
+2. Create a new knowledge base → select vector model 
+omic-embed-text
+3. Upload documents or use the import scripts in knowledge-base/
+
+## Linux Setup
+
+`ash
+# Install Docker & Ollama
 curl -fsSL https://ollama.com/install.sh | sh
 sudo apt install docker-compose
 
-# 下载模型
-ollama pull qwen3:8b
-
-# 启动
+# Clone and run setup
+git clone https://github.com/caizefan34/local-ai-stack.git
+cd local-ai-stack
 bash scripts/setup.sh
-```
+`
+
+## Setting Up OpenCode (IDE Integration)
+
+OpenCode uses the provided config file at config/opencode-config.json:
+
+1. In OpenCode, select Ollama as your provider
+2. Choose the qwen3-8b-stable model
+3. The config file contains all necessary API endpoints and model limits
+
+## Importing Knowledge Base Data
+
+### From GitHub Starred Repos
+
+`ash
+python knowledge-base/sync_github_to_fastgpt.py
+`
+Requires the gh CLI to be authenticated. Syncs your starred repos and your own repos into FastGPT.
+
+### From CC Switch Conversations
+
+`ash
+python knowledge-base/ccswitch_extract.py
+`
+Extracts conversation records from CC Switch's local LevelDB storage.
+
+## Training a Fine-tuned Model
+
+`ash
+# Collect training data from your Codex sessions
+python scripts/automation/prepare_lora_data.py --source codex --max 300
+
+# Train with QLoRA (needs ~7 GB VRAM)
+cd lora-finetune
+python scripts/train.py --modelscope --quant 4bit --epochs 3
+
+# Export to Ollama
+python scripts/merge_and_export.py
+ollama create my-finetuned-model -f Modelfile
+`
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| FastGPT won't start | Check Docker is running and ports 3000/5432/6379/27017 are free |
+| Reranker fails to load model | Ensure you have at least 8 GB free RAM for the BGE model |
+| Ollama out of memory | Use smaller models (qwen3:0.6b) or close other applications |
+| MongoDB replica set error | Run docker compose down -v && docker compose up -d to reset data |
