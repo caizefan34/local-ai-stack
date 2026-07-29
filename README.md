@@ -5,6 +5,10 @@
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-6366f1?style=for-the-badge)](https://caizefan34.github.io/local-ai-stack/)
 [![License](https://img.shields.io/badge/License-MIT-blue)]()
 [![GitHub Stars](https://img.shields.io/github/stars/caizefan34/local-ai-stack?style=social)](https://github.com/caizefan34/local-ai-stack)
+
+<p align="center">
+  <img src="docs/og-image.svg" alt="Local AI Stack" width="100%">
+</p>
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)]()
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python)]()
 
