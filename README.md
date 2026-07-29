@@ -4,7 +4,7 @@
 > **No cloud. No API costs. No GPU required.**
 
 <p align="center">
-<a href="https://github.com/caizefan34/local-ai-stack"><img src="https://img.shields.io/github/stars/caizefan34/local-ai-stack?style=for-the-badge&logo=github&color=6366f1" alt="Stars"></a> <a href="https://caizefan34.github.io/local-ai-stack/"><img src="https://img.shields.io/badge/GitHub%20Pages-Live-6366f1?style=for-the-badge" alt="Pages"></a> <a href="https://github.com/caizefan34/local-ai-stack/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License"></a> <a href="https://github.com/caizefan34/local-ai-stack/releases"><img src="https://img.shields.io/github/v/release/caizefan34/local-ai-stack?style=for-the-badge&color=6366f1" alt="Release"></a> <a href="https://github.com/caizefan34/local-ai-stack/commits/main"><img src="https://img.shields.io/github/last-commit/caizefan34/local-ai-stack?style=for-the-badge&color=6366f1" alt="Last Commit"></a> <a href="https://hub.docker.com/r/caizefan34/local-ai-stack"><img src="https://img.shields.io/docker/pulls/caizefan34/local-ai-stack?style=for-the-badge&color=6366f1" alt="Docker"></a></p>
+<a href="https://github.com/caizefan34/local-ai-stack"><img src="https://img.shields.io/github/stars/caizefan34/local-ai-stack?style=for-the-badge&logo=github&color=6366f1" alt="Stars"></a> <a href="https://caizefan34.github.io/local-ai-stack/"><img src="https://img.shields.io/badge/GitHub%20Pages-Live-6366f1?style=for-the-badge" alt="Pages"></a> <a href="https://github.com/caizefan34/local-ai-stack/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License"></a> <a href="https://github.com/caizefan34/local-ai-stack/releases"><img src="https://img.shields.io/github/v/release/caizefan34/local-ai-stack?style=for-the-badge&color=6366f1" alt="Release"></a> <a href="https://github.com/caizefan34/local-ai-stack/commits/main"><img src="https://img.shields.io/github/last-commit/caizefan34/local-ai-stack?style=for-the-badge&color=6366f1" alt="Last Commit"></a></p>
 
 <p align="center">
   <img src="docs/assets/hero-screenshot.png" alt="Local AI Stack" width="100%">
@@ -21,7 +21,7 @@ Get your first local AI chat running in **under 5 minutes**.
 
 ### Windows
 
-\\\powershell
+```powershell
 git clone https://github.com/caizefan34/local-ai-stack.git
 cd local-ai-stack
 winget install Ollama.Ollama
@@ -29,17 +29,17 @@ ollama pull qwen3:8b
 ollama pull nomic-embed-text:latest
 docker compose -f docker/docker-compose.yml up -d
 .\scripts\start-all.ps1
-\\\
+```
 
-Then open **http://localhost:3000** (password: \1234\)
+Then open **http://localhost:3000** (password: `1234`)
 
 ### Linux / WSL (one command)
 
-\\\ash
+```bash
 git clone https://github.com/caizefan34/local-ai-stack.git
 cd local-ai-stack
 bash scripts/setup.sh
-\\\
+```
 
 > ✅ **Prerequisites:** Windows: [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/) · Linux: Docker + docker compose plugin · 8 GB RAM
 
@@ -73,7 +73,7 @@ Most RAG solutions leave you compromising on something:
 | **Privacy concerns** | Your documents shipped to cloud servers | **100% offline** — everything runs on your machine |
 | **Cloud dependency** | Can't work without internet | **Works offline** — no internet needed after setup |
 | **GPU requirements** | Need expensive NVIDIA GPUs | **Runs on CPU** — 8 GB RAM is enough (GPU optional) |
-| **Complex deployments** | Kubernetes, multiple YAML files, days of config | **One command** — \docker compose up\ or \ash setup.sh\ |
+| **Complex deployments** | Kubernetes, multiple YAML files, days of config | **One command** — `docker compose up` or `bash setup.sh` |
 
 This stack gives you a **production-grade RAG system** that's fully local, fully private, and completely free — running on hardware you already own.
 
@@ -82,17 +82,17 @@ This stack gives you a **production-grade RAG system** that's fully local, fully
 ### Service Dashboard
 Monitor all services in real time:
 
-\\\
+```
 ⚫ ollama    ✔️ online     FastGPT:  http://localhost:3000
 ⚫ fastgpt   ✔️ online     Reranker: http://localhost:18888
 ⚫ reranker  ✔️ online     Ollama:   http://localhost:11434
 ⚫ docker    ✔️ running
-\\\
+```
 
 Open the live desktop dashboard:
-\\\powershell
+```powershell
 start desktop-app/dashboard.html
-\\\
+```
 
 ## 📈 Use Cases
 
@@ -117,7 +117,7 @@ start desktop-app/dashboard.html
 | **Fine-Tuning** | ✅ LoRA/QLoRA | ❌ | ❌ | ❌ | ❌ |
 | **Knowledge Base** | ✅ Auto-sync | ❌ | ✅ | ✅ | ✅ |
 | **CPU Only** | ✅ 8 GB RAM | ✅ | ✅ | ❌ Needs GPU | ❌ Needs GPU |
-| **One-Command Setup** | ✅ \setup.sh\ | ⚠️ Manual | ⚠️ Manual | ❌ Complex | ❌ Complex |
+| **One-Command Setup** | ✅ `setup.sh` | ⚠️ Manual | ⚠️ Manual | ❌ Complex | ❌ Complex |
 | **Built-in Reranker** | ✅ BGE-Reranker-v2-M3 | ❌ | ❌ | ❌ | ❌ |
 | **Desktop Dashboard** | ✅ | ❌ | ❌ | ❌ | ❌ |
 | **Offline** | ✅ Full | ✅ | ✅ | ❌ | ❌ |
@@ -128,7 +128,7 @@ start desktop-app/dashboard.html
 
 ## 🧩 Architecture
 
-\\\mermaid
+```mermaid
 graph TB
     subgraph User["👤 User"]
         CLI[CLI / Dashboard]
@@ -162,11 +162,11 @@ graph TB
     LF --> O
     DD --> O
     DD --> FG
-\\\
+```
 
 ## 🗺️ Project Structure
 
-\\\	ext
+```text
 local-ai-stack/
 ├── config/          ← FastGPT & OpenCode configs
 ├── docker/          ← Docker Compose (with resource limits)
@@ -179,7 +179,7 @@ local-ai-stack/
 ├── desktop-app/     ← Dashboard (HTML) + API server
 ├── tests/           ← E2E tests & model evaluation
 └── .github/         ← CI/CD workflows
-\\\
+```
 
 ---
 
