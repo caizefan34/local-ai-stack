@@ -1,0 +1,17 @@
+﻿[
+  {
+    "id": "example-001",
+    "instruction": "请用简洁的语言解释什么是 QLoRA。",
+    "output": "QLoRA 是一种高效的模型微调方法，它将预训练模型量化为 4-bit，然后注入少量可训练参数（LoRA），使单张 8GB 显卡也能微调 8B 参数的大模型，同时保持接近全量微调的效果。"
+  },
+  {
+    "id": "example-002",
+    "instruction": "Python 中如何合并两个字典？",
+    "output": "Python 3.9+ 使用 | 运算符：dict1 | dict2。Python 3.5+ 使用 {**dict1, **dict2}。修改原字典用 dict1.update(dict2)。"
+  },
+  {
+    "id": "example-003",
+    "instruction": "RAG 和微调有什么区别？各在什么场景下使用？",
+    "output": "RAG（检索增强生成）在推理时从外部知识库检索相关内容，适合知识频繁更新、需要引用来源的场景。微调是训练模型适应特定格式或风格，适合输出格式固定、术语标准的场景。两者可互补使用。"
+  }
+]
