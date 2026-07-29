@@ -2,11 +2,17 @@
   "name": "local-ai-stack",
   "displayName": "Local AI Stack",
   "description": "Local Ollama-backed code chat, completion, explanation, and safe fix suggestions.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "engines": { "vscode": "^1.85.0" },
   "categories": ["Programming Languages", "Machine Learning"],
   "main": "./extension.js",
-  "activationEvents": ["onStartupFinished"],
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:localAiStack.chat",
+    "onCommand:localAiStack.explainSelection",
+    "onCommand:localAiStack.fixSelection",
+    "onCommand:localAiStack.generateTests"
+  ],
   "contributes": {
     "commands": [
       { "command": "localAiStack.explainSelection", "title": "Local AI: Explain Selection" },

@@ -72,6 +72,7 @@ class CodeIntelligenceTests(unittest.TestCase):
         self.assertIn('thumb-up', extension)
         self.assertIn('thumb-down', extension)
         self.assertIn('extensionHost', launch)
+        self.assertIn('onView:localAiStack.chat', manifest)
 
     def test_fastgpt_exposes_code_models(self):
         config = (ROOT / "config" / "fastgpt-config.json").read_text(encoding="utf-8")
