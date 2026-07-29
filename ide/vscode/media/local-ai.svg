@@ -1,6 +1,3 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
-  <path d="M16 3.5a12.5 12.5 0 1 0 0 25 12.5 12.5 0 0 0 0-25Z" fill="#7C83FF"/>
-  <path d="M10.5 11.25h11v9.5a2.25 2.25 0 0 1-2.25 2.25h-6.5a2.25 2.25 0 0 1-2.25-2.25v-9.5Z" fill="#11142A"/>
-  <path d="M13 14.25h2M17 14.25h2M14 18.25h4" stroke="#F7F7FF" stroke-width="1.7" stroke-linecap="round"/>
-  <path d="M16 8v2M8.5 16h2M21.5 16h2M11 9.8l1.4 1.4M21 9.8l-1.4 1.4" stroke="#F7F7FF" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M11.4 8.2 4.7 16l6.7 7.8 2.2-2.1L8.7 16l4.9-5.7-2.2-2.1ZM20.6 8.2l-2.2 2.1 4.9 5.7-4.9 5.7 2.2 2.1 6.7-7.8-6.7-7.8ZM17.2 5.2l.8 3.1 3.1.8-3.1.8-.8 3.1-.8-3.1-3.1-.8 3.1-.8.8-3.1Z" fill="currentColor"/>
 </svg>
