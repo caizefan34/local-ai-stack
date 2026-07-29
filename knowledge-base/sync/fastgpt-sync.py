@@ -30,7 +30,7 @@ def sync_paper(meta_path):
     print("\n=== FastGPT Paper Import ===")
     print("To import this paper into FastGPT knowledge base:")
     print("1. Open " + get_fastgpt_url())
-    print("2. Go to: ??? -> knowledge_base")
+    print("2. Go to: Knowledge Base -> knowledge_base")
     print("3. Click: Create -> Import")
     print("4. Select the PDF: " + meta_path.replace(".meta.json", ".pdf"))
     print("Done")
@@ -43,7 +43,7 @@ def sync_github(repo_dir):
         print("README found at: " + readme + " (" + str(os.path.getsize(readme)) + " bytes)")
         print("To import into FastGPT knowledge base:")
         print("1. Open " + get_fastgpt_url())
-        print("2. Go to: ??? -> knowledge_base")
+        print("2. Go to: Knowledge Base -> knowledge_base")
         print("3. Click: Import -> File/Text")
         print("4. Upload: " + readme)
     else:
@@ -59,7 +59,7 @@ def sync_course(course_dir):
         print("Course: " + meta.get("course_name", "") + " (" + str(meta.get("file_count", 0)) + " files)")
         print("To import into FastGPT knowledge base:")
         print("1. Open " + get_fastgpt_url())
-        print("2. Go to: ??? -> knowledge_base")
+        print("2. Go to: Knowledge Base -> knowledge_base")
         print("3. Click: Import -> Folder (multiple files)")
 
 def check_status():
