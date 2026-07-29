@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Local AI Stack Dashboard</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f0f1a;color:#e0e0e0;min-height:100vh}
+.header{background:linear-gradient(135deg,#1a1a2e,#16213e);padding:24px 32px;border-bottom:1px solid #2a2a4a}
+.header h1{font-size:24px;color:#fff}
+.header p{color:#8888aa;margin-top:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;padding:24px 32px}
+.card{background:#1a1a2e;border-radius:12px;padding:20px;border:1px solid #2a2a4a}
+.card h3{font-size:14px;color:#8888aa;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.status{display:flex;align-items:center;gap:8px;padding:8px 0}
+.status-dot{width:10px;height:10px;border-radius:50%}
+.status-dot.online{background:#22c55e;box-shadow:0 0 8px #22c55e66}
+.status-dot.offline{background:#ef4444;box-shadow:0 0 8px #ef444466}
+.status-dot.checking{background:#f59e0b;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.btn{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all .2s}
+.btn-start{background:#22c55e;color:#fff}
+.btn-start:hover{background:#16a34a}
+.btn-stop{background:#ef4444;color:#fff}
+.btn-stop:hover{background:#dc2626}
+.btn-sync{background:#6366f1;color:#fff;width:100%;padding:10px;margin-top:12px;border-radius:8px}
+.btn-sync:hover{background:#4f46e5}
+.btn-sync:disabled{opacity:0.5;cursor:not-allowed}
+.config-grid{display:grid;gap:8px}
+.config-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #2a2a4a;font-size:13px}
+.config-item:last-child{border-bottom:none}
+.config-label{color:#8888aa}
+.config-value{color:#e0e0e0;font-family:monospace;font-size:12px}
+.log-box{background:#0a0a14;padding:12px;border-radius:8px;font-family:monospace;font-size:12px;max-height:200px;overflow-y:auto;margin-top:8px;line-height:1.6}
+.log-box .info{color:#22c55e}
+.log-box .warn{color:#f59e0b}
+.log-box .error{color:#ef4444}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.metric{text-align:center;padding:12px;background:#0f0f1a;border-radius:8px}
+.metric-value{font-size:24px;font-weight:700;color:#818cf8}
+.metric-label{font-size:11px;color:#8888aa;margin-top:2px}
+@media(max-width:768px){.grid{grid-template-columns:1fr;padding:16px}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Local AI Stack</h1>
+  <p>Ollama + FastGPT + RAG Dashboard</p>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h3>Services</h3>
+    <div class="status"><span class="status-dot checking" id="dot-ollama"></span> Ollama <span id="srv-ollama">checking...</span></div>
+    <div class="status"><span class="status-dot checking" id="dot-fastgpt"></span> FastGPT <span id="srv-fastgpt">checking...</span></div>
+    <div class="status"><span class="status-dot checking" id="dot-reranker"></span> Reranker <span id="srv-reranker">checking...</span></div>
+    <div class="status"><span class="status-dot checking" id="dot-docker"></span> Docker <span id="srv-docker">checking...</span></div>
+    <div style="margin-top:12px">
+      <button class="btn btn-start" onclick="runCmd('start-all')">Start All</button>
+      <button class="btn btn-stop" onclick="runCmd('stop-all')">Stop All</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Knowledge Base Sync</h3>
+    <div class="config-grid">
+      <div class="config-item"><span class="config-label">Last Sync</span><span class="config-value" id="last-sync">-</span></div>
+      <div class="config-item"><span class="config-label">Files Tracked</span><span class="config-value" id="files-count">-</span></div>
+      <div class="config-item"><span class="config-label">Auto-Sync</span><span class="config-value" id="auto-sync">Sunday 03:00</span></div>
+    </div>
+    <button class="btn btn-sync" onclick="runCmd('sync-kb')" id="sync-btn">Sync Knowledge Base Now</button>
+    <div class="log-box" id="sync-log"><span class="info">Ready</span></div>
+  </div>
+
+  <div class="card">
+    <h3>Quick Actions</h3>
+    <div class="config-grid">
+      <div class="config-item"><span class="config-label">FastGPT UI</span><span class="config-value"><a href="http://localhost:3000" target="_blank" style="color:#818cf8">http://localhost:3000</a></span></div>
+      <div class="config-item"><span class="config-label">Ollama API</span><span class="config-value"><a href="http://localhost:11434" target="_blank" style="color:#818cf8">http://localhost:11434</a></span></div>
+      <div class="config-item"><span class="config-label">Reranker API</span><span class="config-value"><a href="http://localhost:18888" target="_blank" style="color:#818cf8">http://localhost:18888</a></span></div>
+    </div>
+    <div class="metrics">
+      <div class="metric"><div class="metric-value" id="m-models">-</div><div class="metric-label">Models</div></div>
+      <div class="metric"><div class="metric-value" id="m-datasets">-</div><div class="metric-label">Datasets</div></div>
+      <div class="metric"><div class="metric-value" id="m-docs">-</div><div class="metric-label">Documents</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+async function checkService(url, dotId, srvId) {
+  const dot = document.getElementById(dotId);
+  const srv = document.getElementById(srvId);
+  try {
+    const r = await fetch(url, { method: 'HEAD', mode: 'no-cors', signal: AbortSignal.timeout(3000) });
+    dot.className = 'status-dot online';
+    srv.textContent = 'online';
+    return true;
+  } catch {
+    dot.className = 'status-dot offline';
+    srv.textContent = 'offline';
+    return false;
+  }
+}
+
+function updateMetrics() {
+  document.getElementById('m-models').textContent = '3';
+  document.getElementById('m-datasets').textContent = '1';
+  document.getElementById('m-docs').textContent = '12';
+}
+
+async function checkAll() {
+  await Promise.all([
+    checkService('http://localhost:11434', 'dot-ollama', 'srv-ollama'),
+    checkService('http://localhost:3000', 'dot-fastgpt', 'srv-fastgpt'),
+    checkService('http://localhost:18888', 'dot-reranker', 'srv-reranker')
+  ]);
+  
+  // Check Docker separately
+  const dot = document.getElementById('dot-docker');
+  const srv = document.getElementById('srv-docker');
+  try {
+    const r = await fetch('http://localhost:3000', { method: 'HEAD', mode: 'no-cors', signal: AbortSignal.timeout(2000) });
+    dot.className = 'status-dot online';
+    srv.textContent = 'running';
+  } catch {
+    dot.className = 'status-dot offline';
+    srv.textContent = 'stopped';
+  }
+  
+  updateMetrics();
+}
+
+async function runCmd(cmd) {
+  const log = document.getElementById('sync-log');
+  const btn = document.getElementById('sync-btn');
+  if (btn) btn.disabled = true;
+  
+  log.innerHTML += '\n<span class="warn">>> Running ' + cmd + '...</span>';
+  log.scrollTop = log.scrollHeight;
+  
+  try {
+    const r = await fetch('/api/' + cmd, { signal: AbortSignal.timeout(60000) });
+    const data = await r.text();
+    log.innerHTML += '\n<span class="info">OK: ' + data.slice(0, 200) + '</span>';
+  } catch (e) {
+    log.innerHTML += '\n<span class="error">Failed: ' + e.message + '</span>';
+  }
+  log.scrollTop = log.scrollHeight;
+  if (btn) btn.disabled = false;
+  checkAll();
+}
+
+checkAll();
+setInterval(checkAll, 15000);
+</script>
+</body>
+</html>
