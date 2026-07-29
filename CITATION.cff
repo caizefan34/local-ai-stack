@@ -1,0 +1,23 @@
+﻿cff-version: 1.2.0
+message: "If you use this software in your research, please cite it as below."
+title: "Local AI Stack"
+abstract: "A production-grade local AI workspace with RAG, knowledge base, fine-tuning, and desktop dashboard. 100% local, 100% free, no GPU required."
+authors:
+  - family-names: "Cai"
+    given-names: "Zefan"
+    orcid: ""
+    affiliation: ""
+date-released: 2026-07-01
+url: "https://github.com/caizefan34/local-ai-stack"
+repository-code: "https://github.com/caizefan34/local-ai-stack"
+license: "MIT"
+keywords:
+  - "local-ai"
+  - "rag"
+  - "ollama"
+  - "knowledge-base"
+  - "fine-tuning"
+  - "self-hosted"
+  - "llm"
+  - "vector-database"
+  - "qwen"

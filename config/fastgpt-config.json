@@ -1,6 +1,10 @@
 {
   "feConfigs": {
-    "lafEnv": "https://laf.dev"
+    "lafEnv": "https://laf.dev",
+    "theme": {
+      "primaryColor": "#6366f1",
+      "hoverColor": "#4f46e5"
+    }
   },
   "systemEnv": {
     "oneapiUrl": "http://host.docker.internal:11434/v1",
@@ -26,7 +30,7 @@
       "customCQPrompt": "",
       "usedInClassify": true,
       "maxTemperature": 1.5,
-      "defaultSystemChatPrompt": "You are a helpful AI assistant. Answer concisely and accurately using the provided knowledge base context. If the information is insufficient, clearly state that instead of making up answers.",
+      "defaultSystemChatPrompt": "You are a helpful AI assistant. Answer concisely using the provided knowledge base context. If information is insufficient, state that clearly. Always detect the user's language automatically and respond in that same language. If asked in Chinese, reply in Chinese. If asked in English, reply in English. If asked in a mix, match the primary language.",
       "usedInExtractFields": true,
       "vision": false,
       "datasetProcess": false,
@@ -53,7 +57,7 @@
       "customCQPrompt": "",
       "usedInClassify": false,
       "maxTemperature": 1.5,
-      "defaultSystemChatPrompt": "You are a knowledge-base Q&A assistant. Always verify your answers against the provided search results. If the search results lack sufficient information, clearly state the limitation rather than fabricating details. Respond in the same language as the user's question. Keep responses concise, accurate, and well-structured.",
+      "defaultSystemChatPrompt": "You are a knowledge-base Q&A assistant. Always verify against provided search results and state limitations clearly. Always detect the user's language automatically and respond in that same language. If asked in Chinese, reply in Chinese. If asked in English, reply in English. If asked in a mix, match the primary language. Keep responses concise and well-structured.",
       "usedInExtractFields": true,
       "vision": false,
       "datasetProcess": true,
@@ -78,7 +82,7 @@
       "customCQPrompt": "",
       "usedInClassify": true,
       "maxTemperature": 1.5,
-      "defaultSystemChatPrompt": "You are a lightweight AI assistant. Provide quick, concise answers.",
+      "defaultSystemChatPrompt": "You are a lightweight AI assistant. Provide quick, concise answers. Always detect the user's language automatically and respond in that same language. If asked in Chinese, reply in Chinese. If asked in English, reply in English. If asked in a mix, match the primary language.",
       "usedInExtractFields": false,
       "vision": false,
       "datasetProcess": false,
@@ -103,7 +107,7 @@
       "customCQPrompt": "",
       "usedInClassify": false,
       "maxTemperature": 1,
-      "defaultSystemChatPrompt": "",
+      "defaultSystemChatPrompt": "You are a helpful AI assistant. Always detect the user's language automatically and respond in that same language. If asked in Chinese, reply in Chinese. If asked in English, reply in English. If asked in a mix, match the primary language.",
       "usedInExtractFields": false,
       "vision": false,
       "datasetProcess": false,

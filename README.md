@@ -222,6 +222,65 @@ Any model supported by Ollama works. Pre-configured: Qwen3-8B (default), LLaMA 3
 
 ---
 
+
+## 🔧 Troubleshooting
+
+### Docker Compose fails with "healthcheck" errors
+If you see `service "pg" refers to undefined build source` or healthcheck syntax errors, ensure you're using Docker Compose v2.22+:
+```bash
+docker compose version
+# Upgrade: https://docs.docker.com/compose/install/
+```
+
+### FastGPT shows "Network Error" or won't load
+The stack needs all three databases healthy before FastGPT starts:
+```bash
+docker compose -f docker/docker-compose.yml ps
+# Wait for pg, mongo, redis to show "healthy", then:
+docker compose -f docker/docker-compose.yml restart fastgpt
+```
+
+### Ollama models not found by FastGPT
+Make sure Ollama is running **outside** Docker (host install). FastGPT connects via `host.docker.internal`:
+```bash
+ollama list                          # Verify models exist
+curl http://localhost:11434/api/tags # Verify Ollama API
+```
+
+### Reranker service won't start
+The BGE model downloads on first run (~2 GB). Ensure enough disk space and internet:
+```bash
+# Check logs
+cat reranker/service.log
+# Manual start for debugging
+cd reranker && python server.py
+```
+
+### Port conflicts
+If port 3000, 5432, or 27017 is already in use, edit your `.env` file:
+```env
+FASTGPT_PORT=3001
+PG_HOST_PORT=5433
+MONGO_HOST_PORT=27018
+```
+Then restart: `docker compose -f docker/docker-compose.yml up -d`
+
+### "Permission denied" on Linux for the config mount
+```bash
+sudo chown 1000:1000 config/fastgpt-config.json
+# Or set world-readable: chmod 644 config/fastgpt-config.json
+```
+
+### Models download slowly
+- Model sizes: Qwen3-8B (~4.7 GB), nomic-embed-text (~274 MB)
+- Use the interactive model downloader: `bash scripts/pull-models.sh`
+- Models are cached locally after first download
+
+### Still stuck?
+- [Search existing issues](https://github.com/caizefan34/local-ai-stack/issues)
+- [Start a discussion](https://github.com/caizefan34/local-ai-stack/discussions)
+- Run `bash scripts/setup.sh` (Linux) or `.\scripts\setup.ps1` (Windows) for a fresh start
+
 ## 🤝 Community
 
 - 💬 [Join the Discussion](https://github.com/caizefan34/local-ai-stack/discussions) — ask questions, share setups
@@ -254,3 +313,4 @@ Made with ❤️ for the open-source community.
 
 ---
 > **Local AI Stack** — Production-grade Local AI Workspace. 100% private. 100% free. No GPU required.
+
