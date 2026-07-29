@@ -60,6 +60,7 @@ class CodeIntelligenceTests(unittest.TestCase):
     def test_vscode_extension_uses_local_completion_model(self):
         manifest = (ROOT / "ide" / "vscode" / "package.json").read_text(encoding="utf-8")
         extension = (ROOT / "ide" / "vscode" / "extension.js").read_text(encoding="utf-8")
+        launch = (ROOT / "ide" / "vscode" / ".vscode" / "launch.json").read_text(encoding="utf-8")
         self.assertIn('localAiStack.completionModel', manifest)
         self.assertIn('registerInlineCompletionItemProvider', extension)
         self.assertIn('localAiStack.fixSelection', extension)
@@ -70,6 +71,7 @@ class CodeIntelligenceTests(unittest.TestCase):
         self.assertIn('rating', extension)
         self.assertIn('thumb-up', extension)
         self.assertIn('thumb-down', extension)
+        self.assertIn('extensionHost', launch)
 
     def test_fastgpt_exposes_code_models(self):
         config = (ROOT / "config" / "fastgpt-config.json").read_text(encoding="utf-8")
