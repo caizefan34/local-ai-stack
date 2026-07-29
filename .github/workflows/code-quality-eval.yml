@@ -21,7 +21,7 @@ jobs:
       - name: Verify model availability
         run: ollama show "${{ inputs.model }}"
       - name: Run local code benchmark
-        shell: pwsh
+        shell: powershell
         env:
           MODEL: ${{ inputs.model }}
           BASELINE: ${{ inputs.baseline }}

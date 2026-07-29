@@ -101,9 +101,9 @@ class CodeIntelligenceTests(unittest.TestCase):
         self.assertIn("actions/runners/registration-token", source)
         self.assertIn("--labels 'ollama,gpu'", source)
 
-    def test_quality_workflow_uses_powershell_on_windows_runner(self):
+    def test_quality_workflow_uses_windows_powershell_on_windows_runner(self):
         workflow = (ROOT / ".github" / "workflows" / "code-quality-eval.yml").read_text(encoding="utf-8")
-        self.assertIn("shell: pwsh", workflow)
+        self.assertIn("shell: powershell", workflow)
         self.assertIn("$env:BASELINE", workflow)
 
     def test_feedback_preparation_uses_only_approved_corrections_or_answers(self):
