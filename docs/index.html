@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Local AI Stack — 本地部署企业级 RAG 问答系统</title>
-    <meta name="description" content="在家用电脑上跑企业级 RAG 应用，完全免费，不需要 GPU。Ollama + FastGPT + BGE Reranker + Qwen3 LoRA 微调综合解决方案。">
+    <title>Local AI Stack — Local AI Stack — Enterprise-grade RAG, 100% local</title>
+    <meta name="description" content="Run a production-grade RAG application on your laptop. Free, private, no GPU required. Ollama + FastGPT + BGE Reranker + Qwen3 LoRA fine-tuning.">
     <meta name="keywords" content="Local AI, RAG, FastGPT, Ollama, Qwen3, LoRA, LLM, 本地部署, 知识库">
     <meta property="og:title" content="Local AI Stack">
-    <meta property="og:description" content="本地部署企业级 RAG 问答系统 — 免费、私有、不需要 GPU">
+    <meta property="og:description" content="Local AI Stack — Enterprise-grade RAG, 100% local — 免费、私有、不需要 GPU">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://caizefan34.github.io/local-ai-stack/">
     <style>
@@ -338,10 +338,10 @@
 <nav>
     <div class="logo">Local AI <span>Stack</span></div>
     <div class="links">
-        <a href="#features">特性</a>
-        <a href="#architecture">架构</a>
-        <a href="#quickstart">快速开始</a>
-        <a href="#benchmark">性能</a>
+        <a href="#features">Features</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#quickstart">Quick Start</a>
+        <a href="#benchmark">Benchmark</a>
         <a href="https://github.com/caizefan34/local-ai-stack" target="_blank" class="btn-gh">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
             GitHub
@@ -353,13 +353,13 @@
 <section class="hero">
     <div class="hero-badge">
         <span class="dot"></span>
-        完全免费 · 数据隐私 · 开箱即用
+        Free · Private · Plug & Play
     </div>
-    <h1>在家用电脑跑企业级<br>RAG 问答系统</h1>
-    <p>Ollama + FastGPT + BGE Reranker + Qwen3 一站式解决方案。<br>免费、私有、不需要 GPU — 也能装进你的笔记本。</p>
+    <h1>Enterprise RAG<br>on Your Laptop</h1>
+    <p>Ollama + FastGPT + BGE Reranker + Qwen3 — all in one stack.<br>Free, private, no GPU required — runs on any laptop.</p>
     <div class="hero-actions">
         <a href="#quickstart" class="btn-primary">
-            🚀 快速开始
+            🚀 Quick Start
         </a>
         <a href="https://github.com/caizefan34/local-ai-stack" target="_blank" class="btn-secondary">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
@@ -369,19 +369,19 @@
     <div class="hero-stats">
         <div class="stat">
             <div class="num">8B</div>
-            <div class="label">模型参数</div>
+            <div class="label">Model Size</div>
         </div>
         <div class="stat">
             <div class="num">40%+</div>
-            <div class="label">检索精度提升</div>
+            <div class="label">Accuracy Gain</div>
         </div>
         <div class="stat">
             <div class="num">0¥</div>
-            <div class="label">API 费用</div>
+            <div class="label">API Cost</div>
         </div>
         <div class="stat">
             <div class="num">5min</div>
-            <div class="label">部署完成</div>
+            <div class="label">Setup Time</div>
         </div>
     </div>
 </section>
@@ -389,38 +389,38 @@
 <!-- ========== Features ========== -->
 <section id="features">
     <div class="section-tag">✨ Features</div>
-    <h2 class="section-title">为什么选择 Local AI Stack</h2>
-    <p class="section-desc">不只是又一个 LLM 部署方案——它是经过真实项目验证的完整 RAG 生产栈。</p>
+    <h2 class="section-title">Why Local AI Stack</h2>
+    <p class="section-desc">Not just another LLM wrapper. This is a battle-tested, production-ready RAG stack proven in real-world projects.</p>
     <div class="features-grid">
         <div class="feature-card">
             <div class="icon">🆓</div>
-            <h3>完全免费</h3>
-            <p>全部开源，Ollama 本地推理，零 API 费用。没有隐藏收费，没有额度限制。</p>
+            <h3>100% Free</h3>
+            <p>全部开源，Ollama 本地推理，零 API Cost。没有隐藏收费，没有额度限制。</p>
         </div>
         <div class="feature-card">
             <div class="icon">🔒</div>
-            <h3>数据隐私</h3>
-            <p>所有数据本地处理，不经过任何第三方服务器。你的知识库只属于你。</p>
+            <h3>Privacy First</h3>
+            <p>All data stays on your machine. Nothing ever touches a third-party server.</p>
         </div>
         <div class="feature-card">
             <div class="icon">🎯</div>
-            <h3>RAG 增强</h3>
-            <p>BGE Reranker 二次排序 + pgvector HNSW 索引，检索准确率提升 40% 以上。</p>
+            <h3>RAG Enhanced</h3>
+            <p>BGE Reranker re-ranking + pgvector HNSW indexes — 40%+ retrieval accuracy improvement.</p>
         </div>
         <div class="feature-card">
             <div class="icon">🏋️</div>
-            <h3>LoRA 微调</h3>
-            <p>支持用真实对话数据微调模型。一键脚本，从数据收集到 Ollama 部署全链路。</p>
+            <h3>LoRA Fine-tuning</h3>
+            <p>Fine-tune Qwen3 on real conversation data. One-click pipeline from data collection to Ollama deployment.</p>
         </div>
         <div class="feature-card">
             <div class="icon">🧩</div>
-            <h3>多模型支持</h3>
-            <p>深度适配 Qwen3 系列，支持 LLaMA、Mistral 等主流模型一键切换。</p>
+            <h3>Multi-Model</h3>
+            <p>Deep Qwen3 integration. Switch to LLaMA, Mistral, or any GGUF model with one config change.</p>
         </div>
         <div class="feature-card">
             <div class="icon">💻</div>
-            <h3>Windows 友好</h3>
-            <p>专门为 Windows 用户优化的 PowerShell 一键部署脚本。当然也支持 Linux/macOS。</p>
+            <h3>Windows Native</h3>
+            <p>PowerShell one-click setup built for Windows. Works on Linux and macOS too.</p>
         </div>
     </div>
 </section>
@@ -428,35 +428,35 @@
 <!-- ========== Architecture ========== -->
 <section id="architecture">
     <div class="section-tag">🏗️ Architecture</div>
-    <h2 class="section-title">系统架构</h2>
-    <p class="section-desc">从浏览器到知识库，清晰的数据流和组件划分。</p>
+    <h2 class="section-title">系统Architecture</h2>
+    <p class="section-desc">Clear data flow from browser to knowledge base.</p>
     <div class="arch-container">
         <div class="mermaid">
             graph TB
-                subgraph User["🖥️ 用户层"]
-                    Browser["🌐 浏览器 / OpenCode IDE"]
+                subgraph User["🖥️ User"]
+                    Browser["🌐 Browser / OpenCode"]
                 end
                 subgraph FastGPT["📋 FastGPT (v4.8.9)"]
-                    KM["知识库管理"]
-                    WF["工作流编排"]
-                    Chat["对话管理"]
-                    API["FastGPT API Server"]
+                    KM["Knowledge Base"]
+                    WF["Workflows"]
+                    Chat["Chat"]
+                    API["FastGPT API"]
                 end
-                subgraph Storage["🗄️ 存储层"]
+                subgraph Storage["🗄️ Storage"]
                     PG[("PostgreSQL<br/>+ pgvector")]
                     Mongo[("MongoDB")]
                     Redis[("Redis")]
                 end
-                subgraph AI["🤖 AI 推理层"]
+                subgraph AI["🤖 AI Inference"]
                     Ollama["Ollama"]
                     Qwen["Qwen3-8B / 4B"]
                     Embed["nomic-embed-text"]
                 end
                 subgraph Rerank["⚡ Rerank"]
-                    BGE["BGE Reranker<br/>Service"]
+                    BGE["BGE Reranker"]
                 end
-                subgraph Train["🏋️ 微调"]
-                    LoRA["LoRA Finetune<br/>Scripts"]
+                subgraph Train["🏋️ Training"]
+                    LoRA["LoRA Scripts"]
                 end
 
                 Browser -->|HTTP| FastGPT
@@ -475,8 +475,8 @@
 <!-- ========== Quick Start ========== -->
 <section id="quickstart">
     <div class="section-tag">🚀 Quick Start</div>
-    <h2 class="section-title">5 分钟部署</h2>
-    <p class="section-desc">从零到完整的 RAG 系统，只需几条命令。</p>
+    <h2 class="section-title">5-Minute Setup</h2>
+    <p class="section-desc">From zero to a fully working RAG system in a few commands.</p>
     
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab(event, 'win')">🪟 Windows</button>
@@ -484,34 +484,34 @@
     </div>
     <div class="tab-content">
         <div id="tab-win" class="tab-pane active">
-            <pre><span class="comment"># 1. 克隆仓库</span>
+            <pre><span class="comment"># 1. Clone the repo</span>
 git clone https://github.com/caizefan34/local-ai-stack.git
 cd local-ai-stack
 
-<span class="comment"># 2. 安装 Ollama（如果还没装）</span>
+<span class="comment"># 2. Install Ollama</span>
 winget install Ollama.Ollama
 
-<span class="comment"># 3. 下载推荐模型</span>
+<span class="comment"># 3. Pull recommended models</span>
 ollama pull qwen3:8b
 ollama pull nomic-embed-text:latest
 
-<span class="comment"># 4. 启动 FastGPT + 数据库</span>
+<span class="comment"># 4. Start FastGPT + databases</span>
 docker compose -f docker/docker-compose.yml up -d
 
-<span class="comment"># 5. 启动 Reranker 服务</span>
+<span class="comment"># 5. Start the reranker service</span>
 .scriptsstart-all.ps1
 
-<span class="comment"># 🎉 访问 http://localhost:3000 开始使用</span></pre>
+<span class="comment"># 🎉 Visit http://localhost:3000 to start</span></pre>
         </div>
         <div id="tab-linux" class="tab-pane">
-            <pre><span class="comment"># 1. 克隆仓库</span>
+            <pre><span class="comment"># 1. Clone the repo</span>
 git clone https://github.com/caizefan34/local-ai-stack.git
 cd local-ai-stack
 
-<span class="comment"># 2. 一键部署（安装依赖 + 下载模型 + 启动服务）</span>
+<span class="comment"># 2. One-command setup (deps + models + services)</span>
 bash scripts/setup.sh
 
-<span class="comment"># 🎉 访问 http://localhost:3000 开始使用</span></pre>
+<span class="comment"># 🎉 Visit http://localhost:3000 to start</span></pre>
         </div>
     </div>
 </section>
@@ -519,48 +519,48 @@ bash scripts/setup.sh
 <!-- ========== Benchmark ========== -->
 <section id="benchmark">
     <div class="section-tag">📊 Performance</div>
-    <h2 class="section-title">性能基准</h2>
-    <p class="section-desc">基于 RTX 5070 Laptop 8GB + 16GB RAM 实测数据。</p>
+    <h2 class="section-title">Benchmark基准</h2>
+    <p class="section-desc">Measured on RTX 5070 Laptop 8GB + 16GB RAM.</p>
     
     <table class="benchmark-table">
         <thead>
             <tr>
-                <th>场景</th>
-                <th>耗时</th>
-                <th>显存占用</th>
-                <th>状态</th>
+                <th>Scenario</th>
+                <th>Latency</th>
+                <th>VRAM</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td class="label">Qwen3-8B 推理（无 RAG）</td>
+                <td class="label">Qwen3-8B Inference (no RAG)</td>
                 <td class="value">15-25 tok/s</td>
                 <td>4.5 GB</td>
-                <td class="status-yes">✅ 流畅</td>
+                <td class="status-yes">✅ Smooth</td>
             </tr>
             <tr>
-                <td class="label">带 Reranker 检索</td>
+                <td class="label">Retrieval + Reranker</td>
                 <td class="value">+80 ms</td>
                 <td>+2.0 GB</td>
-                <td class="status-yes">✅ 流畅</td>
+                <td class="status-yes">✅ Smooth</td>
             </tr>
             <tr>
-                <td class="label">LoRA 微调（293 条, 3 epoch）</td>
+                <td class="label">LoRA Fine-tuning（293 条, 3 epoch）</td>
                 <td class="value">~15 min</td>
                 <td>~7 GB</td>
-                <td class="status-yes">✅ 可运行</td>
+                <td class="status-yes">✅ Runs fine</td>
             </tr>
             <tr>
-                <td class="label">知识库嵌入（1000 篇文档）</td>
+                <td class="label">Knowledge Base Embedding (1000 docs)</td>
                 <td class="value">~2 min</td>
                 <td>~1 GB</td>
-                <td class="status-yes">✅ 快速</td>
+                <td class="status-yes">✅ Fast</td>
             </tr>
             <tr>
                 <td class="label">Qwen3-8B + 4-bit QLoRA</td>
                 <td class="value">—</td>
                 <td>~4.5 GB</td>
-                <td class="status-yes">✅ 8GB 显卡可用</td>
+                <td class="status-yes">✅ Fits 8GB VRAM</td>
             </tr>
         </tbody>
     </table>
@@ -568,8 +568,8 @@ bash scripts/setup.sh
 
 <!-- ========== CTA ========== -->
 <div class="cta-section">
-    <h2>觉得有用？给个 ⭐ 吧</h2>
-    <p>你的支持是持续优化的最大动力。</p>
+    <h2>Found this useful? Give it a ⭐</h2>
+    <p>Your support keeps this project alive and improving.</p>
     <a href="https://github.com/caizefan34/local-ai-stack" target="_blank" class="star-btn">
         ⭐ Star on GitHub
     </a>
