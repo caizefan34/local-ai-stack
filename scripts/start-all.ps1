@@ -5,27 +5,38 @@
 "@
 Write-Host ""
 
+$rootDir = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$envFile = Join-Path $rootDir ".env"
+
 # Check Docker
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
     Write-Host "[x] Docker not found! Install Docker Desktop first." -ForegroundColor Red
     exit 1
 }
+if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
+    Write-Host "[x] Python 3 not found! Run .\scripts\setup.ps1 first." -ForegroundColor Red
+    exit 1
+}
+if (-not (Test-Path $envFile)) {
+    Write-Host "[x] .env not found. Run .\scripts\setup.ps1 first." -ForegroundColor Red
+    exit 1
+}
 
 # 1. Start FastGPT stack
 Write-Host "[1/3] Starting FastGPT + Databases..." -ForegroundColor Yellow
-$composeDir = Join-Path $PSScriptRoot "..\docker"
-Set-Location $composeDir
-docker compose up -d 2>&1 | Out-Null
+$composeFile = Join-Path $rootDir "docker\docker-compose.yml"
+docker compose --env-file $envFile -f $composeFile up -d 2>&1 | Out-Null
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 Write-Host "  [v] FastGPT running on http://localhost:3000" -ForegroundColor Green
 
 # 2. Start reranker service
 Write-Host "[2/3] Starting BGE Reranker Service..." -ForegroundColor Yellow
-$rerankerDir = Join-Path $PSScriptRoot "..\reranker"
+$rerankerDir = Join-Path $rootDir "reranker"
 Get-Process -Name python* -ErrorAction SilentlyContinue | Where-Object {
     (Get-CimInstance Win32_Process -Filter "ProcessId = $($_.Id)").CommandLine -match "reranker"
 } | Stop-Process -Force -ErrorAction SilentlyContinue
 Start-Process python -ArgumentList "$rerankerDir\server.py" -WindowStyle Hidden
-Write-Host "  [v] Reranker running on http://localhost:18888" -ForegroundColor Green
+Write-Host "  [v] Reranker starting on http://localhost:18888" -ForegroundColor Green
 
 # 3. Verify
 Write-Host "[3/3] Verifying services..." -ForegroundColor Yellow

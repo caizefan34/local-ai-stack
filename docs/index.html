@@ -1,326 +1,104 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Local AI Stack &mdash; Enterprise-grade RAG, 100% local &amp; free</title>
-<meta name="description" content="Run a production-grade RAG system on your laptop. Free, private, no GPU required.">
-<meta property="og:title" content="Local AI Stack">
-<meta property="og:description" content="Ollama + FastGPT + RAG &mdash; Enterprise-grade AI, 100% local and free.">
-<meta property="og:url" content="https://caizefan34.github.io/local-ai-stack/">
-<meta property="og:image" content="https://caizefan34.github.io/local-ai-stack/assets/og-image.png">
-<meta property="og:image:type" content="image/png">
-<meta property="og:image:width" content="1280">
-<meta property="og:image:height" content="640">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-:root{--primary:#6366f1;--primary-dark:#4f46e5;--primary-light:#a5b4fc;--bg:#0b1121;--bg-card:#131c31;--surface:#1e293b;--text:#f1f5f9;--text-dim:#94a3b8;--text-muted:#64748b;--border:#1e293b;--success:#22c55e;--radius:14px;--font:"Inter",system-ui,sans-serif}
-body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
-a{color:var(--primary-light);text-decoration:none}
-::selection{background:var(--primary);color:#fff}
-nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;justify-content:space-between;align-items:center;padding:14px 32px;background:rgba(11,17,33,.85);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
-nav .logo{font-size:1.15rem;font-weight:700}
-nav .logo .hl{color:var(--primary-light)}
-nav .links{display:flex;gap:28px;align-items:center}
-nav .links a{color:var(--text-dim);font-size:.88rem;font-weight:500}
-nav .links a:hover{color:var(--text)}
-.btn-gh{display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border-radius:10px;background:var(--bg-card);color:var(--text);font-size:.85rem;font-weight:500;border:1px solid #334155;transition:all .2s}
-.btn-gh:hover{background:#1a2744;border-color:var(--primary);color:var(--primary-light)}
-.btn-gh svg{width:18px;height:18px}
-.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 24px 80px;position:relative;overflow:hidden}
-.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(99,102,241,.1) 0%,transparent 60%),radial-gradient(ellipse at 80% 50%,rgba(6,182,212,.08) 0%,transparent 60%);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 18px;border-radius:20px;background:rgba(99,102,241,.12);color:var(--primary-light);font-size:.85rem;font-weight:500;border:1px solid rgba(99,102,241,.25);margin-bottom:28px}
-.hero-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--success);display:inline-block;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.hero h1{font-size:clamp(2.5rem,6vw,4.2rem);font-weight:800;letter-spacing:-1.5px;line-height:1.1;max-width:800px;background:linear-gradient(135deg,#f1f5f9 0%,#a5b4fc 50%,#06b6d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{font-size:1.15rem;color:var(--text-dim);max-width:600px;margin:20px auto 32px}
-.hero-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
-.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:12px;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);color:#fff;font-size:.95rem;font-weight:600;border:none;cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(99,102,241,.25)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(99,102,241,.25)}
-.btn-secondary{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:12px;background:var(--bg-card);color:var(--text);font-size:.95rem;font-weight:500;border:1px solid #334155;cursor:pointer;transition:all .2s}
-.btn-secondary:hover{background:#1a2744;border-color:var(--primary);transform:translateY(-2px)}
-section{padding:90px 24px;max-width:1100px;margin:0 auto}
-.section-tag{display:inline-block;padding:5px 14px;border-radius:8px;background:rgba(99,102,241,.1);color:var(--primary-light);font-size:.8rem;font-weight:600;margin-bottom:14px;border:1px solid rgba(99,102,241,.2)}
-.section-title{font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;letter-spacing:-.5px;margin-bottom:12px}
-.section-desc{color:var(--text-dim);font-size:1.05rem;max-width:600px;margin-bottom:48px}
-.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
-.feature-card{background:var(--bg-card);border-radius:var(--radius);padding:32px 28px;border:1px solid var(--border);transition:all .25s}
-.feature-card:hover{border-color:var(--primary);transform:translateY(-4px);box-shadow:0 12px 40px rgba(99,102,241,.1)}
-.feature-icon{font-size:2rem;margin-bottom:16px}
-.feature-card h3{font-size:1.15rem;font-weight:600;margin-bottom:8px}
-.feature-card p{color:var(--text-dim);font-size:.92rem;line-height:1.6}
-.arch-container{background:var(--bg-card);border-radius:24px;padding:32px;border:1px solid var(--border);overflow-x:auto}
-.tabs{display:flex;background:var(--bg-card);border-radius:12px 12px 0 0;overflow:hidden;border:1px solid var(--border);border-bottom:none}
-.tab-btn{flex:1;padding:14px 24px;border:none;cursor:pointer;background:transparent;color:var(--text-dim);font-size:.9rem;font-weight:500;transition:all .2s}
-.tab-btn:hover{background:#1a2744;color:var(--text)}
-.tab-btn.active{background:var(--surface);color:var(--primary-light);box-shadow:inset 0 -2px 0 var(--primary)}
-.tab-content{background:var(--surface);border-radius:0 0 12px 12px;border:1px solid var(--border);border-top:none}
-.tab-pane{display:none;padding:24px;overflow-x:auto}
-.tab-pane.active{display:block}
-.tab-pane pre{background:#0a0f1a;border-radius:10px;padding:20px;font-family:"JetBrains Mono",Consolas,monospace;font-size:.85rem;line-height:1.7;overflow-x:auto}
-.tab-pane pre .comment{color:#64748b;font-style:italic}
-.perf-table,.bench-table{width:100%;border-collapse:separate;border-spacing:0;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
-.perf-table thead,.bench-table thead{background:var(--bg-card)}
-.perf-table th,.bench-table th{padding:16px 20px;text-align:left;font-weight:600;font-size:.85rem;color:var(--text-dim);border-bottom:1px solid var(--border)}
-.perf-table td,.bench-table td{padding:16px 20px;font-size:.92rem;border-bottom:1px solid var(--border)}
-.perf-table tbody tr,.bench-table tbody tr{background:var(--surface);transition:background .2s}
-.perf-table tbody tr:hover{background:var(--bg-card)}
-.perf-table tbody tr:last-child td,.bench-table tbody tr:last-child td{border:none}
-.metric{font-weight:500}
-.before{color:var(--text-muted)}
-.after{color:var(--success);font-weight:600}
-.status-yes{color:var(--success);font-weight:500}
-.pipeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:24px 0}
-.pstep{background:var(--bg-card);border-radius:var(--radius);padding:24px;border:1px solid var(--border);position:relative}
-.pstep .num{position:absolute;top:-10px;left:20px;width:28px;height:28px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700}
-.pstep h4{font-size:1rem;margin-bottom:6px;margin-top:6px}
-.pstep p{color:var(--text-dim);font-size:.85rem}
-.pcmd{background:#0a0f1a;border-radius:10px;padding:16px 20px;font-family:"JetBrains Mono",Consolas,monospace;font-size:.85rem;line-height:1.8;overflow-x:auto;margin-top:20px;border:1px solid var(--border)}
-.pcmd .c{color:#64748b}
-.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
-.scard{background:var(--bg-card);border-radius:var(--radius);padding:24px;border:1px solid var(--border);display:flex;align-items:flex-start;gap:16px;transition:all .2s}
-.scard:hover{border-color:var(--primary)}
-.scard .e{font-size:1.8rem;line-height:1}
-.scard .i h4{font-size:1rem;margin-bottom:3px}
-.scard .i p{color:var(--text-dim);font-size:.82rem}
-.scard .i .w{color:var(--text-muted);font-size:.78rem;margin-top:3px}
-.cta{text-align:center;padding:80px 24px;background:linear-gradient(180deg,transparent 0%,rgba(99,102,241,.04) 100%)}
-.cta h2{font-size:2rem;font-weight:700;margin-bottom:10px}
-.cta p{color:var(--text-dim);margin-bottom:28px}
-.star-btn{display:inline-flex;align-items:center;gap:10px;padding:16px 40px;border-radius:14px;background:linear-gradient(135deg,#fbbf24 0%,#f59e0b 100%);color:#0f172a;font-size:1.05rem;font-weight:700;transition:all .2s}
-.star-btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 12px 40px rgba(251,191,36,.3);opacity:1}
-footer{text-align:center;padding:40px 24px;border-top:1px solid var(--border);color:var(--text-muted);font-size:.85rem}
-footer a{color:var(--text-dim)}
-footer a:hover{color:var(--text)}
-.props{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:32px}
-.prop{background:var(--surface);border-radius:10px;padding:20px;text-align:center;border:1px solid var(--border)}
-.prop .v{font-size:1.5rem;font-weight:700;color:var(--primary-light)}
-.prop .l{color:var(--text-dim);font-size:.85rem;margin-top:4px}
-.fade-in{opacity:0;transform:translateY(30px);transition:all .6s ease-out}
-.fade-in.visible{opacity:1;transform:translateY(0)}
-@media(max-width:768px){nav{padding:12px 16px}nav .links a:not(.btn-gh){display:none}.hero h1{font-size:clamp(1.8rem,8vw,2.8rem)}section{padding:60px 16px}}
-.mermaid-box{text-align:center}
-</style>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Local AI Stack — Own your AI workspace</title>
+  <meta name="description" content="A private, local AI workspace for RAG, knowledge bases, coding assistance, and LoRA fine-tuning. Built with Ollama, FastGPT, pgvector, and BGE reranking.">
+  <meta name="theme-color" content="#08111f">
+  <link rel="canonical" href="https://caizefan34.github.io/local-ai-stack/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Local AI Stack — Own your AI workspace">
+  <meta property="og:description" content="Private RAG, local knowledge bases, and model tooling that run on your machine.">
+  <meta property="og:url" content="https://caizefan34.github.io/local-ai-stack/">
+  <meta property="og:image" content="https://caizefan34.github.io/local-ai-stack/assets/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <style>
+    :root{--ink:#eaf1ff;--muted:#a6b6d1;--faint:#6f82a4;--bg:#08111f;--panel:#0e1a2c;--panel-2:#12223a;--line:rgba(176,202,255,.16);--blue:#73a8ff;--cyan:#5eead4;--violet:#9c8cff;--radius:18px;--content:1180px}
+    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:hidden}
+    body:before{content:"";position:fixed;z-index:-2;inset:0;background:radial-gradient(circle at 18% 5%,rgba(83,110,255,.24),transparent 30rem),radial-gradient(circle at 80% 20%,rgba(28,211,193,.13),transparent 28rem),linear-gradient(180deg,#08111f 0%,#091424 54%,#07101c 100%)}
+    a{color:inherit;text-decoration:none} button{font:inherit} .wrap{width:min(var(--content),calc(100% - 40px));margin:auto}
+    .nav{position:sticky;top:0;z-index:20;background:rgba(8,17,31,.78);border-bottom:1px solid rgba(176,202,255,.1);backdrop-filter:blur(18px)} .navin{height:70px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+    .brand{font-weight:800;letter-spacing:-.04em;display:flex;align-items:center;gap:10px}.brand-mark{width:29px;height:29px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(145deg,#85b7ff,#7565f8);color:#07111e;box-shadow:0 6px 22px rgba(115,168,255,.32)}
+    .navlinks{display:flex;align-items:center;gap:22px;color:var(--muted);font-size:.9rem}.navlinks a:hover{color:#fff}.github{border:1px solid var(--line);border-radius:10px;padding:8px 13px;color:var(--ink)!important;background:rgba(255,255,255,.03)}.github:hover{border-color:var(--blue);background:rgba(115,168,255,.1)}
+    .hero{padding:94px 0 68px;position:relative}.hero-grid{display:grid;grid-template-columns:1.01fr .99fr;align-items:center;gap:54px}.eyebrow{display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(115,168,255,.27);background:rgba(90,117,255,.12);color:#c8d7ff;border-radius:99px;padding:6px 12px;font-size:.82rem;font-weight:650}.pulse{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 0 5px rgba(94,234,212,.12)}
+    h1,h2,h3,p{margin-top:0}h1{font-size:clamp(2.65rem,5.5vw,5.1rem);line-height:1.03;letter-spacing:-.065em;margin:20px 0 22px;max-width:690px}.grad{background:linear-gradient(110deg,#fff 12%,#b8cbff 48%,#62e9d5);-webkit-background-clip:text;background-clip:text;color:transparent}.lead{font-size:1.13rem;color:var(--muted);max-width:630px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin:30px 0 25px}.button{min-height:48px;padding:12px 18px;border-radius:12px;font-weight:750;display:inline-flex;align-items:center;justify-content:center;gap:9px;transition:transform .2s,box-shadow .2s,border .2s}.button:hover{transform:translateY(-2px)}.primary{background:linear-gradient(135deg,#84b7ff,#7163f7);color:#07111e;box-shadow:0 12px 28px rgba(94,126,255,.28)}.secondary{border:1px solid var(--line);background:rgba(255,255,255,.035);color:var(--ink)}.secondary:hover{border-color:var(--blue)}
+    .micro{display:flex;flex-wrap:wrap;gap:9px;color:var(--faint);font-size:.82rem}.micro span{display:inline-flex;align-items:center;gap:7px}.micro span+span:before{content:"";display:block;width:3px;height:3px;border-radius:50%;background:var(--faint)}
+    .product{border:1px solid rgba(166,191,255,.26);border-radius:22px;padding:10px;background:linear-gradient(135deg,rgba(123,147,255,.19),rgba(24,223,203,.08));box-shadow:0 28px 70px rgba(0,0,0,.25);transform:rotate(1.5deg);transition:transform .35s}.product:hover{transform:rotate(0) translateY(-5px)}.product-bar{height:30px;display:flex;align-items:center;gap:6px;padding:0 8px}.product-bar i{width:8px;height:8px;border-radius:50%;background:#ff776f}.product-bar i:nth-child(2){background:#ffd46b}.product-bar i:nth-child(3){background:#57dfb2}.product img{display:block;width:100%;height:auto;border-radius:13px;border:1px solid rgba(255,255,255,.1)}
+    .proof{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(5,12,23,.27)}.proofin{min-height:103px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}.proof-label{font-size:.82rem;text-transform:uppercase;letter-spacing:.11em;color:var(--faint);font-weight:700}.logos{display:flex;gap:clamp(16px,3vw,42px);flex-wrap:wrap;color:#cfdbf2;font-weight:750;letter-spacing:-.025em}.logos span{display:flex;align-items:center;gap:8px}.logos b{color:var(--blue)}
+    section{padding:100px 0}.section-head{max-width:690px;margin-bottom:40px}.kicker{font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;color:var(--cyan);font-weight:800;margin-bottom:10px}.section-head h2{font-size:clamp(2rem,4vw,3.35rem);line-height:1.12;letter-spacing:-.05em;margin-bottom:12px}.section-head p{color:var(--muted);font-size:1.05rem;margin-bottom:0}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{padding:27px;border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(150deg,rgba(25,45,76,.72),rgba(10,23,40,.72));min-height:214px}.icon{font-size:1.35rem;width:42px;height:42px;border-radius:12px;background:rgba(115,168,255,.13);display:grid;place-items:center;margin-bottom:25px}.card h3{font-size:1.08rem;letter-spacing:-.02em;margin-bottom:7px}.card p{color:var(--muted);font-size:.92rem;margin:0}
+    .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.flow-item{padding:21px 18px;border-radius:15px;border:1px solid var(--line);background:rgba(18,34,58,.7);position:relative}.flow-item:not(:last-child):after{content:"→";position:absolute;right:-13px;top:50%;translate:0 -50%;z-index:2;width:25px;height:25px;border-radius:50%;display:grid;place-items:center;background:var(--blue);color:#06101c;font-weight:900}.flow-num{font-size:.75rem;color:var(--cyan);font-weight:800}.flow-item h3{font-size:1rem;margin:8px 0 5px}.flow-item p{font-size:.84rem;color:var(--muted);margin:0}
+    .split{display:grid;grid-template-columns:1fr .95fr;gap:42px;align-items:center}.stack-list{display:grid;gap:11px}.stack-row{display:flex;gap:14px;align-items:flex-start;padding:15px 16px;border:1px solid var(--line);border-radius:14px;background:rgba(15,30,50,.62)}.stack-row b{display:block;font-size:.94rem}.stack-row span{color:var(--muted);font-size:.86rem}.tick{color:var(--cyan);font-weight:900}.arch{padding:18px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(145deg,rgba(95,133,255,.11),rgba(12,28,47,.45))}.arch img{width:100%;display:block;border-radius:11px}
+    .quick{border:1px solid rgba(115,168,255,.32);background:linear-gradient(135deg,rgba(68,92,197,.22),rgba(16,45,61,.24));padding:clamp(25px,5vw,54px);border-radius:25px}.quick-grid{display:grid;grid-template-columns:.92fr 1.08fr;gap:38px;align-items:start}.quick h2{font-size:clamp(2rem,3.5vw,3rem);line-height:1.1;letter-spacing:-.05em}.quick p{color:var(--muted)}.reqs{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}.reqs span{border:1px solid var(--line);background:rgba(4,13,25,.26);padding:6px 10px;border-radius:8px;color:#c4d3ed;font-size:.82rem}.code{position:relative;background:#06101d;border:1px solid rgba(157,184,240,.19);border-radius:15px;padding:22px;overflow:auto}.code pre{font:500 .84rem/1.85 ui-monospace,SFMono-Regular,Consolas,monospace;color:#dce7fb;margin:0;white-space:pre}.comment{color:#6f82a4}.command{color:#8bdef0}.copy{position:absolute;right:10px;top:10px;border:1px solid var(--line);border-radius:8px;padding:5px 9px;background:#10203a;color:#cddbf5;font-size:.75rem;cursor:pointer}.copy:hover{border-color:var(--blue)}
+    .cta{text-align:center;padding:112px 0;background:radial-gradient(circle at 50% 55%,rgba(112,101,248,.2),transparent 31rem)}.cta h2{font-size:clamp(2.3rem,5vw,4rem);line-height:1.06;letter-spacing:-.06em;margin-bottom:15px}.cta p{color:var(--muted);font-size:1.05rem;max-width:560px;margin:0 auto 26px}.footer{border-top:1px solid var(--line);padding:34px 0;color:var(--faint);font-size:.85rem}.footerin{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}.footer a:hover{color:var(--ink)}
+    @media (max-width:850px){.hero{padding:68px 0 56px}.hero-grid,.split,.quick-grid{grid-template-columns:1fr}.hero-copy{max-width:680px}.product{max-width:700px;margin:10px auto 0}.cards{grid-template-columns:1fr 1fr}.flow{grid-template-columns:1fr 1fr}.flow-item:nth-child(2):after{display:none}.navlinks a:not(.github){display:none}}
+    @media (max-width:560px){.wrap{width:min(100% - 28px,var(--content))}.navin{height:62px}.brand{font-size:.92rem}.hero{padding-top:52px}h1{font-size:2.75rem}.lead{font-size:1rem}.actions{display:grid;grid-template-columns:1fr}.button{width:100%}.cards,.flow{grid-template-columns:1fr}.flow-item:after{display:none}.proofin{padding:20px 0}.logos{gap:13px;font-size:.87rem}section{padding:72px 0}.quick{padding:24px 18px;border-radius:18px}.code{padding:19px 14px}.code pre{font-size:.72rem}.footerin{flex-direction:column;gap:6px}}
+    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.button,.product{transition:none}}
+  </style>
 </head>
-<body><nav>
-<div class="logo">&#9889; Local <span class="hl">AI Stack</span></div>
-<div class="links">
-<a href="#features">Features</a>
-<a href="#architecture">Architecture</a>
-<a href="#quickstart">Quick Start</a>
-<a href="#optimizations">Optimizations</a>
-<a href="#benchmarks">Benchmarks</a>
-<a href="https://github.com/caizefan34/local-ai-stack" target="_blank" class="btn-gh">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-GitHub
-</a>
-</div>
-</nav>
-<section class="hero">
-<div class="hero-badge"><span class="dot"></span> v1.0 &mdash; 100% local, 100% free</div>
-<h1>Enterprise-grade RAG<br>on your laptop</h1>
-<p>Ollama + FastGPT + BGE Reranker + Qwen3 LoRA fine-tuning.<br>No API keys, no cloud costs, no GPU required.</p>
-<div class="hero-btns">
-<a href="#quickstart" class="btn-primary">
-<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-Get Started
-</a>
-<a href="https://github.com/caizefan34/local-ai-stack" target="_blank" class="btn-secondary">
-<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-View on GitHub
-</a>
-</div>
-<div style="margin-top:48px;display:flex;gap:40px;flex-wrap:wrap;justify-content:center">
-<div><div style="font-size:1.8rem;font-weight:700">100%</div><div style="color:var(--text-muted);font-size:.85rem">Free &amp; Open Source</div></div>
-<div><div style="font-size:1.8rem;font-weight:700">&#x1f512;</div><div style="color:var(--text-muted);font-size:.85rem">Privacy First</div></div>
-<div><div style="font-size:1.8rem;font-weight:700">+40%</div><div style="color:var(--text-muted);font-size:.85rem">Reranker Accuracy Gain</div></div>
-<div><div style="font-size:1.8rem;font-weight:700">16K</div><div style="color:var(--text-muted);font-size:.85rem">Context Window</div></div>
-</div>
-</section>
-<section id="features">
-<div class="section-tag">&#x2728; Features</div>
-<h2 class="section-title">What makes this stack different</h2>
-<p class="section-desc">A production-grade RAG system designed for local deployment &mdash; no compromises.</p>
-<div class="features">
-<div class="feature-card fade-in"><div class="feature-icon">&#x1f1f3;&#xfe0f;&#x200d;&#x1f1f4;</div><h3>100% Free</h3><p>Fully open-source. Ollama local inference means zero API costs. No hidden subscriptions.</p></div>
-<div class="feature-card fade-in"><div class="feature-icon">&#x1f512;</div><h3>Privacy First</h3><p>All data processed locally &mdash; nothing ever leaves your machine. Your documents stay yours.</p></div>
-<div class="feature-card fade-in"><div class="feature-icon">&#x1f3af;</div><h3>RAG + Reranker</h3><p>BGE Reranker re-ranks retrieved documents for 40%+ accuracy gain over vector search alone.</p></div>
-<div class="feature-card fade-in"><div class="feature-icon">&#x1f9e9;</div><h3>Visual Knowledge Base</h3><p>FastGPT UI for managing documents, vector search, visual workflows, and chat management.</p></div>
-<div class="feature-card fade-in"><div class="feature-icon">&#x1f504;</div><h3>KB Auto-Sync</h3><p>Automatically sync folders to FastGPT. Weekly pipeline with dedup, extraction, and reporting.</p></div>
-<div class="feature-card fade-in"><div class="feature-icon">&#x1f4bb;</div><h3>Desktop Dashboard</h3><p>Live service monitor with real-time status, one-click controls, and KB sync trigger.</p></div>
-<div class="feature-card fade-in"><div class="feature-icon">&#x1f3cb;&#xfe0f;&#x200d;&#x2642;&#xfe0f;</div><h3>LoRA Fine-tuning</h3><p>One-click pipeline: collect conversations, train, export to Ollama. Fits 8 GB VRAM with QLoRA.</p></div>
-<div class="feature-card fade-in"><div class="feature-icon">&#x1f4bb;</div><h3>Windows First-Class</h3><p>PowerShell one-click setup. No WSL, no Linux tricks. Windows and Linux both supported.</p></div>
-<div class="feature-card fade-in"><div class="feature-icon">&#x1f310;</div><h3>Multi-Model</h3><p>Qwen3, LLaMA, Mistral &mdash; switch with a single config change. Optimized for Chinese NLP.</p></div>
-<div class="feature-card fade-in"><div class="feature-icon">&#x1f4e6;</div><h3>Docker-Powered</h3><p>FastGPT + PostgreSQL (pgvector) + MongoDB + Redis &mdash; one docker compose command to start.</p></div>
-</div></section>
-<section id="architecture">
-<div class="section-tag">&#x1f3d7;&#xfe0f; Architecture</div>
-<h2 class="section-title">System Architecture</h2>
-<p class="section-desc">How components connect &mdash; from user input to retrieved, reranked, and generated answers.</p>
-<div class="arch-container">
-<pre class="mermaid" class="mermaid-box">
-flowchart TB
-    User["&#x1f9d1; User Browser / OpenCode IDE"]
+<body>
+  <header class="nav"><div class="wrap navin">
+    <a class="brand" href="#top" aria-label="Local AI Stack home"><span class="brand-mark">✦</span>Local AI Stack</a>
+    <nav class="navlinks" aria-label="Primary navigation">
+      <a href="#workflows">Workflows</a><a href="#stack">Stack</a><a href="#quickstart">Quick start</a>
+      <a class="github" href="https://github.com/caizefan34/local-ai-stack" target="_blank" rel="noreferrer">★ Star on GitHub</a>
+    </nav>
+  </div></header>
+  <main id="top">
+    <section class="hero"><div class="wrap hero-grid">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="pulse"></span> A private workspace for practical AI</div>
+        <h1>Own your <span class="grad">AI workspace.</span><br>Keep your data local.</h1>
+        <p class="lead">Run a useful AI stack on your own machine: private knowledge search, visual RAG workflows, local coding help, and optional LoRA fine-tuning—without usage metering or cloud lock-in.</p>
+        <div class="actions"><a class="button primary" href="#quickstart">Start locally <span aria-hidden="true">→</span></a><a class="button secondary" href="https://github.com/caizefan34/local-ai-stack" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></div>
+        <div class="micro"><span>Runs locally after setup</span><span>Docker + Ollama</span><span>Windows and Linux</span></div>
+      </div>
+      <div class="product" aria-label="FastGPT interface screenshot"><div class="product-bar"><i></i><i></i><i></i></div><img src="assets/hero-screenshot.png" width="1366" height="768" alt="Local AI Stack knowledge-base chat interface"></div>
+    </div></section>
+    <div class="proof"><div class="wrap proofin"><span class="proof-label">A focused local stack, assembled from</span><div class="logos"><span><b>◉</b> Ollama</span><span><b>◇</b> FastGPT</span><span><b>▣</b> pgvector</span><span><b>✦</b> BGE Reranker</span><span><b>⌁</b> PEFT + TRL</span></div></div></div>
+    <section id="workflows"><div class="wrap">
+      <div class="section-head"><div class="kicker">Built for useful work</div><h2>One local foundation. Three high-value workflows.</h2><p>Instead of another chat window, this project gives personal and small-team knowledge work an end-to-end local home.</p></div>
+      <div class="cards">
+        <article class="card"><div class="icon">⌕</div><h3>Ask your documents</h3><p>Bring in notes, papers, repositories, and folders. Retrieve context locally and answer through a visual FastGPT workflow.</p></article>
+        <article class="card"><div class="icon">⌘</div><h3>Build without sharing code</h3><p>Use Ollama-backed models and the included OpenCode configuration when your codebase should remain on your machine.</p></article>
+        <article class="card"><div class="icon">↗</div><h3>Turn feedback into a model</h3><p>Collect examples, prepare a dataset, and run the included QLoRA pipeline when you need a specialized local assistant.</p></article>
+      </div>
+    </div></section>
+    <section><div class="wrap">
+      <div class="section-head"><div class="kicker">From question to grounded answer</div><h2>Simple enough to understand. Powerful enough to extend.</h2></div>
+      <div class="flow">
+        <article class="flow-item"><div class="flow-num">01 / Ingest</div><h3>Add what you know</h3><p>Import documents or synchronize selected folders.</p></article>
+        <article class="flow-item"><div class="flow-num">02 / Retrieve</div><h3>Search locally</h3><p>FastGPT and pgvector find the relevant context.</p></article>
+        <article class="flow-item"><div class="flow-num">03 / Rerank</div><h3>Refine the evidence</h3><p>The optional BGE service prioritizes stronger matches.</p></article>
+        <article class="flow-item"><div class="flow-num">04 / Answer</div><h3>Use your model</h3><p>Ollama generates a response in your own workflow.</p></article>
+      </div>
+    </div></section>
+    <section id="stack"><div class="wrap split">
+      <div><div class="section-head"><div class="kicker">A stack you can inspect</div><h2>Modern components, no mystery layers.</h2><p>Each service has a clear role and a documented local endpoint, so you can begin with the defaults and evolve the stack as your needs grow.</p></div>
+        <div class="stack-list">
+          <div class="stack-row"><span class="tick">✓</span><div><b>FastGPT + pgvector</b><span>Visual workflows and vector-backed knowledge bases.</span></div></div>
+          <div class="stack-row"><span class="tick">✓</span><div><b>Ollama</b><span>Local model inference and embeddings on your own hardware.</span></div></div>
+          <div class="stack-row"><span class="tick">✓</span><div><b>BGE reranker</b><span>An optional FastAPI service for improving retrieval order.</span></div></div>
+          <div class="stack-row"><span class="tick">✓</span><div><b>LoRA tooling</b><span>Dataset preparation, training, merging, and Ollama export scripts.</span></div></div>
+        </div>
+      </div>
+      <div class="arch"><img src="assets/architecture-diagram.svg" alt="Diagram showing Local AI Stack architecture"></div>
+    </div></section>
+    <section id="quickstart"><div class="wrap quick"><div class="quick-grid">
+      <div><div class="kicker">Quick start</div><h2>Run your own workspace.</h2><p>The setup scripts create a local `.env` with random credentials, pull the recommended Ollama models, and start the services. Review the full guide before exposing any service beyond your machine.</p><div class="reqs"><span>8 GB RAM minimum</span><span>Docker Desktop / Docker</span><span>Python 3</span><span>GPU optional</span></div></div>
+      <div class="code"><button class="copy" type="button" data-copy="git clone https://github.com/caizefan34/local-ai-stack.git&#10;cd local-ai-stack&#10;bash scripts/setup.sh">Copy</button><pre><code><span class="comment"># Linux / WSL — one command setup</span>
+<span class="command">git clone</span> https://github.com/caizefan34/local-ai-stack.git
+<span class="command">cd</span> local-ai-stack
+<span class="command">bash</span> scripts/setup.sh
 
-    subgraph FastGPT["FastGPT Platform"]
-        KB["&#x1f4da; Knowledge Base"]
-        WF["&#x2699;&#xfe0f; Workflow Engine"]
-        Chat["&#x1f4ac; Chat Manager"]
-        API["&#x1f310; FastGPT API Server"]
-    end
-
-    subgraph Storage["Storage Layer"]
-        PG[("PostgreSQL + pgvector")]
-    end
-
-    subgraph AI["AI Layer"]
-        Ollama["&#x1f999; Ollama\nQwen3-8B / nomic-embed-text"]
-        Reranker["&#x26a1; BGE Reranker\nFastAPI :18888"]
-    end
-
-    subgraph Training["Training Pipeline"]
-        LoRA["&#x1f3cb;&#xfe0f; LoRA Fine-tuning\nPEFT + TRL"]
-        Export["&#x1f4e4; Export to Ollama Modelfile"]
-    end
-
-    User -->|HTTP / Chat API| API
-    API --> KB & WF & Chat
-    KB -->|Vector Search| PG
-    KB -->|Rerank| Reranker
-    Chat -->|LLM Inference| Ollama
-    WF --> Ollama & Reranker
-    Training -->|Collect Data| KB
-    Training -->|Export Model| Ollama
-    LoRA --> Export
-</pre>
-</div></section>
-<section id="quickstart">
-<div class="section-tag">&#x1f680; Quick Start</div>
-<h2 class="section-title">Get running in 5 minutes</h2>
-<p class="section-desc">Clone, install dependencies, and start all services.</p>
-<div class="props">
-<div class="prop"><div class="v">8 GB</div><div class="l">Min RAM</div></div>
-<div class="prop"><div class="v">20 GB</div><div class="l">Min Disk</div></div>
-<div class="prop"><div class="v">Docker</div><div class="l">v24+ Required</div></div>
-<div class="prop"><div class="v">Python</div><div class="l">3.10+ Required</div></div>
-</div>
-<div class="tabs">
-<button class="tab-btn active" onclick="switchTab(event,'win')">&#x1fa9f; Windows</button>
-<button class="tab-btn" onclick="switchTab(event,'linux')">&#x1f427; Linux</button>
-</div>
-<div class="tab-content">
-<div id="tab-win" class="tab-pane active">
-<pre><span class="comment"># 1. Clone the repo</span>
-git clone https://github.com/caizefan34/local-ai-stack.git
-cd local-ai-stack
-
-<span class="comment"># 2. Install Ollama</span>
-winget install Ollama.Ollama
-
-<span class="comment"># 3. Pull recommended models</span>
-ollama pull qwen3:8b
-ollama pull nomic-embed-text:latest
-
-<span class="comment"># 4. Start FastGPT + databases</span>
-docker compose -f docker/docker-compose.yml up -d
-
-<span class="comment"># 5. Start the reranker service</span>
-.\scripts\start-all.ps1
-
-<span class="comment"># &#x1f389; Visit http://localhost:3000</span></pre>
-</div>
-<div id="tab-linux" class="tab-pane">
-<pre><span class="comment"># 1. Clone the repo</span>
-git clone https://github.com/caizefan34/local-ai-stack.git
-cd local-ai-stack
-
-<span class="comment"># 2. One-command setup</span>
-bash scripts/setup.sh
-
-<span class="comment"># &#x1f389; Visit http://localhost:3000</span></pre>
-</div></div></section><section id="optimizations">
-<div class="section-tag">&#x1f527; Optimizations</div>
-<h2 class="section-title">Tuned for peak performance</h2>
-<p class="section-desc">Every parameter was benchmarked and adjusted for local hardware.</p>
-<table class="perf-table">
-<thead><tr><th>Optimization</th><th>Before</th><th>After</th><th>Impact</th></tr></thead>
-<tbody>
-<tr><td class="metric">BGE Reranker</td><td class="before">&#x274c; Not used</td><td class="after">&#x2705; Enabled</td><td>+40% retrieval accuracy</td></tr>
-<tr><td class="metric">pgHNSWEfSearch</td><td class="before">80</td><td class="after">200</td><td>+15% recall</td></tr>
-<tr><td class="metric">Chunk Size</td><td class="before">1500 chars</td><td class="after">800-1000 chars</td><td>Better precision</td></tr>
-<tr><td class="metric">Context Window</td><td class="before">8K</td><td class="after">16K</td><td>Long document support</td></tr>
-<tr><td class="metric">LoRA 4-bit QLoRA</td><td class="before">&#x274c;</td><td class="after">&#x2705;</td><td>8B model fits ~4.5 GB VRAM</td></tr>
-<tr><td class="metric">paged_adamw_8bit</td><td class="before">&#x274c;</td><td class="after">&#x2705;</td><td>50% less optimizer memory</td></tr>
-</tbody></table></section>
-<section id="benchmarks">
-<div class="section-tag">&#x1f4ca; Benchmarks</div>
-<h2 class="section-title">Real-world performance</h2>
-<p class="section-desc">Measured on RTX 5070 Laptop 8 GB + 16 GB RAM.</p>
-<table class="bench-table">
-<thead><tr><th>Scenario</th><th>Speed</th><th>VRAM</th><th>Status</th></tr></thead>
-<tbody>
-<tr><td>Qwen3-8B inference (no RAG)</td><td>15-25 tok/s</td><td>4.5 GB</td><td class="status-yes">&#x2705; Smooth</td></tr>
-<tr><td>With reranker</td><td>+80 ms</td><td>6.5 GB</td><td class="status-yes">&#x2705; Smooth</td></tr>
-<tr><td>LoRA training (293 samples, 3 epochs)</td><td>~15 min</td><td>~7 GB</td><td class="status-yes">&#x2705; Smooth</td></tr>
-<tr><td>Knowledge base embedding (1000 docs)</td><td>~2 min</td><td>~1 GB</td><td class="status-yes">&#x2705; Fast</td></tr>
-<tr><td>Qwen3-8B + 4-bit QLoRA</td><td>&mdash;</td><td>~4.5 GB</td><td class="status-yes">&#x2705; Fits 8 GB VRAM</td></tr>
-</tbody></table></section>
-<section id="lora">
-<div class="section-tag">&#x1f3cb;&#xfe0f; Fine-tuning</div>
-<h2 class="section-title">LoRA Fine-tuning Pipeline</h2>
-<p class="section-desc">From conversation data collection to a fully trained Ollama model.</p>
-<div class="pipeline">
-<div class="pstep fade-in"><div class="num">1</div><h4>&#x1f4e5; Collect Data</h4><p>Import conversations from Codex, CC Switch, or your own Q&amp;A logs.</p></div>
-<div class="pstep fade-in"><div class="num">2</div><h4>&#x1f9f9; Prepare &amp; Format</h4><p>Convert to training-ready format. Filter, deduplicate, and split into train/val sets.</p></div>
-<div class="pstep fade-in"><div class="num">3</div><h4>&#x1f3cb;&#xfe0f; Train (QLoRA)</h4><p>4-bit QLoRA with paged_adamw_8bit. Fits in 8 GB VRAM for Qwen3-8B.</p></div>
-<div class="pstep fade-in"><div class="num">4</div><h4>&#x1f4e4; Export to Ollama</h4><p>Merge LoRA weights, create a Modelfile, and deploy your custom model.</p></div>
-</div>
-<div class="pcmd">
-<span class="c"># One-command pipeline</span><br>
-cd lora-finetune<br><br>
-<span class="c"># Step 1: Collect data</span><br>
-python scripts/collect_data.py<br><br>
-<span class="c"># Step 2: Train (QLoRA, ~4.5 GB VRAM)</span><br>
-python scripts/train.py<br><br>
-<span class="c"># Step 3: Export &amp; deploy</span><br>
-python scripts/merge_and_export.py<br>
-ollama create my-finetuned-model -f Modelfile
-</div></section>
-<section id="stack">
-<div class="section-tag">&#x1f9e9; Tech Stack</div>
-<h2 class="section-title">Built with the best tools</h2>
-<p class="section-desc">Each component was chosen for quality, performance, and active maintenance.</p>
-<div class="sgrid">
-<div class="scard"><div class="e">&#x1f9e0;</div><div class="i"><h4>Qwen3-8B</h4><p>LLM</p><div class="w">Best open-source Chinese model, MIT license</div></div></div>
-<div class="scard"><div class="e">&#x1f50d;</div><div class="i"><h4>nomic-embed-text</h4><p>Embedding Model</p><div class="w">Lightweight, local, fast</div></div></div>
-<div class="scard"><div class="e">&#x26a1;</div><div class="i"><h4>BGE-Reranker-v2-M3</h4><p>Reranker</p><div class="w">High accuracy, multilingual</div></div></div>
-<div class="scard"><div class="e">&#x1f4cb;</div><div class="i"><h4>FastGPT v4.8.9</h4><p>RAG Platform</p><div class="w">Visual workflow, enterprise-grade</div></div></div>
-<div class="scard"><div class="e">&#x1f5c4;&#xfe0f;</div><div class="i"><h4>pgvector</h4><p>Vector Database</p><div class="w">Rock-solid PostgreSQL ecosystem</div></div></div>
-<div class="scard"><div class="e">&#x1f527;</div><div class="i"><h4>PEFT + TRL</h4><p>Training Framework</p><div class="w">HuggingFace native, battle-tested</div></div></div>
-</div></section>
-<div class="cta">
-<h2>Found this useful? Give it a &#x2b50;</h2>
-<p>Your support keeps this project alive and improving.</p>
-<a href="https://github.com/caizefan34/local-ai-stack" target="_blank" class="star-btn">&#x2b50; Star on GitHub</a>
-</div>
-<footer>
-<p>MIT License &copy; 2026 <a href="https://github.com/caizefan34">caizefan34</a></p>
-<p style="margin-top:6px">
-<a href="https://github.com/caizefan34/local-ai-stack">GitHub</a>
- &middot; 
-<a href="https://github.com/caizefan34/local-ai-stack/issues">Issues</a>
- &middot; 
-<a href="https://github.com/caizefan34/local-ai-stack/discussions">Discussions</a>
-</p></footer>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
-<script>
-mermaid.initialize({theme:"dark",themeVariables:{primaryColor:"#6366f1",primaryTextColor:"#f1f5f9",primaryBorderColor:"#4f46e5",lineColor:"#64748b",secondaryColor:"#1e293b",tertiaryColor:"#0f172a",fontSize:"14px",fontFamily:"Inter,system-ui,sans-serif"},flowchart:{htmlLabels:true,curve:"basis",padding:20}});
-function switchTab(e,n){document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));document.querySelectorAll(".tab-pane").forEach(p=>p.classList.remove("active"));e.target.classList.add("active");document.getElementById("tab-"+n).classList.add("active")}
-new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&e.target.classList.add("visible")})},{threshold:.1}).observe||Array.from(document.querySelectorAll(".fade-in")).forEach(o=>setTimeout(()=>o.classList.add("visible"),100));
-document.querySelectorAll(".fade-in").forEach(el=>{new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&e.target.classList.add("visible")})},{threshold:.1}).observe(el)})
-</script>
+<span class="comment"># Windows — run the guided installer</span>
+<span class="command">.\scripts\setup.ps1</span></code></pre></div>
+    </div></div></section>
+    <section class="cta"><div class="wrap"><div class="kicker">Ready when you are</div><h2>Make your AI workspace<br><span class="grad">yours.</span></h2><p>Use it, improve it, and share what you learn. A star helps other builders find a practical path to local AI.</p><div class="actions" style="justify-content:center"><a class="button primary" href="https://github.com/caizefan34/local-ai-stack" target="_blank" rel="noreferrer">★ Star on GitHub</a><a class="button secondary" href="https://github.com/caizefan34/local-ai-stack/issues" target="_blank" rel="noreferrer">Report an issue</a></div></div></section>
+  </main>
+  <footer class="footer"><div class="wrap footerin"><span>MIT License © 2026 caizefan34</span><span><a href="https://github.com/caizefan34/local-ai-stack">GitHub</a> · <a href="https://github.com/caizefan34/local-ai-stack/discussions">Discussions</a> · <a href="https://github.com/caizefan34/local-ai-stack/issues">Issues</a></span></div></footer>
+  <script>
+    document.querySelectorAll('[data-copy]').forEach(function(button){button.addEventListener('click',async function(){try{await navigator.clipboard.writeText(button.dataset.copy);button.textContent='Copied';setTimeout(function(){button.textContent='Copy'},1600)}catch(error){button.textContent='Select code';}})});
+  </script>
 </body>
 </html>

@@ -38,7 +38,7 @@ Primary README hero image showing the FastGPT UI in action. Communicates `this i
 | **Browser DevTools** | Free, built-in, exact viewport | No annotation |
 
 ### Workflow
-1. Start all services: `docker compose -f docker/docker-compose.yml up -d`
+1. Start all services: `docker compose --env-file .env -f docker/docker-compose.yml up -d`
 2. Open http://localhost:3000
 3. Import a test document (e.g., a sample PDF from tests/ or a paper abstract)
 4. Ask a question about the document to generate a Q&A response with citations

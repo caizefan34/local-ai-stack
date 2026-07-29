@@ -1,19 +1,36 @@
-﻿# Local AI Stack — Your Personal AI Workspace
-> **Build your own Local AI Workspace in 5 minutes.**  
-> Local RAG · Local Knowledge Base · Local Coding Assistant · Local Fine-Tuning  
-> **No cloud. No API costs. No GPU required.**
+# Local AI Stack — Own Your AI Workspace
+> **Private RAG, knowledge bases, coding help, and model tooling—running on your machine.**
+> Ollama · FastGPT · pgvector · BGE reranking · LoRA / QLoRA
+> **No usage metering. No cloud lock-in. Your data stays local.**
 
 <p align="center">
-<a href="https://github.com/caizefan34/local-ai-stack"><img src="https://img.shields.io/github/stars/caizefan34/local-ai-stack?style=for-the-badge&logo=github&color=6366f1" alt="Stars"></a> <a href="https://caizefan34.github.io/local-ai-stack/"><img src="https://img.shields.io/badge/GitHub%20Pages-Live-6366f1?style=for-the-badge" alt="Pages"></a> <a href="https://github.com/caizefan34/local-ai-stack/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License"></a> <a href="https://github.com/caizefan34/local-ai-stack/releases"><img src="https://img.shields.io/github/v/release/caizefan34/local-ai-stack?style=for-the-badge&color=6366f1" alt="Release"></a> <a href="https://github.com/caizefan34/local-ai-stack/commits/main"><img src="https://img.shields.io/github/last-commit/caizefan34/local-ai-stack?style=for-the-badge&color=6366f1" alt="Last Commit"></a></p>
+<a href="https://github.com/caizefan34/local-ai-stack"><img src="https://img.shields.io/github/stars/caizefan34/local-ai-stack?style=for-the-badge&logo=github&color=6366f1" alt="GitHub stars"></a> <a href="https://caizefan34.github.io/local-ai-stack/"><img src="https://img.shields.io/badge/Live%20walkthrough-Visit%20Pages-6366f1?style=for-the-badge" alt="Live walkthrough"></a> <a href="https://github.com/caizefan34/local-ai-stack/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge" alt="MIT License"></a> <a href="https://github.com/caizefan34/local-ai-stack/commits/master"><img src="https://img.shields.io/github/last-commit/caizefan34/local-ai-stack/master?style=for-the-badge&color=6366f1" alt="Last commit"></a></p>
 
 <p align="center">
   <img src="docs/assets/hero-screenshot.png" alt="Local AI Stack" width="100%">
 </p>
 
 <p align="center">
-<a href="#-quick-start"><b>Quick Start</b></a> · <a href="#features"><b>Features</b></a> · <a href="#-why-local-ai-stack"><b>Why Local AI</b></a> · <a href="#-use-cases"><b>Use Cases</b></a> · <a href="#-comparison"><b>Comparison</b></a> · <a href="#-architecture"><b>Architecture</b></a> · <a href="#-roadmap"><b>Roadmap</b></a> · <a href="https://caizefan34.github.io/local-ai-stack/"><b>Docs</b></a></p>
+<a href="#-quick-start"><b>Quick Start</b></a> · <a href="#-why-local-ai-stack"><b>Why Local</b></a> · <a href="#-use-cases"><b>Use Cases</b></a> · <a href="#-architecture"><b>Architecture</b></a> · <a href="https://caizefan34.github.io/local-ai-stack/"><b>Live Walkthrough</b></a> · <a href="https://github.com/caizefan34/local-ai-stack/discussions"><b>Discuss</b></a></p>
 
 ---
+
+## Why this stack?
+
+Most local-AI projects stop at model chat. Local AI Stack gives you a reusable workspace around it: bring in documents, build a private RAG workflow, run local models through Ollama, and optionally fine-tune a model from your own examples.
+
+| Use it when you want to… | Included path |
+|---|---|
+| Ask questions over papers, notes, or a team wiki | FastGPT + pgvector knowledge base + optional BGE reranking |
+| Keep code and prompts off third-party APIs | Ollama-backed local inference + OpenCode configuration |
+| Keep a knowledge base fresh | Import and folder-sync tools with extraction and deduplication |
+| Create a specialized assistant | Data preparation, QLoRA training, merging, and Ollama export scripts |
+
+<p align="center">
+  <a href="https://caizefan34.github.io/local-ai-stack/"><b>Explore the live walkthrough →</b></a>
+  &nbsp; · &nbsp;
+  <a href="https://github.com/caizefan34/local-ai-stack"><b>Star the project ★</b></a>
+</p>
 
 ## 🚀 Quick Start
 
@@ -24,14 +41,10 @@ Get your first local AI chat running in **under 5 minutes**.
 ```powershell
 git clone https://github.com/caizefan34/local-ai-stack.git
 cd local-ai-stack
-winget install Ollama.Ollama
-ollama pull qwen3:8b
-ollama pull nomic-embed-text:latest
-docker compose -f docker/docker-compose.yml up -d
-.\scripts\start-all.ps1
+.\scripts\setup.ps1
 ```
 
-Then open **http://localhost:3000** (password: `1234`)
+Then open **http://localhost:3000**. The installer creates random local credentials and saves the admin password in `.env`.
 
 ### Linux / WSL (one command)
 
@@ -41,10 +54,12 @@ cd local-ai-stack
 bash scripts/setup.sh
 ```
 
-> ✅ **Prerequisites:** Windows: [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/) · Linux: Docker + docker compose plugin · 8 GB RAM
+> ✅ **Prerequisites:** Windows: [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/) · Linux: Docker + docker compose plugin · Python 3 · 8 GB RAM
 
-<p align="left">
-<a href="#-quick-start" style="display:inline-block;padding:10px 28px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;font-size:16px;font-weight:600;text-decoration:none">▶️ Get Started Now</a>
+> 🔐 **Credentials:** `scripts/setup.sh` / `scripts/setup.ps1` creates a local `.env` with random credentials. If starting Compose manually, copy `.env.example` to `.env` and replace both placeholder values first.
+
+<p align="center">
+<a href="https://caizefan34.github.io/local-ai-stack/" style="display:inline-block;padding:10px 28px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;font-size:16px;font-weight:600;text-decoration:none">▶ Explore the walkthrough</a>
 <a href="https://github.com/caizefan34/local-ai-stack" style="display:inline-block;padding:10px 28px;border-radius:8px;background:#1a1a2e;color:#fff;font-size:16px;font-weight:600;text-decoration:none;margin-left:8px">⭐ Star on GitHub</a>
 </p>
 
@@ -53,8 +68,8 @@ bash scripts/setup.sh
 ## ✨ Features
 
 <table>
-<tr><td width="50%"><h3>🔒 Privacy First</h3><p>All data processed locally. No API calls. Your documents never leave your machine.</p></td>
-<td width="50%"><h3>🎹 Production RAG</h3><p>Visual workflow engine with reranker that boosts accuracy by 40%. BGE-Reranker-v2-M3 included.</p></td></tr>
+<tr><td width="50%"><h3>🔒 Privacy First</h3><p>All data is processed locally after setup. Your documents remain on your machine.</p></td>
+<td width="50%"><h3>🎹 Practical RAG</h3><p>Visual workflows with FastGPT, pgvector search, and an optional BGE-Reranker-v2-M3 service.</p></td></tr>
 <tr><td><h3>💪 LoRA Fine-Tuning</h3><p>PEFT + TRL pipeline. Fine-tune Qwen3-8B on 8GB VRAM with QLoRA. Turn your conversations into a custom model.</p></td>
 <td><h3>🔄 Auto-Sync Pipeline</h3><p>Weekly sync from Windows folders to FastGPT. Import papers, courses, and GitHub repos automatically.</p></td></tr>
 <tr><td><h3>💻 Desktop Dashboard</h3><p>Real-time service monitor with one-click controls. Check status, start/stop services, trigger KB sync.</p></td>
@@ -235,9 +250,9 @@ docker compose version
 ### FastGPT shows "Network Error" or won't load
 The stack needs all three databases healthy before FastGPT starts:
 ```bash
-docker compose -f docker/docker-compose.yml ps
+docker compose --env-file .env -f docker/docker-compose.yml ps
 # Wait for pg, mongo, redis to show "healthy", then:
-docker compose -f docker/docker-compose.yml restart fastgpt
+docker compose --env-file .env -f docker/docker-compose.yml restart fastgpt
 ```
 
 ### Ollama models not found by FastGPT
@@ -263,7 +278,7 @@ FASTGPT_PORT=3001
 PG_HOST_PORT=5433
 MONGO_HOST_PORT=27018
 ```
-Then restart: `docker compose -f docker/docker-compose.yml up -d`
+Then restart: `docker compose --env-file .env -f docker/docker-compose.yml up -d`
 
 ### "Permission denied" on Linux for the config mount
 ```bash

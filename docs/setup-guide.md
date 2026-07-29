@@ -35,22 +35,22 @@ ollama pull qwen3:8b
 ollama pull nomic-embed-text:latest
 `
 
-### 3. Configure Environment (Optional)
+### 3. Configure Environment
 
 Copy .env.example to .env and adjust settings:
 
 ```powershell
 cp .env.example .env
-# Edit .env to set custom passwords and keys
+# Replace ADMIN_PASSWORD and TOKEN_KEY before starting manually
 `
 
 ### 4. Start FastGPT
 
 ```powershell
-docker compose -f docker/docker-compose.yml up -d
+docker compose --env-file .env -f docker/docker-compose.yml up -d
 `
 
-Visit **http://localhost:3000** — default password: 1234
+Visit **http://localhost:3000** and use the `ADMIN_PASSWORD` stored in `.env`.
 
 ### 5. Start the Reranker Service
 

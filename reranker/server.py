@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional
 import uvicorn, torch, os, time, logging
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
@@ -10,18 +10,19 @@ log = logging.getLogger('reranker')
 app = FastAPI(title='Local Reranker - BGE')
 MODEL_NAME = os.getenv('RERANKER_MODEL', 'BAAI/bge-reranker-v2-m3')
 RERANKER_PORT = int(os.getenv('RERANKER_PORT', '18888'))
+MAX_DOCUMENTS = int(os.getenv('RERANKER_MAX_DOCUMENTS', '256'))
 model = None
 tokenizer = None
 device = 'cpu'
 
 class ReRankInput(BaseModel):
-    query: str
-    documents: List[str]
-    top_k: Optional[int] = None
+    query: str = Field(min_length=1, max_length=8192)
+    documents: List[str] = Field(min_length=1, max_length=MAX_DOCUMENTS)
+    top_k: Optional[int] = Field(default=None, gt=0, le=MAX_DOCUMENTS)
 
 class FastGPTReRankInput(BaseModel):
-    query: str
-    passages: List[str]
+    query: str = Field(min_length=1, max_length=8192)
+    passages: List[str] = Field(min_length=1, max_length=MAX_DOCUMENTS)
 
 @app.on_event('startup')
 async def load_model():
@@ -56,6 +57,8 @@ def _rerank(query: str, texts: List[str]):
         raise HTTPException(503, 'Model not loaded yet - try again in a few seconds')
     if not texts:
         return []
+    if len(texts) > MAX_DOCUMENTS:
+        raise HTTPException(413, f'Too many documents; maximum is {MAX_DOCUMENTS}')
     pairs = [[query, doc] for doc in texts]
     with torch.no_grad():
         inputs = tokenizer(pairs, padding=True, truncation=True, return_tensors='pt', max_length=512)
@@ -87,7 +90,7 @@ def rerank_fastgpt(input: FastGPTReRankInput):
 @app.get('/health')
 def health():
     return {
-        'status': 'ok',
+        'status': 'ok' if model is not None else 'loading',
         'model': MODEL_NAME,
         'device': str(model.device) if model else 'loading',
         'uptime': time.time() - health.start_time if hasattr(health, 'start_time') else 0
