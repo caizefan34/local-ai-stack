@@ -1,4 +1,4 @@
-﻿import urllib.request, json
+import urllib.request, json
 
 body = json.dumps({"model":"qwen3-1.7b-stable","prompt":"What is 2+2? Output only the number.","stream":False,"think":False,"options":{"temperature":0,"num_predict":16}}).encode()
 req = urllib.request.Request("http://localhost:11434/api/generate", data=body, headers={"Content-Type":"application/json; charset=utf-8"})
