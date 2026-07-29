@@ -94,7 +94,12 @@ editor content to disk.
 The included [`ide/vscode`](../ide/vscode) extension provides inline completion
 and **Local AI: Explain Selection** / **Suggest Fix for Selection** using the
 local Ollama API. Fixes are displayed as an unapplied diff; it never applies an
-edit or executes a command on behalf of the user.
+edit or executes a command on behalf of the user. Its chat answer includes
+**thumbs-up** and **thumbs-down** buttons. A click is the explicit approval to
+append that answer to the workspace-local, git-ignored
+`lora-finetune/data/feedback.jsonl` (configurable with
+`localAiStack.feedbackPath`); feedback still requires human review before LoRA
+training.
 
 Store fine-tuning feedback only after explicit approval:
 

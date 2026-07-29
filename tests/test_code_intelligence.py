@@ -66,6 +66,10 @@ class CodeIntelligenceTests(unittest.TestCase):
         self.assertIn('localAiStack.generateTests', extension)
         self.assertIn('registerWebviewViewProvider', extension)
         self.assertIn('"viewsContainers"', manifest)
+        self.assertIn('feedback', extension)
+        self.assertIn('rating', extension)
+        self.assertIn('thumb-up', extension)
+        self.assertIn('thumb-down', extension)
 
     def test_fastgpt_exposes_code_models(self):
         config = (ROOT / "config" / "fastgpt-config.json").read_text(encoding="utf-8")

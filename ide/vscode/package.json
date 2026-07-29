@@ -35,7 +35,8 @@
       "properties": {
         "localAiStack.ollamaUrl": { "type": "string", "default": "http://127.0.0.1:11434/api/generate" },
         "localAiStack.codeModel": { "type": "string", "default": "qwen2.5-coder:7b" },
-        "localAiStack.completionModel": { "type": "string", "default": "qwen2.5-coder:1.5b" }
+        "localAiStack.completionModel": { "type": "string", "default": "qwen2.5-coder:1.5b" },
+        "localAiStack.feedbackPath": { "type": "string", "default": "lora-finetune/data/feedback.jsonl", "description": "Workspace-relative path for feedback recorded with the thumbs buttons." }
       }
     }
   }

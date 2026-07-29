@@ -2,7 +2,7 @@ const vscode = require('vscode');
 
 function settings() {
   const config = vscode.workspace.getConfiguration('localAiStack');
-  return { url: config.get('ollamaUrl'), codeModel: config.get('codeModel'), completionModel: config.get('completionModel') };
+  return { url: config.get('ollamaUrl'), codeModel: config.get('codeModel'), completionModel: config.get('completionModel'), feedbackPath: config.get('feedbackPath') };
 }
 
 async function generate(prompt, model) {
@@ -13,20 +13,37 @@ async function generate(prompt, model) {
 }
 
 class ChatViewProvider {
+  async recordFeedback(prompt, response, rating) {
+    const folder = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0];
+    if (!folder || !prompt || !response || !['up', 'down'].includes(rating)) throw new Error('Open a workspace and receive an answer before rating it.');
+    const relativePath = settings().feedbackPath.replaceAll('\\', '/');
+    const path = vscode.Uri.joinPath(folder.uri, ...relativePath.split('/'));
+    const line = `${JSON.stringify({ prompt, response, rating, approved: true, source: 'vscode', created_at: new Date().toISOString() })}\n`;
+    await vscode.workspace.fs.createDirectory(vscode.Uri.joinPath(folder.uri, ...relativePath.split('/').slice(0, -1)));
+    let existing = new Uint8Array();
+    try { existing = await vscode.workspace.fs.readFile(path); } catch (error) { if (error.code !== 'FileNotFound') throw error; }
+    await vscode.workspace.fs.writeFile(path, Buffer.concat([Buffer.from(existing), Buffer.from(line, 'utf8')]));
+  }
+
   resolveWebviewView(view) {
     view.webview.options = { enableScripts: true };
     view.webview.html = `<!doctype html><html><body>
       <style>body{font-family:var(--vscode-font-family);padding:8px}textarea{width:100%;box-sizing:border-box}button{margin-top:8px}pre{white-space:pre-wrap;word-break:break-word}</style>
-      <textarea id="prompt" rows="5" placeholder="Ask about the current code..."></textarea><button id="send">Send</button><pre id="answer"></pre>
+      <textarea id="prompt" rows="5" placeholder="Ask about the current code..."></textarea><button id="send">Send</button><pre id="answer"></pre><div id="feedback" style="display:none"><button id="thumb-up" title="Useful answer">👍</button><button id="thumb-down" title="Needs correction">👎</button></div>
       <script>const api=acquireVsCodeApi();const prompt=document.getElementById('prompt');const answer=document.getElementById('answer');document.getElementById('send').onclick=()=>{answer.textContent='Thinking…';api.postMessage({type:'chat',text:prompt.value})};window.addEventListener('message',e=>answer.textContent=e.data.answer);</script>
-    </body></html>`;
-    view.webview.onDidReceiveMessage(async ({ type, text }) => {
+      <script>let lastPrompt='';let lastAnswer='';for(const rating of ['up','down'])document.getElementById('thumb-'+rating).onclick=()=>{document.getElementById('feedback').style.display='none';api.postMessage({type:'feedback',rating,prompt:lastPrompt,response:lastAnswer})};window.addEventListener('message',e=>{if(e.data.prompt&&e.data.answer){lastPrompt=e.data.prompt;lastAnswer=e.data.answer;document.getElementById('feedback').style.display='block'}});</script></body></html>`;
+    view.webview.onDidReceiveMessage(async ({ type, text, prompt, response, rating }) => {
+      if (type === 'feedback') {
+        try { await this.recordFeedback(prompt, response, rating); view.webview.postMessage({ answer: 'Feedback saved locally. Review it before LoRA training.' }); }
+        catch (error) { view.webview.postMessage({ answer: `Feedback was not saved: ${error.message}` }); }
+        return;
+      }
       if (type !== 'chat' || !String(text).trim()) return;
       try {
         const editor = vscode.window.activeTextEditor;
         const selection = editor && !editor.selection.isEmpty ? `\n\nSelected code:\n${editor.document.getText(editor.selection)}` : '';
         const answer = await generate(`${text}${selection}`, settings().codeModel);
-        view.webview.postMessage({ answer });
+        view.webview.postMessage({ answer, prompt: text });
       } catch (error) { view.webview.postMessage({ answer: `Local AI request failed: ${error.message}` }); }
     });
   }
