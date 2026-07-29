@@ -1,7 +1,7 @@
 import urllib.request, os, sys
 
 url = "https://github.com/ggml-org/llama.cpp/releases/download/b10173/llama-b10173-bin-win-cuda-13.3-x64.zip"
-out = r"/home/user\AppData\Local\Temp\llama-cpp-cuda.zip"
+out = r"%USERPROFILE%\AppData\Local\Temp\llama-cpp-cuda.zip"
 print(f"Downloading to {out}...")
 req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
 resp = urllib.request.urlopen(req, timeout=600)
