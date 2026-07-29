@@ -102,15 +102,10 @@ jobs:
             pip install -r reranker/requirements.txt -q
           fi
 
-      - name: Python import sanity check
+      - name: Python syntax sanity check
         run: |
-          for f in reranker/server.py knowledge-base/sync/*.py; do
-            if [ -f "$f" ]; then
-              echo "Import-check: $f"
-              python -c "import ast; ast.parse(open('$f').read())" || exit 1
-            fi
-          done
-          echo "All Python files parse correctly."
+          python -m compileall -q reranker knowledge-base/sync tests
+          echo "All Python files compile correctly."
 
       - name: Run unit tests
         run: |
