@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" width="1280" height="800">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a" />
+      <stop offset="100%" style="stop-color:#1e293b" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1" />
+      <stop offset="100%" style="stop-color:#818cf8" />
+    </linearGradient>
+    <linearGradient id="msgUser" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1" />
+      <stop offset="100%" style="stop-color:#4f46e5" />
+    </linearGradient>
+    <linearGradient id="msgAI" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#334155" />
+      <stop offset="100%" style="stop-color:#1e293b" />
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="800" fill="url(#bgGrad)"/>
+
+  <!-- Top Nav Bar -->
+  <rect x="0" y="0" width="1280" height="56" fill="#1e293b" opacity="0.95"/>
+  <rect x="0" y="55" width="1280" height="1" fill="#334155"/>
+
+  <!-- Logo -->
+  <rect x="20" y="12" width="32" height="32" rx="8" fill="url(#accent)"/>
+  <text x="36" y="33" font-family="'Segoe UI', sans-serif" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">AI</text>
+  <text x="62" y="33" font-family="'Segoe UI', sans-serif" font-size="14" font-weight="600" fill="#e2e8f0">Local AI Stack</text>
+
+  <!-- Status indicators -->
+  <circle cx="320" cy="28" r="5" fill="#22c55e"/>
+  <text x="330" y="33" font-family="'Segoe UI', sans-serif" font-size="12" fill="#94a3b8">Ollama</text>
+  <circle cx="390" cy="28" r="5" fill="#22c55e"/>
+  <text x="400" y="33" font-family="'Segoe UI', sans-serif" font-size="12" fill="#94a3b8">FastGPT</text>
+  <circle cx="470" cy="28" r="5" fill="#22c55e"/>
+  <text x="480" y="33" font-family="'Segoe UI', sans-serif" font-size="12" fill="#94a3b8">Reranker</text>
+
+  <!-- Nav right items -->
+  <rect x="1100" y="12" width="80" height="32" rx="6" fill="url(#accent)"/>
+  <text x="1140" y="33" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="600" fill="#fff" text-anchor="middle">New Chat</text>
+  <circle cx="1220" cy="28" r="14" fill="#334155"/>
+  <text x="1220" y="33" font-family="'Segoe UI', sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">👤</text>
+
+  <!-- Sidebar - Knowledge Base Panel -->
+  <rect x="0" y="56" width="280" height="744" fill="#0f172a" opacity="0.9"/>
+  <rect x="0" y="56" width="280" height="1" fill="#1e293b"/>
+
+  <text x="20" y="85" font-family="'Segoe UI', sans-serif" font-size="13" font-weight="600" fill="#e2e8f0">📂 Knowledge Base</text>
+  <rect x="20" y="95" width="240" height="28" rx="6" fill="#1e293b"/>
+  <text x="30" y="114" font-family="'Segoe UI', sans-serif" font-size="11" fill="#64748b">Search documents...</text>
+
+  <!-- KB Items -->
+  <g filter="url(#shadow)">
+    <rect x="15" y="135" width="250" height="50" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <text x="25" y="155" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="600" fill="#e2e8f0">📄 Attention Is All You Need</text>
+    <text x="25" y="172" font-family="'Segoe UI', sans-serif" font-size="10" fill="#64748b">Added 2 days ago · 15 pages</text>
+    <circle cx="245" cy="148" r="4" fill="#22c55e"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="15" y="193" width="250" height="50" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <text x="25" y="213" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="600" fill="#e2e8f0">📄 LoRA Fine-Tuning Guide</text>
+    <text x="25" y="230" font-family="'Segoe UI', sans-serif" font-size="10" fill="#64748b">Added 5 days ago · 8 pages</text>
+    <circle cx="245" cy="208" r="4" fill="#22c55e"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="15" y="251" width="250" height="50" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <text x="25" y="271" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="600" fill="#e2e8f0">📄 Course Notes - ML</text>
+    <text x="25" y="288" font-family="'Segoe UI', sans-serif" font-size="10" fill="#64748b">Auto-synced · 23 pages</text>
+    <circle cx="245" cy="266" r="4" fill="#6366f1"/>
+  </g>
+
+  <text x="17" y="325" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#6366f1">+ Import Documents</text>
+
+  <!-- Chat Area -->
+  <!-- Chat Header -->
+  <rect x="280" y="56" width="1000" height="1" fill="#1e293b"/>
+
+  <!-- Chat Messages -->
+  <!-- User message -->
+  <g filter="url(#shadow)">
+    <rect x="580" y="80" width="660" ry="12" rx="12" height="60" fill="url(#msgUser)"/>
+    <text x="600" y="105" font-family="'Segoe UI', sans-serif" font-size="13" fill="#e0e7ff">Explain the key innovation of the Transformer</text>
+    <text x="600" y="125" font-family="'Segoe UI', sans-serif" font-size="13" fill="#e0e7ff">architecture from the paper I uploaded.</text>
+  </g>
+
+  <!-- AI message -->
+  <g filter="url(#shadow)">
+    <rect x="300" y="160" width="780" ry="12" rx="12" height="200" fill="url(#msgAI)"/>
+    <text x="320" y="185" font-family="'Segoe UI', sans-serif" font-size="13" font-weight="600" fill="#818cf8">🤖 AI Assistant</text>
+    <text x="320" y="208" font-family="'Segoe UI', sans-serif" font-size="13" fill="#cbd5e1">The key innovation of the Transformer architecture is the</text>
+    <text x="320" y="226" font-family="'Segoe UI', sans-serif" font-size="13" fill="#cbd5e1"><tspan fill="#6366f1">self-attention mechanism</tspan>, which allows the model to weigh</text>
+    <text x="320" y="244" font-family="'Segoe UI', sans-serif" font-size="13" fill="#cbd5e1">the importance of all input tokens simultaneously, rather than</text>
+    <text x="320" y="262" font-family="'Segoe UI', sans-serif" font-size="13" fill="#cbd5e1">processing them sequentially like RNNs or LSTMs.</text>
+    <text x="320" y="290" font-family="'Segoe UI', sans-serif" font-size="12" fill="#64748b">📎 Citation: "Attention Is All You Need" · Section 3.2 · Page 4</text>
+    <text x="320" y="308" font-family="'Segoe UI', sans-serif" font-size="12" fill="#64748b">📎 Citation: "Attention Is All You Need" · Figure 2 · Page 5</text>
+    <rect x="320" y="320" width="80" height="22" rx="4" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <text x="360" y="335" font-family="'Segoe UI', sans-serif" font-size="10" fill="#818cf8" text-anchor="middle">Reranker: 96%</text>
+  </g>
+
+  <!-- User message 2 -->
+  <g filter="url(#shadow)">
+    <rect x="550" y="385" width="690" ry="12" rx="12" height="60" fill="url(#msgUser)"/>
+    <text x="570" y="410" font-family="'Segoe UI', sans-serif" font-size="13" fill="#e0e7ff">How does the reranker improve the retrieval</text>
+    <text x="570" y="430" font-family="'Segoe UI', sans-serif" font-size="13" fill="#e0e7ff">quality compared to basic vector search?</text>
+  </g>
+
+  <!-- AI message 2 -->
+  <g filter="url(#shadow)">
+    <rect x="300" y="465" width="780" ry="12" rx="12" height="160" fill="url(#msgAI)"/>
+    <text x="320" y="490" font-family="'Segoe UI', sans-serif" font-size="13" font-weight="600" fill="#818cf8">🤖 AI Assistant</text>
+    <text x="320" y="513" font-family="'Segoe UI', sans-serif" font-size="13" fill="#cbd5e1">The BGE-Reranker-v2-M3 model enhances retrieval by</text>
+    <text x="320" y="531" font-family="'Segoe UI', sans-serif" font-size="13" fill="#cbd5e1">re-ranking the top-K results from the initial vector search,</text>
+    <text x="320" y="549" font-family="'Segoe UI', sans-serif" font-size="13" fill="#cbd5e1">improving accuracy by up to <tspan fill="#6366f1">+40%</tspan> compared to using</text>
+    <text x="320" y="567" font-family="'Segoe UI', sans-serif" font-size="13" fill="#cbd5e1">cosine similarity alone.</text>
+    <text x="320" y="595" font-family="'Segoe UI', sans-serif" font-size="12" fill="#64748b">📎 Citation: "BGE-Reranker-v2-M3" · Technical Report · Page 2</text>
+  </g>
+
+  <!-- Input area -->
+  <rect x="300" y="655" width="900" height="48" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="320" y="683" font-family="'Segoe UI', sans-serif" font-size="13" fill="#64748b">Ask a question about your documents...</text>
+
+  <!-- Send button -->
+  <rect x="1140" y="660" width="40" height="38" rx="8" fill="url(#accent)"/>
+  <text x="1160" y="684" font-family="'Segoe UI', sans-serif" font-size="16" fill="#fff" text-anchor="middle">→</text>
+
+  <!-- Footer watermark -->
+  <text x="790" y="770" font-family="'Segoe UI', sans-serif" font-size="11" fill="#475569" text-anchor="middle">100% Local · 100% Private · No GPU Required</text>
+
+  <!-- Sidebar bottom status -->
+  <rect x="10" y="740" width="260" height="50" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <circle cx="25" cy="758" r="4" fill="#22c55e"/>
+  <text x="35" y="762" font-family="'Segoe UI', sans-serif" font-size="11" fill="#94a3b8">All services running</text>
+  <text x="35" y="778" font-family="'Segoe UI', sans-serif" font-size="10" fill="#64748b">3 active models · 5.2 GB RAM</text>
+</svg>

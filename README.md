@@ -1,54 +1,52 @@
-# Local AI Stack
-> **Production-grade RAG. 100% local. 100% free. No GPU required.** 
-Build a private AI knowledge base on your laptop with zero cloud costs.
+﻿# Local AI Stack — Your Personal AI Workspace
+> **Build your own Local AI Workspace in 5 minutes.**  
+> Local RAG · Local Knowledge Base · Local Coding Assistant · Local Fine-Tuning  
+> **No cloud. No API costs. No GPU required.**
 
 <p align="center">
-<a href="https://github.com/caizefan34/local-ai-stack"><img src="https://img.shields.io/github/stars/caizefan34/local-ai-stack?style=for-the-badge&logo=github&color=6366f1" alt="Stars"></a> <a href="https://caizefan34.github.io/local-ai-stack/"><img src="https://img.shields.io/badge/GitHub%20Pages-Live-6366f1?style=for-the-badge" alt="Pages"></a> <a href="https://github.com/caizefan34/local-ai-stack/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License"></a></p>
+<a href="https://github.com/caizefan34/local-ai-stack"><img src="https://img.shields.io/github/stars/caizefan34/local-ai-stack?style=for-the-badge&logo=github&color=6366f1" alt="Stars"></a> <a href="https://caizefan34.github.io/local-ai-stack/"><img src="https://img.shields.io/badge/GitHub%20Pages-Live-6366f1?style=for-the-badge" alt="Pages"></a> <a href="https://github.com/caizefan34/local-ai-stack/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License"></a> <a href="https://github.com/caizefan34/local-ai-stack/releases"><img src="https://img.shields.io/github/v/release/caizefan34/local-ai-stack?style=for-the-badge&color=6366f1" alt="Release"></a> <a href="https://github.com/caizefan34/local-ai-stack/commits/main"><img src="https://img.shields.io/github/last-commit/caizefan34/local-ai-stack?style=for-the-badge&color=6366f1" alt="Last Commit"></a> <a href="https://hub.docker.com/r/caizefan34/local-ai-stack"><img src="https://img.shields.io/docker/pulls/caizefan34/local-ai-stack?style=for-the-badge&color=6366f1" alt="Docker"></a></p>
 
 <p align="center">
-  <img src="docs/og-image.svg" alt="Local AI Stack" width="100%">
+  <img src="docs/assets/hero-screenshot.png" alt="Local AI Stack" width="100%">
 </p>
 
 <p align="center">
-<a href="#-quick-start">Quick Start</a> . <a href="#-features">Features</a> . <a href="#-demo">Demo</a> . <a href="#-use-cases">Use Cases</a> . <a href="https://caizefan34.github.io/local-ai-stack/">GitHub Pages</a></p>
+<a href="#-quick-start"><b>Quick Start</b></a> · <a href="#features"><b>Features</b></a> · <a href="#-why-local-ai-stack"><b>Why Local AI</b></a> · <a href="#-use-cases"><b>Use Cases</b></a> · <a href="#-comparison"><b>Comparison</b></a> · <a href="#-architecture"><b>Architecture</b></a> · <a href="#-roadmap"><b>Roadmap</b></a> · <a href="https://caizefan34.github.io/local-ai-stack/"><b>Docs</b></a></p>
 
 ---
 
-## ✨ Why Local AI Stack?
+## 🚀 Quick Start
 
-Most RAG solutions are either:
-- **Cloud-dependent** (OpenAI, Claude) - costs, privacy risks, rate limits
-- **Complex to set up** - Kubernetes, multiple services, days of configuration
-- **GPU-hungry** - requires expensive hardware
-
-This stack solves all three:
-- ✅ **100% offline** - No API keys, no data leaves your machine
-- ✅ **One-command setup** - Docker Compose + PowerShell/Bash
-- ✅ **Runs on 8GB RAM / CPU** - No GPU required (GPU just makes it faster)
-- ✅ **Fine-tune your model** - LoRA training pipeline included
-
-## ⚡ Quick Start
-
-Get your AI knowledge base running in under 5 minutes:
+Get your first local AI chat running in **under 5 minutes**.
 
 ### Windows
-```powershell
+
+\\\powershell
 git clone https://github.com/caizefan34/local-ai-stack.git
-Set-Location local-ai-stack
+cd local-ai-stack
 winget install Ollama.Ollama
 ollama pull qwen3:8b
 ollama pull nomic-embed-text:latest
 docker compose -f docker/docker-compose.yml up -d
 .\scripts\start-all.ps1
-```
+\\\
 
-### Linux / WSL
-```bash
+Then open **http://localhost:3000** (password: \1234\)
+
+### Linux / WSL (one command)
+
+\\\ash
 git clone https://github.com/caizefan34/local-ai-stack.git
-cd local-ai-stack && bash scripts/setup.sh
-```
+cd local-ai-stack
+bash scripts/setup.sh
+\\\
 
-Open **http://localhost:3000** (default password: 1234)
+> ✅ **Prerequisites:** Windows: [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/) · Linux: Docker + docker compose plugin · 8 GB RAM
+
+<p align="left">
+<a href="#-quick-start" style="display:inline-block;padding:10px 28px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;font-size:16px;font-weight:600;text-decoration:none">▶️ Get Started Now</a>
+<a href="https://github.com/caizefan34/local-ai-stack" style="display:inline-block;padding:10px 28px;border-radius:8px;background:#1a1a2e;color:#fff;font-size:16px;font-weight:600;text-decoration:none;margin-left:8px">⭐ Star on GitHub</a>
+</p>
 
 ---
 
@@ -63,66 +61,190 @@ Open **http://localhost:3000** (default password: 1234)
 <td><h3>🌐 Multi-Model</h3><p>Switch between Qwen3, LLaMA, Mistral via config. 4 models pre-configured for different workloads.</p></td></tr>
 </table>
 
+---
+
+## 💡 Why Local AI Stack?
+
+Most RAG solutions leave you compromising on something:
+
+| Pain Point | The Problem | How This Stack Solves It |
+|------------|-------------|--------------------------|
+| **OpenAI costs** | Pay per token, rate limits, unpredictable bills | **100% free** — no API keys, no usage charges |
+| **Privacy concerns** | Your documents shipped to cloud servers | **100% offline** — everything runs on your machine |
+| **Cloud dependency** | Can't work without internet | **Works offline** — no internet needed after setup |
+| **GPU requirements** | Need expensive NVIDIA GPUs | **Runs on CPU** — 8 GB RAM is enough (GPU optional) |
+| **Complex deployments** | Kubernetes, multiple YAML files, days of config | **One command** — \docker compose up\ or \ash setup.sh\ |
+
+This stack gives you a **production-grade RAG system** that's fully local, fully private, and completely free — running on hardware you already own.
+
 ## 🎬 Demo
 
 ### Service Dashboard
 Monitor all services in real time:
 
-```
+\\\
 ⚫ ollama    ✔️ online     FastGPT:  http://localhost:3000
 ⚫ fastgpt   ✔️ online     Reranker: http://localhost:18888
 ⚫ reranker  ✔️ online     Ollama:   http://localhost:11434
 ⚫ docker    ✔️ running
-```
+\\\
 
-Open the live dashboard:
-```powershell
+Open the live desktop dashboard:
+\\\powershell
 start desktop-app/dashboard.html
-```
+\\\
 
 ## 📈 Use Cases
 
 | Scenario | How This Helps |
 |----------|---------------|
-| Research Papers | Import PDFs, auto-extract metadata, search with reranker |
-| Course Notes | Sync folders, chunk documents, query with RAG |
-| GitHub Repos | Clone and index repo docs, search code with context |
-| Team Wiki | Local knowledge base, no cloud dependency |
-| Model Fine-Tuning | Collect conversation logs, train LoRA, deploy custom model |
+| 🎓 **Research Papers** | Import PDFs, auto-extract metadata, search with reranker-enhanced RAG |
+| 📚 **Course Notes** | Sync folders, chunk documents, query your notes with natural language |
+| 👥 **Team Wiki** | Self-hosted knowledge base for your team — no cloud dependency |
+| 💻 **Coding Assistant** | Pre-configured local AI coding assistant (OpenCode) for private code Q&A |
+| 🧠 **Personal Knowledge Base** | Weekly auto-sync from your folders to FastGPT — never lose context |
+| 🤖 **AI Agent Memory** | Use RAG as long-term memory for AI agents, with vector search |
+| 🎯 **Model Fine-Tuning** | Collect Q&A logs, train LoRA adapters, deploy custom models via QLoRA |
 
-## 🧩 Tech Stack
+---
 
-| Layer | Choice | Why |
-|-------|--------|-----|
-| LLM | Qwen3-8B | Best open-source Chinese/English model, MIT license |
-| Embedding | nomic-embed-text | Lightweight, local, no GPU needed |
-| Reranker | BGE-Reranker-v2-M3 | +40% retrieval accuracy |
-| RAG Platform | FastGPT v4.8.9 | Visual workflow, enterprise-grade |
-| Vector DB | pgvector (PostgreSQL) | Rock-solid, HNSW indexing |
-| Training | PEFT + TRL (HuggingFace) | 4-bit QLoRA, fits 8GB VRAM |
-| AI Coding | OpenCode | Pre-configured local AI assistant |
+## 📊 Comparison
 
-## 📁 Project Structure
+| Feature | **Local AI Stack** | Open WebUI | AnythingLLM | Dify | RagFlow |
+|---------|:---:|:---:|:---:|:---:|:---:|
+| **100% Local** | ✅ | ✅ | ✅ | ❌ Cloud | ❌ Cloud |
+| **RAG** | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Fine-Tuning** | ✅ LoRA/QLoRA | ❌ | ❌ | ❌ | ❌ |
+| **Knowledge Base** | ✅ Auto-sync | ❌ | ✅ | ✅ | ✅ |
+| **CPU Only** | ✅ 8 GB RAM | ✅ | ✅ | ❌ Needs GPU | ❌ Needs GPU |
+| **One-Command Setup** | ✅ \setup.sh\ | ⚠️ Manual | ⚠️ Manual | ❌ Complex | ❌ Complex |
+| **Built-in Reranker** | ✅ BGE-Reranker-v2-M3 | ❌ | ❌ | ❌ | ❌ |
+| **Desktop Dashboard** | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Offline** | ✅ Full | ✅ | ✅ | ❌ | ❌ |
 
-```
+> Comparisons are based on publicly available information as of July 2026. Features may change.
+
+---
+
+## 🧩 Architecture
+
+\\\mermaid
+graph TB
+    subgraph User["👤 User"]
+        CLI[CLI / Dashboard]
+        Web[FastGPT UI]
+    end
+
+    subgraph Core["🧠 AI Core"]
+        O[Ollama<br/>Qwen3 / LLaMA / Mistral]
+        E[nomic-embed-text<br/>Embeddings]
+    end
+
+    subgraph RAG["📄 RAG Pipeline"]
+        FG[FastGPT<br/>Visual Workflow Engine]
+        R[BGE-Reranker-v2-M3<br/>Reranker +40% accuracy]
+        PG[(PostgreSQL + pgvector<br/>Vector Database)]
+    end
+
+    subgraph Tools["🔧 Tooling"]
+        KB[Knowledge Base<br/>Auto-Sync Pipeline]
+        LF[LoRA Fine-Tuning<br/>PEFT + TRL + QLoRA]
+        DD[Desktop Dashboard<br/>Service Monitor]
+    end
+
+    CLI --> O
+    Web --> FG
+    FG --> O
+    FG --> R
+    FG --> PG
+    KB --> PG
+    O --> E
+    LF --> O
+    DD --> O
+    DD --> FG
+\\\
+
+## 🗺️ Project Structure
+
+\\\	ext
 local-ai-stack/
-├── config/  FastGPT & OpenCode configs
-├── docker/  Docker Compose (with resource limits)
-├── docs/  Documentation & GitHub Pages
-├── knowledge-base/  Import tools + auto-sync pipeline
-├── lora-finetune/  LoRA training (collect, train, export)
-├── models/  Ollama Modelfiles
-├── reranker/  BGE Reranker FastAPI service
-├── scripts/  Setup, start, automation scripts
-├── desktop-app/  Dashboard (HTML) + API server
-├── tests/  E2E tests & model evaluation
-```
+├── config/          ← FastGPT & OpenCode configs
+├── docker/          ← Docker Compose (with resource limits)
+├── docs/            ← Documentation & GitHub Pages
+├── knowledge-base/  ← Import tools + auto-sync pipeline
+├── lora-finetune/   ← LoRA training pipeline (collect, train, export)
+├── models/          ← Ollama Modelfiles
+├── reranker/        ← BGE Reranker FastAPI service
+├── scripts/         ← Setup, start, automation scripts
+├── desktop-app/     ← Dashboard (HTML) + API server
+├── tests/           ← E2E tests & model evaluation
+└── .github/         ← CI/CD workflows
+\\\
+
+---
+
+## 🛣️ Roadmap
+
+- [x] Local RAG with FastGPT
+- [x] Ollama integration (Qwen3, LLaMA, Mistral)
+- [x] LoRA / QLoRA fine-tuning pipeline
+- [x] BGE Reranker for improved accuracy
+- [x] Knowledge base auto-sync pipeline
+- [x] Desktop service dashboard
+- [x] GitHub Pages documentation site
+- [ ] MCP (Model Context Protocol) support
+- [ ] Agent workflows and multi-step reasoning
+- [ ] Multi-user support and access control
+- [ ] Mobile-friendly dashboard
+- [ ] One-click model download manager
+
+---
+
+## ❓ FAQ
+
+### Do I need a GPU?
+**No.** The stack runs entirely on CPU with 8 GB RAM. A GPU will speed up inference and training, but it's optional.
+
+### Can I run offline?
+**Yes.** After the initial model download, everything runs locally with no internet connection required.
+
+### Which models are supported?
+Any model supported by Ollama works. Pre-configured: Qwen3-8B (default), LLaMA 3, Mistral, and nomic-embed-text for embeddings.
+
+### Can I use my own documents?
+**Yes.** Import PDFs, text files, Markdown, or sync entire folders. The auto-sync pipeline indexes them automatically.
+
+### How much RAM is required?
+**8 GB minimum** for Qwen3-8B with RAG. 16 GB recommended for running multiple services simultaneously.
+
+### Do you store my data?
+**Never.** All data stays on your local machine. There are no telemetry, analytics, or cloud sync features.
+
+---
+
+## 🤝 Community
+
+- 💬 [Join the Discussion](https://github.com/caizefan34/local-ai-stack/discussions) — ask questions, share setups
+- 🐛 [Report an Issue](https://github.com/caizefan34/local-ai-stack/issues) — bug reports and feature requests
+- 📖 [Read the Docs](https://caizefan34.github.io/local-ai-stack/) — detailed setup guide and reference
+
+## 👥 Contributing
+
+Contributions are welcome! Check out our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+---
+
+## 📜 License
+
+MIT License © 2026 [caizefan34](https://github.com/caizefan34). Free to use, modify, and distribute.
+
+<p align="center">
+Made with ❤️ for the open-source community.
+</p>
 
 ---
 
 ## 🌟 Star the Project
-
-If you find this useful, consider giving it a star on GitHub:
 
 <p align="center">
 <a href="https://github.com/caizefan34/local-ai-stack" class="star-btn" style="display:inline-block;padding:14px 40px;border-radius:12px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;font-size:18px;font-weight:700;text-decoration:none;box-shadow:0 4px 20px rgba(99,102,241,.25)">⭐ Star on GitHub</a>
@@ -130,6 +252,5 @@ If you find this useful, consider giving it a star on GitHub:
 
 <p align="center">Questions? <a href="https://github.com/caizefan34/local-ai-stack/discussions">Join the discussion</a> . <a href="https://github.com/caizefan34/local-ai-stack/issues">Report an issue</a></p>
 
-## License
-
-MIT License © 2026 [caizefan34](https://github.com/caizefan34). Free to use, modify, and distribute.
+---
+> **Local AI Stack** — Production-grade Local AI Workspace. 100% private. 100% free. No GPU required.

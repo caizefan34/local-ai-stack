@@ -31,7 +31,7 @@
   <text x="640" y="220" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-weight="800" font-size="64" fill="url(#accent)">Local AI Stack</text>
   
   <!-- Subtitle -->
-  <text x="640" y="285" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-weight="500" font-size="26" fill="#94a3b8">Ollama + FastGPT + RAG &mdash; Enterprise-grade AI, 100% local</text>
+  <text x="640" y="285" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-weight="500" font-size="26" fill="#94a3b8">Ollama + FastGPT + RAG — Enterprise-grade AI, 100% local</text>
   
   <!-- Feature pills -->
   <rect x="340" y="330" width="160" height="40" rx="20" fill="#1e293b" stroke="#334155" stroke-width="1"/>
@@ -47,8 +47,8 @@
   <text x="980" y="356" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="15" fill="#a5b4fc" font-weight="600">RAG + LoRA</text>
   
   <!-- Bottom features -->
-  <text x="640" y="430" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="18" fill="#64748b">RAG + Reranker &bull; Visual Knowledge Base &bull; LoRA Fine-Tuning</text>
-  <text x="640" y="460" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="18" fill="#64748b">KB Auto-Sync &bull; Desktop Dashboard &bull; Multi-Model</text>
+  <text x="640" y="430" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="18" fill="#64748b">RAG + Reranker • Visual Knowledge Base • LoRA Fine-Tuning</text>
+  <text x="640" y="460" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="18" fill="#64748b">KB Auto-Sync • Desktop Dashboard • Multi-Model</text>
   
   <!-- Status bar -->
   <rect x="390" y="505" width="500" height="44" rx="22" fill="#131c31" stroke="#334155" stroke-width="1"/>

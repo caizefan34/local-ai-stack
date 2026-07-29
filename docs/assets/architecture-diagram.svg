@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="userGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#818cf8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="ollamaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a855f7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c084fc;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="fastgptGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#60a5fa;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="rerankerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#14b8a6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2dd4bf;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="pgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fb923c;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="kbGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4ade80;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="dashGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#64748b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#94a3b8;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1920" height="1080" fill="url(#bgGrad)"/>
+
+  <!-- Title -->
+  <text x="960" y="65" font-family="'Segoe UI', system-ui, sans-serif" font-size="32" font-weight="700" fill="#f1f5f9" text-anchor="middle" letter-spacing="2">LOCAL AI STACK — Architecture</text>
+  <text x="960" y="95" font-family="'Segoe UI', system-ui, sans-serif" font-size="16" fill="#94a3b8" text-anchor="middle">Production-Grade Local AI Workspace · 100% Private · 100% Free · No GPU Required</text>
+
+  <!-- Row 1: User -->
+  <g filter="url(#shadow)">
+    <rect x="710" y="125" width="500" height="100" rx="16" fill="url(#userGrad)" opacity="0.95"/>
+    <text x="960" y="170" font-family="'Segoe UI', system-ui, sans-serif" font-size="22" font-weight="700" fill="#fff" text-anchor="middle">👤 User</text>
+    <text x="960" y="198" font-family="'Segoe UI', system-ui, sans-serif" font-size="15" fill="#e0e7ff" text-anchor="middle">Browser → FastGPT UI · Desktop Dashboard</text>
+  </g>
+
+  <!-- Arrow -->
+  <line x1="960" y1="225" x2="960" y2="260" stroke="#64748b" stroke-width="3" stroke-dasharray="6,4"/>
+  <polygon points="960,268 954,256 966,256" fill="#64748b"/>
+
+  <!-- Row 2 -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="270" width="500" height="200" rx="16" fill="url(#ollamaGrad)" opacity="0.95"/>
+    <text x="330" y="320" font-family="'Segoe UI', system-ui, sans-serif" font-size="22" font-weight="700" fill="#fff" text-anchor="middle">🦙 Ollama</text>
+    <text x="330" y="345" font-family="'Segoe UI', system-ui, sans-serif" font-size="15" fill="#f3e8ff" text-anchor="middle">LLM Inference Engine</text>
+    <text x="330" y="370" font-family="'Segoe UI', system-ui, sans-serif" font-size="14" fill="#e9d5ff" text-anchor="middle">Qwen3 · LLaMA · Mistral</text>
+    <text x="330" y="395" font-family="'Segoe UI', system-ui, sans-serif" font-size="14" fill="#e9d5ff" text-anchor="middle">nomic-embed-text (Embeddings)</text>
+    <text x="330" y="430" font-family="'Segoe UI', system-ui, sans-serif" font-size="13" fill="#d8b4fe" text-anchor="middle">API: http://localhost:11434</text>
+
+    <rect x="650" y="270" width="620" height="200" rx="16" fill="url(#fastgptGrad)" opacity="0.95"/>
+    <text x="960" y="320" font-family="'Segoe UI', system-ui, sans-serif" font-size="22" font-weight="700" fill="#fff" text-anchor="middle">⚡ FastGPT</text>
+    <text x="960" y="345" font-family="'Segoe UI', system-ui, sans-serif" font-size="15" fill="#dbeafe" text-anchor="middle">RAG Platform · Visual Workflow Engine</text>
+    <text x="960" y="370" font-family="'Segoe UI', system-ui, sans-serif" font-size="14" fill="#bfdbfe" text-anchor="middle">Multi-Step Reasoning · Document QA</text>
+    <text x="960" y="395" font-family="'Segoe UI', system-ui, sans-serif" font-size="14" fill="#bfdbfe" text-anchor="middle">Knowledge Base Management</text>
+    <text x="960" y="430" font-family="'Segoe UI', system-ui, sans-serif" font-size="13" fill="#93c5fd" text-anchor="middle">UI: http://localhost:3000</text>
+
+    <rect x="1340" y="270" width="500" height="200" rx="16" fill="url(#rerankerGrad)" opacity="0.95"/>
+    <text x="1590" y="320" font-family="'Segoe UI', system-ui, sans-serif" font-size="22" font-weight="700" fill="#fff" text-anchor="middle">🔍 BGE Reranker</text>
+    <text x="1590" y="345" font-family="'Segoe UI', system-ui, sans-serif" font-size="15" fill="#ccfbf1" text-anchor="middle">BGE-Reranker-v2-M3</text>
+    <text x="1590" y="370" font-family="'Segoe UI', system-ui, sans-serif" font-size="14" fill="#99f6e4" text-anchor="middle">+40% Retrieval Accuracy</text>
+    <text x="1590" y="395" font-family="'Segoe UI', system-ui, sans-serif" font-size="14" fill="#99f6e4" text-anchor="middle">FastAPI Service</text>
+    <text x="1590" y="430" font-family="'Segoe UI', system-ui, sans-serif" font-size="13" fill="#5eead4" text-anchor="middle">API: http://localhost:18888</text>
+  </g>
+
+  <!-- Arrows between services -->
+  <line x1="650" y1="370" x2="585" y2="370" stroke="#64748b" stroke-width="2" stroke-dasharray="5,3"/>
+  <polygon points="578,370 590,364 590,376" fill="#64748b"/>
+  <line x1="1270" y1="370" x2="1335" y2="370" stroke="#64748b" stroke-width="2" stroke-dasharray="5,3"/>
+  <polygon points="1342,370 1330,364 1330,376" fill="#64748b"/>
+
+  <!-- Arrow to PostgreSQL -->
+  <line x1="960" y1="470" x2="960" y2="505" stroke="#64748b" stroke-width="3" stroke-dasharray="6,4"/>
+  <polygon points="960,513 954,501 966,501" fill="#64748b"/>
+
+  <!-- PostgreSQL -->
+  <g filter="url(#shadow)">
+    <rect x="480" y="520" width="960" height="150" rx="16" fill="url(#pgGrad)" opacity="0.95"/>
+    <text x="960" y="570" font-family="'Segoe UI', system-ui, sans-serif" font-size="22" font-weight="700" fill="#fff" text-anchor="middle">🗄️ PostgreSQL + pgvector</text>
+    <text x="960" y="595" font-family="'Segoe UI', system-ui, sans-serif" font-size="15" fill="#ffedd5" text-anchor="middle">Vector Database · HNSW Indexing</text>
+    <text x="960" y="620" font-family="'Segoe UI', system-ui, sans-serif" font-size="14" fill="#fed7aa" text-anchor="middle">Stores: Document Embeddings · Metadata · Workflow State</text>
+    <text x="960" y="645" font-family="'Segoe UI', system-ui, sans-serif" font-size="13" fill="#fdba74" text-anchor="middle">Port: 5432</text>
+  </g>
+
+  <!-- Arrow: FastGPT → PostgreSQL -->
+  <line x1="870" y1="470" x2="870" y2="515" stroke="#64748b" stroke-width="2" stroke-dasharray="5,3"/>
+  <polygon points="870,522 864,510 876,510" fill="#64748b"/>
+
+  <!-- Row 4 arrows -->
+  <line x1="720" y1="670" x2="720" y2="700" stroke="#64748b" stroke-width="3" stroke-dasharray="6,4"/>
+  <polygon points="720,708 714,696 726,696" fill="#64748b"/>
+  <line x1="1200" y1="670" x2="1200" y2="700" stroke="#64748b" stroke-width="3" stroke-dasharray="6,4"/>
+  <polygon points="1200,708 1194,696 1206,696" fill="#64748b"/>
+
+  <!-- KB and Dashboard -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="715" width="600" height="200" rx="16" fill="url(#kbGrad)" opacity="0.95"/>
+    <text x="380" y="765" font-family="'Segoe UI', system-ui, sans-serif" font-size="22" font-weight="700" fill="#fff" text-anchor="middle">📂 Knowledge Base</text>
+    <text x="380" y="790" font-family="'Segoe UI', system-ui, sans-serif" font-size="15" fill="#dcfce7" text-anchor="middle">Auto-Sync Pipeline</text>
+    <text x="380" y="815" font-family="'Segoe UI', system-ui, sans-serif" font-size="14" fill="#bbf7d0" text-anchor="middle">Import: PDFs · Notes · GitHub Repos</text>
+    <text x="380" y="840" font-family="'Segoe UI', system-ui, sans-serif" font-size="14" fill="#bbf7d0" text-anchor="middle">Weekly Folder Sync · Chunking</text>
+
+    <!-- Arrow: KB → PostgreSQL -->
+    <line x1="580" y1="815" x2="620" y2="610" stroke="#64748b" stroke-width="2" stroke-dasharray="5,3"/>
+    <polygon points="625,603 615,613 612,605" fill="#64748b"/>
+    <line x1="620" y1="610" x2="680" y2="610" stroke="#64748b" stroke-width="2" stroke-dasharray="5,3"/>
+    <polygon points="688,610 676,604 676,616" fill="#64748b"/>
+
+    <rect x="1240" y="715" width="600" height="200" rx="16" fill="url(#dashGrad)" opacity="0.95"/>
+    <text x="1540" y="765" font-family="'Segoe UI', system-ui, sans-serif" font-size="22" font-weight="700" fill="#fff" text-anchor="middle">🖥️ Desktop Dashboard</text>
+    <text x="1540" y="790" font-family="'Segoe UI', system-ui, sans-serif" font-size="15" fill="#f1f5f9" text-anchor="middle">Service Monitor &amp; Control</text>
+    <text x="1540" y="815" font-family="'Segoe UI', system-ui, sans-serif" font-size="14" fill="#e2e8f0" text-anchor="middle">Real-time Status · One-Click Start/Stop</text>
+    <text x="1540" y="840" font-family="'Segoe UI', system-ui, sans-serif" font-size="14" fill="#e2e8f0" text-anchor="middle">KB Sync Trigger · Health Checks</text>
+
+    <!-- Dashboard monitoring arrows -->
+    <line x1="1240" y1="815" x2="1200" y2="815" stroke="#64748b" stroke-width="2" stroke-dasharray="5,3"/>
+    <polygon points="1192,815 1204,809 1204,821" fill="#64748b"/>
+  </g>
+
+  <!-- Dashboard monitoring vertical line -->
+  <line x1="1540" y1="715" x2="1540" y2="520" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="1550" y="620" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" fill="#64748b" transform="rotate(-90,1550,620)">Health Check API Calls</text>
+
+  <!-- Bottom: LoRA -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="940" width="1760" height="80" rx="16" fill="#1e293b" stroke="#334155" stroke-width="2" opacity="0.95"/>
+    <text x="960" y="980" font-family="'Segoe UI', system-ui, sans-serif" font-size="18" font-weight="700" fill="#e2e8f0" text-anchor="middle">🎯 LoRA Fine-Tuning Pipeline</text>
+    <text x="960" y="1003" font-family="'Segoe UI', system-ui, sans-serif" font-size="14" fill="#94a3b8" text-anchor="middle">Collect Q&amp;A Logs → PEFT + TRL → 4-bit QLoRA → Export Custom Model → Deploy to Ollama</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="960" y="1060" font-family="'Segoe UI', system-ui, sans-serif" font-size="13" fill="#475569" text-anchor="middle">All components run 100% locally · No cloud dependency · No API costs · MIT License</text>
+</svg>
