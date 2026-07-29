@@ -74,3 +74,25 @@ to improve knowledge base retrieval quality.
 - Increase context window to 32K
 - Add a second reranker for cross-validation
 - Train longer LoRA epochs (5-10)
+
+
+## Knowledge Base Sync Optimization
+
+### Chunk Size for Auto-Synced Content
+- Windows synced folders: Use 800-1000 char chunks for general documents
+- GitHub repos: Use 1500-2000 char chunks (code benefits from larger context)
+- Research papers: Use 500-800 char chunks (dense content needs precision)
+
+### Sync Frequency
+- Weekly (default): Best balance for most users
+- Daily: For active projects with frequent updates
+- Manual: Use the Desktop Dashboard trigger button
+
+### Deduplication
+Run the dedup tool after large syncs:
+
+```bash
+cd knowledge-base/sync
+python3 dedup.py --check     # Preview duplicates
+python3 dedup.py --clean     # Interactive cleanup
+```

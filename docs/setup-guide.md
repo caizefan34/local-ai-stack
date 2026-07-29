@@ -14,7 +14,7 @@
 
 ### 1. Install Dependencies
 
-`powershell
+```powershell
 # Install Docker Desktop
 # https://www.docker.com/products/docker-desktop/
 
@@ -27,7 +27,7 @@ winget install Ollama.Ollama
 
 ### 2. Clone and Pull Models
 
-`powershell
+```powershell
 git clone https://github.com/caizefan34/local-ai-stack.git
 cd local-ai-stack
 
@@ -39,14 +39,14 @@ ollama pull nomic-embed-text:latest
 
 Copy .env.example to .env and adjust settings:
 
-`powershell
+```powershell
 cp .env.example .env
 # Edit .env to set custom passwords and keys
 `
 
 ### 4. Start FastGPT
 
-`powershell
+```powershell
 docker compose -f docker/docker-compose.yml up -d
 `
 
@@ -54,7 +54,7 @@ Visit **http://localhost:3000** — default password: 1234
 
 ### 5. Start the Reranker Service
 
-`powershell
+```powershell
 .\scripts\start-all.ps1
 `
 
@@ -129,3 +129,33 @@ ollama create my-finetuned-model -f Modelfile
 | Reranker fails to load model | Ensure you have at least 8 GB free RAM for the BGE model |
 | Ollama out of memory | Use smaller models (qwen3:0.6b) or close other applications |
 | MongoDB replica set error | Run docker compose down -v && docker compose up -d to reset data |
+
+
+## Knowledge Base Auto-Sync
+
+Set up automated syncing of your local files into FastGPT:
+
+```bash
+# Sync Windows folders to WSL knowledge base
+cd knowledge-base/sync
+export KB_WINDOWS_SOURCE=/mnt/d/your-knowledge-folder
+python3 sync-from-windows.py
+```
+
+### Windows Scheduled Task (Admin):
+
+```powershell
+.\scripts\setup_kb_sync_task.ps1
+```
+
+## Desktop Dashboard
+
+Monitor and control your stack via the desktop dashboard:
+
+```powershell
+# Start the API server
+powershell -File desktop-app/dashboard-server.ps1
+
+# Open the dashboard
+start desktop-app/dashboard.html
+```
