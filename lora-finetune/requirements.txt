@@ -1,7 +1,20 @@
-﻿bitsandbytes>=0.43
-peft>=0.12
-accelerate>=0.33
-trl>=0.10
-datasets>=2.20
-transformers>=4.45
-torch>=2.4
+# Core ML
+torch>=2.4.0
+transformers>=4.45.0
+accelerate>=0.33.0
+
+# LoRA / PEFT
+peft>=0.12.0
+trl>=0.10.0
+bitsandbytes>=0.43.0
+
+# Data
+datasets>=2.20.0
+sentencepiece>=0.2.0
+protobuf>=4.25.0
+
+# Utilities
+tqdm>=4.66.0
+wandb>=0.17.0
+tensorboard>=2.17.0
+scipy>=1.13.0

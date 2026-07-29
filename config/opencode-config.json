@@ -1,43 +1,45 @@
 {
-    "$schema": "https://opencode.ai/config.json",
-    "provider": {
-        "ollama": {
-            "npm": "@ai-sdk/openai-compatible",
-            "name": "Ollama",
-            "options": {
-                "baseURL": "http://localhost:11434/v1"
-            },
-            "models": {
-                "qwen3-8b-stable": {
-                    "name": "Qwen3 8B Local Stable",
-                    "limit": {
-                        "context": 16384,
-                        "output": 4096
-                    },
-                    "options": {
-                        "reasoningEffort": "none"
-                    }
-                },
-                "qwen2.5-coder:14b": {
-                    "name": "Qwen2.5 Coder 14B Slow Fallback",
-                    "limit": {
-                        "context": 16384,
-                        "output": 4096
-                    }
-                },
-                "qwen3-1.7b-stable": {
-                    "name": "Qwen3 1.7B Fast",
-                    "limit": {
-                        "output": 1024,
-                        "context": 4096
-                    },
-                    "options": {
-                        "reasoningEffort": "none"
-                    }
-                }
-            }
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama",
+      "options": {
+        "baseURL": "http://localhost:11434/v1"
+      },
+      "models": {
+        "qwen3-8b-stable": {
+          "name": "Qwen3 8B Local Stable",
+          "limit": {
+            "context": 16384,
+            "output": 4096
+          },
+          "options": {
+            "reasoningEffort": "none",
+            "top_p": 0.9
+          },
+          "system": "You are a senior software engineer. Write clean, well-documented code. Prefer simple solutions over complex ones."
+        },
+        "qwen2.5-coder:14b": {
+          "name": "Qwen2.5 Coder 14B Slow Fallback",
+          "limit": {
+            "context": 16384,
+            "output": 4096
+          }
+        },
+        "qwen3-1.7b-stable": {
+          "name": "Qwen3 1.7B Fast",
+          "limit": {
+            "output": 1024,
+            "context": 8192
+          },
+          "options": {
+            "reasoningEffort": "none"
+          }
         }
-    },
-    "model": "ollama/qwen3-8b-stable",
-    "small_model": "ollama/qwen3-8b-stable"
+      }
+    }
+  },
+  "model": "ollama/qwen3-8b-stable",
+  "small_model": "ollama/qwen3-8b-stable"
 }

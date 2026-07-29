@@ -1,121 +1,147 @@
 {
-    "feConfigs": {
-        "lafEnv": "https://laf.dev"
+  "feConfigs": {
+    "lafEnv": "https://laf.dev"
+  },
+  "systemEnv": {
+    "oneapiUrl": "http://host.docker.internal:11434/v1",
+    "chatApiKey": "",
+    "vectorMaxProcess": 4,
+    "qaMaxProcess": 4,
+    "pgHNSWEfSearch": 200
+  },
+  "llmModels": [
+    {
+      "avatar": "/imgs/model/ollama.svg",
+      "maxContext": 8192,
+      "maxResponse": 2048,
+      "charsPointsPrice": 0,
+      "usedInQueryExtension": true,
+      "functionCall": false,
+      "name": "Qwen3 0.6B Fast",
+      "defaultConfig": {
+        "reasoning_effort": "none",
+        "temperature": 0.1
+      },
+      "quoteMaxToken": 4000,
+      "customCQPrompt": "",
+      "usedInClassify": true,
+      "maxTemperature": 1.5,
+      "defaultSystemChatPrompt": "You are a helpful AI assistant. Answer concisely and accurately using the provided knowledge base context. If the information is insufficient, clearly state that instead of making up answers.",
+      "usedInExtractFields": true,
+      "vision": false,
+      "datasetProcess": false,
+      "usedInToolCall": false,
+      "customExtractPrompt": "",
+      "toolChoice": false,
+      "censor": false,
+      "model": "qwen3:0.6b"
     },
-    "systemEnv": {
-        "oneapiUrl": "http://host.docker.internal:11434/v1",
-        "chatApiKey": "",
-        "vectorMaxProcess": 4,
-        "qaMaxProcess": 4,
-        "pgHNSWEfSearch": 200
+    {
+      "avatar": "/imgs/model/ollama.svg",
+      "maxContext": 32768,
+      "maxResponse": 8192,
+      "charsPointsPrice": 0,
+      "usedInQueryExtension": false,
+      "functionCall": false,
+      "name": "Qwen3 8B Main",
+      "defaultConfig": {
+        "reasoning_effort": "none",
+        "temperature": 0.3,
+        "top_p": 0.9
+      },
+      "quoteMaxToken": 8000,
+      "customCQPrompt": "",
+      "usedInClassify": false,
+      "maxTemperature": 1.5,
+      "defaultSystemChatPrompt": "You are a knowledge-base Q&A assistant. Always verify your answers against the provided search results. If the search results lack sufficient information, clearly state the limitation rather than fabricating details. Respond in the same language as the user's question. Keep responses concise, accurate, and well-structured.",
+      "usedInExtractFields": true,
+      "vision": false,
+      "datasetProcess": true,
+      "usedInToolCall": true,
+      "customExtractPrompt": "",
+      "toolChoice": false,
+      "censor": false,
+      "model": "qwen3:8b"
     },
-    "llmModels": [
-        {
-            "avatar": "/imgs/model/ollama.svg",
-            "maxContext": 8192,
-            "maxResponse": 1024,
-            "charsPointsPrice": 0,
-            "usedInQueryExtension": true,
-            "functionCall": false,
-            "name": "Qwen3 0.6B Fast (Simple Tasks)",
-            "defaultConfig": {
-                "reasoning_effort": "none",
-                "temperature": 0.1
-            },
-            "quoteMaxToken": 4000,
-            "customCQPrompt": "",
-            "usedInClassify": true,
-            "maxTemperature": 1,
-            "defaultSystemChatPrompt": "请简洁回答。",
-            "usedInExtractFields": true,
-            "vision": false,
-            "datasetProcess": false,
-            "usedInToolCall": false,
-            "customExtractPrompt": "",
-            "toolChoice": false,
-            "censor": false,
-            "model": "qwen3:0.6b"
-        },
-        {
-            "avatar": "/imgs/model/ollama.svg",
-            "maxContext": 16384,
-            "maxResponse": 4096,
-            "charsPointsPrice": 0,
-            "usedInQueryExtension": false,
-            "functionCall": false,
-            "name": "Qwen3 8B Local Stable",
-            "defaultConfig": {
-                "reasoning_effort": "none",
-                "temperature": 0.3
-            },
-            "quoteMaxToken": 8000,
-            "customCQPrompt": "",
-            "usedInClassify": false,
-            "maxTemperature": 1,
-            "defaultSystemChatPrompt": "你是一个基于知识库的问答助手。回答前先核对检索资料；资料不足时明确说明，不得编造。回答简洁、准确、有条理。",
-            "usedInExtractFields": true,
-            "vision": false,
-            "datasetProcess": true,
-            "usedInToolCall": true,
-            "customExtractPrompt": "",
-            "toolChoice": false,
-            "censor": false,
-            "model": "qwen3:8b"
-        },
-        {
-            "avatar": "/imgs/model/ollama.svg",
-            "maxContext": 8192,
-            "maxResponse": 1536,
-            "charsPointsPrice": 0,
-            "usedInQueryExtension": false,
-            "functionCall": false,
-            "name": "Qwen2.5 14B Slow Fallback",
-            "defaultConfig": {
-                "temperature": 0.1
-            },
-            "quoteMaxToken": 5000,
-            "customCQPrompt": "",
-            "usedInClassify": false,
-            "maxTemperature": 1,
-            "defaultSystemChatPrompt": "",
-            "usedInExtractFields": false,
-            "vision": false,
-            "datasetProcess": false,
-            "usedInToolCall": false,
-            "customExtractPrompt": "",
-            "toolChoice": false,
-            "censor": false,
-            "model": "qwen2.5:14b"
-        }
-    ],
-    "vectorModels": [
-        {
-            "model": "nomic-embed-text:latest",
-            "name": "Nomic Embed Text",
-            "avatar": "/imgs/model/ollama.svg",
-            "charsPointsPrice": 0,
-            "defaultToken": 512,
-            "maxToken": 2048,
-            "weight": 100,
-            "defaultConfig": {},
-            "dbConfig": {},
-            "queryConfig": {}
-        }
-    ],
-    "reRankModels": [
-        {
-            "requestUrl": "http://host.docker.internal:18888/rerank_fastgpt",
-            "name": "BGE Reranker v2 M3",
-            "model": "bge-reranker-v2-m3",
-            "requestAuth": "",
-            "charsPointsPrice": 0
-        }
-    ],
-    "audioSpeechModels": [],
-    "whisperModel": {},
-    "provider": {
-        "ollama": {
-            "baseUrl": "http://host.docker.internal:11434/v1"
-        }
+    {
+      "avatar": "/imgs/model/ollama.svg",
+      "maxContext": 16384,
+      "maxResponse": 4096,
+      "charsPointsPrice": 0,
+      "usedInQueryExtension": false,
+      "functionCall": false,
+      "name": "Qwen3 1.7B Light",
+      "defaultConfig": {
+        "temperature": 0.2
+      },
+      "quoteMaxToken": 4000,
+      "customCQPrompt": "",
+      "usedInClassify": true,
+      "maxTemperature": 1.5,
+      "defaultSystemChatPrompt": "You are a lightweight AI assistant. Provide quick, concise answers.",
+      "usedInExtractFields": false,
+      "vision": false,
+      "datasetProcess": false,
+      "usedInToolCall": false,
+      "customExtractPrompt": "",
+      "toolChoice": false,
+      "censor": false,
+      "model": "qwen3:1.7b"
+    },
+    {
+      "avatar": "/imgs/model/ollama.svg",
+      "maxContext": 16384,
+      "maxResponse": 4096,
+      "charsPointsPrice": 0,
+      "usedInQueryExtension": false,
+      "functionCall": false,
+      "name": "Qwen2.5 14B Fallback",
+      "defaultConfig": {
+        "temperature": 0.1
+      },
+      "quoteMaxToken": 5000,
+      "customCQPrompt": "",
+      "usedInClassify": false,
+      "maxTemperature": 1,
+      "defaultSystemChatPrompt": "",
+      "usedInExtractFields": false,
+      "vision": false,
+      "datasetProcess": false,
+      "usedInToolCall": false,
+      "customExtractPrompt": "",
+      "toolChoice": false,
+      "censor": false,
+      "model": "qwen2.5:14b"
     }
+  ],
+  "vectorModels": [
+    {
+      "model": "nomic-embed-text:latest",
+      "name": "Nomic Embed Text",
+      "avatar": "/imgs/model/ollama.svg",
+      "charsPointsPrice": 0,
+      "defaultToken": 512,
+      "maxToken": 2048,
+      "weight": 100,
+      "defaultConfig": {},
+      "dbConfig": {},
+      "queryConfig": {}
+    }
+  ],
+  "reRankModels": [
+    {
+      "requestUrl": "http://host.docker.internal:18888/rerank_fastgpt",
+      "name": "BGE Reranker v2 M3",
+      "model": "bge-reranker-v2-m3",
+      "requestAuth": "",
+      "charsPointsPrice": 0
+    }
+  ],
+  "audioSpeechModels": [],
+  "whisperModel": {},
+  "provider": {
+    "ollama": {
+      "baseUrl": "http://host.docker.internal:11434/v1"
+    }
+  }
 }

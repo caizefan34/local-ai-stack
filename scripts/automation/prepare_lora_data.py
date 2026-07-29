@@ -1,49 +1,92 @@
-import sys, json, pymongo, os, random
-from bson.objectid import ObjectId
-sys.stdout.reconfigure(encoding="utf-8")
+import sys, json, os, random, argparse
 
-client = pymongo.MongoClient("mongodb://localhost:27017/fastgpt?directConnection=true", serverSelectionTimeoutMS=5000)
-db = client["fastgpt"]
-kb_id = ObjectId("6a675d6c59fb544cd040db65")
+def extract_text(content):
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        texts = []
+        for item in content:
+            if isinstance(item, dict):
+                texts.append(item.get('text', item.get('content', '')))
+        return '\n'.join(texts)
+    return str(content)
 
-# Extract Q&A pairs from knowledge base
+parser = argparse.ArgumentParser(description='Prepare LoRA training data from Codex/CC Switch sessions')
+parser.add_argument('--source', choices=['codex', 'ccswitch', 'all'], default='all', help='Data source')
+parser.add_argument('--max', type=int, default=300, help='Maximum training samples')
+parser.add_argument('--output', default=os.path.expanduser('~/local-model-lab/lora-finetune/data/train.json'), help='Output path')
+args = parser.parse_args()
+
 qa_pairs = []
-for d in db["dataset_datas"].find({"datasetId": kb_id, "a": {"$ne": ""}}).limit(200):
-    q = d.get("q", "").strip()
-    a = d.get("a", "").strip()
-    if q and a and len(q) > 20 and len(a) > 20:
-        qa_pairs.append({"instruction": q[:2000], "input": "", "output": a[:2000]})
+dirs = []
+if args.source in ('codex', 'all'):
+    dirs.append((os.path.expanduser('~/.codex/archived_sessions'), True))
+    dirs.append((os.path.expanduser('~/.codex/sessions'), False))
+if args.source in ('ccswitch', 'all'):
+    p = os.path.expanduser('~/.ccswitch/logs')
+    if os.path.isdir(p):
+        dirs.append((p, False))
 
-print(f"Found {len(qa_pairs)} Q&A pairs with answers")
+for base_dir, is_archive in dirs:
+    if not os.path.isdir(base_dir):
+        continue
+    files = []
+    for root, dirs2, filenames in os.walk(base_dir):
+        for f in filenames:
+            if f.endswith('.jsonl'):
+                files.append(os.path.join(root, f))
+    
+    for fp in files:
+        sz = os.path.getsize(fp)
+        if sz < 500:
+            continue
+        with open(fp, 'r', encoding='utf-8', errors='replace') as fh:
+            try:
+                lines = fh.readlines()
+            except:
+                continue
+        
+        messages = []
+        for line in lines:
+            try:
+                d = json.loads(line)
+                if d.get('type') == 'response_item':
+                    payload = d.get('payload', {})
+                    role = payload.get('role', '')
+                    raw_content = payload.get('content', '')
+                    content = extract_text(raw_content).strip()
+                    if role in ('user', 'assistant') and content and len(content) > 20:
+                        messages.append({'role': role, 'content': content[:3000]})
+            except:
+                pass
+        
+        for i in range(len(messages) - 1):
+            if messages[i]['role'] == 'user' and messages[i+1]['role'] == 'assistant':
+                user_msg = messages[i]['content']
+                asst_msg = messages[i+1]['content']
+                if len(user_msg) > 30 and len(asst_msg) > 30:
+                    qa_pairs.append({
+                        'instruction': user_msg[:3000],
+                        'input': '',
+                        'output': asst_msg[:3000]
+                    })
 
-# Also generate from conversations (q has content, a is empty - these are chunks)
-# We can pair consecutive chunks as pseudo Q&A
-count = 0
-for d in db["dataset_datas"].find({"datasetId": kb_id, "a": ""}).sort("_id", 1).limit(5000):
-    q = d.get("q", "").strip()
-    if q and len(q) > 100 and count < 150:
-        # Use chunks that look like Q&A (contain question patterns)
-        if any(x in q[:200].lower() for x in ["?", "如何", "怎么", "什么", "为什么", "怎样", "是否", "能否", "what", "how", "why", "can"]):
-            qa_pairs.append({"instruction": q[:2000], "input": "", "output": "Based on the above information: " + q[:1000]})
-            count += 1
+print(f'Extracted {len(qa_pairs)} Q&A pairs')
 
-print(f"Generated {len(qa_pairs)} total training samples")
+seen = set()
+unique = []
+for p in qa_pairs:
+    h = p['instruction'][:100]
+    if h not in seen:
+        seen.add(h)
+        unique.append(p)
 
-# Filter to max 200 high-quality samples, mix sources
-random.shuffle(qa_pairs)
-qa_pairs = qa_pairs[:200]
+unique.sort(key=lambda x: len(x['output']), reverse=True)
+unique = unique[:args.max]
+random.shuffle(unique)
 
-# Save
-out_dir = os.path.expanduser("~/local-model-lab/lora-finetune/data")
-os.makedirs(out_dir, exist_ok=True)
-out_file = os.path.join(out_dir, "train.json")
-with open(out_file, "w", encoding="utf-8") as f:
-    json.dump(qa_pairs, f, ensure_ascii=False, indent=2)
+os.makedirs(os.path.dirname(args.output), exist_ok=True)
+with open(args.output, 'w', encoding='utf-8') as f:
+    json.dump(unique, f, ensure_ascii=False, indent=2)
 
-print(f"Saved {len(qa_pairs)} samples to {out_file}")
-
-# Show samples
-for s in qa_pairs[:3]:
-    print(f"  INSTR: {s['instruction'][:80]}...")
-    print(f"  OUT: {s['output'][:80]}...")
-    print()
+print(f'Saved {len(unique)} unique training samples to {args.output}')
