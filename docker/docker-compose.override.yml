@@ -1,3 +1,5 @@
+# NOTE: Resource limits have been moved to docker-compose.yml (mem_limit)
+# This file is kept for swarm deployments
 services:
   pg:
     deploy:
