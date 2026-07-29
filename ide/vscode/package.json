@@ -1,7 +1,7 @@
 {
   "name": "local-ai-stack",
   "displayName": "Local AI Stack",
-  "description": "Local Ollama-backed code completion and explain-selection commands.",
+  "description": "Local Ollama-backed code chat, completion, explanation, and safe fix suggestions.",
   "version": "0.1.0",
   "engines": { "vscode": "^1.85.0" },
   "categories": ["Programming Languages", "Machine Learning"],
@@ -10,8 +10,26 @@
   "contributes": {
     "commands": [
       { "command": "localAiStack.explainSelection", "title": "Local AI: Explain Selection" },
-      { "command": "localAiStack.fixSelection", "title": "Local AI: Suggest Fix for Selection" }
+      { "command": "localAiStack.fixSelection", "title": "Local AI: Suggest Fix for Selection" },
+      { "command": "localAiStack.generateTests", "title": "Local AI: Generate Unit Tests for Selection" }
     ],
+    "menus": {
+      "editor/context": [
+        { "command": "localAiStack.explainSelection", "when": "editorHasSelection", "group": "local-ai@1" },
+        { "command": "localAiStack.fixSelection", "when": "editorHasSelection", "group": "local-ai@2" },
+        { "command": "localAiStack.generateTests", "when": "editorHasSelection", "group": "local-ai@3" }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        { "id": "localAiStack", "title": "Local AI", "icon": "media/local-ai.svg" }
+      ]
+    },
+    "views": {
+      "localAiStack": [
+        { "id": "localAiStack.chat", "name": "Local AI Chat" }
+      ]
+    },
     "configuration": {
       "title": "Local AI Stack",
       "properties": {
