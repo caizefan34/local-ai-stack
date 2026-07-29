@@ -21,10 +21,15 @@ jobs:
       - name: Verify model availability
         run: ollama show "${{ inputs.model }}"
       - name: Run local code benchmark
+        shell: pwsh
+        env:
+          MODEL: ${{ inputs.model }}
+          BASELINE: ${{ inputs.baseline }}
         run: |
-          BASELINE_ARG=""
-          if [ -n "${{ inputs.baseline }}" ]; then BASELINE_ARG="--baseline ${{ inputs.baseline }}"; fi
-          python code_intelligence/evaluate_codegen.py benchmarks/codegen-smoke.json --model "${{ inputs.model }}" $BASELINE_ARG --output codegen-eval.json
+          $arguments = @('code_intelligence/evaluate_codegen.py', 'benchmarks/codegen-smoke.json', '--model', $env:MODEL)
+          if ($env:BASELINE) { $arguments += @('--baseline', $env:BASELINE) }
+          $arguments += @('--output', 'codegen-eval.json')
+          & python @arguments
       - uses: actions/upload-artifact@v4
         with:
           name: codegen-eval
