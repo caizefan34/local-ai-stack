@@ -210,7 +210,7 @@ local-ai-stack/
 - [x] Desktop service dashboard
 - [x] GitHub Pages documentation site
 - [x] MCP (Model Context Protocol) support — local stdio server in [`mcp_server/`](mcp_server/README.md)
-- [ ] Agent workflows and multi-step reasoning
+- [x] Agent workflows and multi-step reasoning — bounded read-only workflows in [`agent_workflows/`](docs/agent-workflows.md)
 - [ ] Multi-user support and access control
 - [ ] Mobile-friendly dashboard
 - [ ] One-click model download manager

@@ -114,7 +114,7 @@ jobs:
 
       - name: Python syntax sanity check
         run: |
-          python -m compileall -q reranker knowledge-base/sync mcp_server tests
+          python -m compileall -q agent_workflows reranker knowledge-base/sync mcp_server tests
           echo "All Python files compile correctly."
 
       - name: Run unit tests
