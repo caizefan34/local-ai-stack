@@ -25,6 +25,8 @@ Most local-AI projects stop at model chat. Local AI Stack gives you a reusable w
 | Keep code and prompts off third-party APIs | Ollama-backed local inference + OpenCode configuration |
 | Keep a knowledge base fresh | Import and folder-sync tools with extraction and deduplication |
 | Create a specialized assistant | Data preparation, QLoRA training, merging, and Ollama export scripts |
+| Manage the local stack with a team | Authenticated Dashboard with viewer, operator, and admin roles |
+| Connect an MCP client or investigate code | Local stdio MCP server and bounded read-only agent workflows |
 
 <p align="center">
   <a href="https://caizefan34.github.io/local-ai-stack/"><b>Explore the live walkthrough →</b></a>
@@ -60,6 +62,8 @@ bash scripts/setup.sh
 
 > 💻 **Code mode:** add `-CodeMode` on Windows or `--code-mode` on Linux/WSL to pull Qwen2.5-Coder 7B (generation) and 1.5B (inline completion). See the [code intelligence guide](docs/code-intelligence.md).
 
+> 🛡️ **Authenticated Dashboard:** create the first administrator with `python -m control_plane bootstrap-admin --username admin`, then run `python -m control_plane serve` and open [http://127.0.0.1:18080](http://127.0.0.1:18080). See the [access-control guide](docs/multi-user-access.md) and [model manager](docs/model-manager.md).
+
 <p align="center">
 <a href="https://caizefan34.github.io/local-ai-stack/" style="display:inline-block;padding:10px 28px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;font-size:16px;font-weight:600;text-decoration:none">▶ Explore the walkthrough</a>
 <a href="https://github.com/caizefan34/local-ai-stack" style="display:inline-block;padding:10px 28px;border-radius:8px;background:#1a1a2e;color:#fff;font-size:16px;font-weight:600;text-decoration:none;margin-left:8px">⭐ Star on GitHub</a>
@@ -74,9 +78,18 @@ bash scripts/setup.sh
 <td width="50%"><h3>🎹 Practical RAG</h3><p>Visual workflows with FastGPT, pgvector search, and an optional BGE-Reranker-v2-M3 service.</p></td></tr>
 <tr><td><h3>💪 LoRA Fine-Tuning</h3><p>PEFT + TRL pipeline. Fine-tune Qwen3-8B on 8GB VRAM with QLoRA. Turn your conversations into a custom model.</p></td>
 <td><h3>🔄 Auto-Sync Pipeline</h3><p>Weekly sync from Windows folders to FastGPT. Import papers, courses, and GitHub repos automatically.</p></td></tr>
-<tr><td><h3>💻 Desktop Dashboard</h3><p>Real-time service monitor with one-click controls. Check status, start/stop services, trigger KB sync.</p></td>
+<tr><td><h3>💻 Authenticated Dashboard</h3><p>Responsive service monitor with role-gated controls, user management, KB sync, and allowlisted model downloads.</p></td>
 <td><h3>🌐 Multi-Model</h3><p>Switch between Qwen3, LLaMA, Mistral via config. 4 models pre-configured for different workloads.</p></td></tr>
+<tr><td><h3>🔌 MCP Server</h3><p>Connect MCP-compatible clients over local stdio for model, generation, reranking, and health tools.</p></td>
+<td><h3>🤖 Bounded Agent Workflows</h3><p>Use explicit, step-limited, read-only investigation workflows for workspace and code diagnosis.</p></td></tr>
 </table>
+
+### Operations and integrations
+
+- [Control-plane access and roles](docs/multi-user-access.md) — secure dashboard setup and remote-access guidance.
+- [One-click model manager](docs/model-manager.md) — role-gated Ollama model downloads from an allowlist.
+- [MCP server](mcp_server/README.md) — start and configure a local stdio MCP integration.
+- [Agent workflows](docs/agent-workflows.md) — run bounded, read-only multi-step investigation.
 
 ---
 
@@ -106,10 +119,13 @@ Monitor all services in real time:
 ⚫ docker    ✔️ running
 ```
 
-Open the live desktop dashboard:
+Start the authenticated Dashboard control plane, then open **http://127.0.0.1:18080**:
 ```powershell
-start desktop-app/dashboard.html
+python -m control_plane bootstrap-admin --username admin
+python -m control_plane serve
 ```
+
+The first command is needed only once. The Dashboard requires sign-in; see the [access-control guide](docs/multi-user-access.md) for roles and remote-access guidance.
 
 ## 📈 Use Cases
 

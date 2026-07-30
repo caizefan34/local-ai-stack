@@ -40,7 +40,7 @@
   <header class="nav"><div class="wrap navin">
     <a class="brand" href="#top" aria-label="Local AI Stack home"><span class="brand-mark">✦</span>Local AI Stack</a>
     <nav class="navlinks" aria-label="Primary navigation">
-      <a href="#workflows">Workflows</a><a href="#stack">Stack</a><a href="#quickstart">Quick start</a>
+      <a href="#workflows">Workflows</a><a href="#operations">Operations</a><a href="#quickstart">Quick start</a>
       <a class="github" href="https://github.com/caizefan34/local-ai-stack" target="_blank" rel="noreferrer">★ Star on GitHub</a>
     </nav>
   </div></header>
@@ -64,6 +64,14 @@
         <article class="card"><div class="icon">↗</div><h3>Turn feedback into a model</h3><p>Collect examples, prepare a dataset, and run the included QLoRA pipeline when you need a specialized local assistant.</p></article>
       </div>
     </div></section>
+    <section id="operations"><div class="wrap">
+      <div class="section-head"><div class="kicker">Operate and extend safely</div><h2>More than a chat interface.</h2><p>Run the stack locally, manage access deliberately, and connect it to tools that keep your data on your machine.</p></div>
+      <div class="cards">
+        <article class="card"><div class="icon">🔐</div><h3>Authenticated Dashboard</h3><p>A responsive control plane with viewer, operator, and administrator roles for service actions, user management, and knowledge-base sync.</p><p><a href="multi-user-access.md" style="color:var(--cyan)">Read access-control guide →</a></p></article>
+        <article class="card"><div class="icon">⬇️</div><h3>One-click model downloads</h3><p>Operators and administrators can pull an allowlisted Ollama catalog in the Dashboard while everyone can inspect installed models and job state.</p><p><a href="model-manager.md" style="color:var(--cyan)">Read model-manager guide →</a></p></article>
+        <article class="card"><div class="icon">🔌</div><h3>MCP and agent workflows</h3><p>Expose local model and reranking tools through stdio MCP, or run step-limited read-only workflows to investigate a workspace.</p><p><a href="https://github.com/caizefan34/local-ai-stack/tree/master/mcp_server" style="color:var(--cyan)">Read MCP guide →</a><br><a href="agent-workflows.md" style="color:var(--cyan)">Read agent-workflow guide →</a></p></article>
+      </div>
+    </div></section>
     <section><div class="wrap">
       <div class="section-head"><div class="kicker">From question to grounded answer</div><h2>Simple enough to understand. Powerful enough to extend.</h2></div>
       <div class="flow">
@@ -85,7 +93,7 @@
       <div class="arch"><img src="assets/architecture-diagram.svg" alt="Diagram showing Local AI Stack architecture"></div>
     </div></section>
     <section id="quickstart"><div class="wrap quick"><div class="quick-grid">
-      <div><div class="kicker">Quick start</div><h2>Run your own workspace.</h2><p>The setup scripts create a local `.env` with random credentials, pull the recommended Ollama models, and start the services. Review the full guide before exposing any service beyond your machine.</p><div class="reqs"><span>8 GB RAM minimum</span><span>Docker Desktop / Docker</span><span>Python 3</span><span>GPU optional</span></div></div>
+      <div><div class="kicker">Quick start</div><h2>Run your own workspace.</h2><p>The setup scripts create a local `.env` with random credentials, pull the recommended Ollama models, and start the services. To use the role-based Dashboard, bootstrap an administrator and run the local control plane after setup. Review the full guide before exposing any service beyond your machine.</p><div class="reqs"><span>8 GB RAM minimum</span><span>Docker Desktop / Docker</span><span>Python 3</span><span>GPU optional</span></div></div>
       <div class="code"><button class="copy" type="button" data-copy="git clone https://github.com/caizefan34/local-ai-stack.git&#10;cd local-ai-stack&#10;bash scripts/setup.sh">Copy</button><pre><code><span class="comment"># Linux / WSL — one command setup</span>
 <span class="command">git clone</span> https://github.com/caizefan34/local-ai-stack.git
 <span class="command">cd</span> local-ai-stack

@@ -150,12 +150,12 @@ python3 sync-from-windows.py
 
 ## Desktop Dashboard
 
-Monitor and control your stack via the desktop dashboard:
+The responsive Dashboard uses an authenticated local control plane. Create the first administrator, then start the service:
 
 ```powershell
-# Start the API server
-powershell -File desktop-app/dashboard-server.ps1
-
-# Open the dashboard
-start desktop-app/dashboard.html
+python -m pip install -r control_plane/requirements.txt
+python -m control_plane bootstrap-admin --username admin
+python -m control_plane serve
 ```
+
+Open `http://127.0.0.1:18080/` and sign in. Do not open `desktop-app/dashboard.html` directly: it needs the authenticated API. Viewers can see service health and model jobs; operators can use approved actions and pull catalogued models; administrators can manage accounts. See [multi-user access](multi-user-access.md) and the [model manager](model-manager.md).
