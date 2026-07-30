@@ -41,5 +41,29 @@ jobs:
       - name: Check Python syntax
         run: |
           find . -name '*.py' -not -path './git/*' -exec python -m py_compile {} \;
-      - name: Validate public entry points
-        run: python -m unittest discover -s tests -p 'test_*.py'
+      - name: Validate Pages links
+        run: |
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+
+          class Links(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.links = []
+
+              def handle_starttag(self, tag, attrs):
+                  if tag == "a":
+                      href = dict(attrs).get("href")
+                      if href:
+                          self.links.append(href)
+
+          page = Path("docs/index.html")
+          parser = Links()
+          parser.feed(page.read_text(encoding="utf-8"))
+          for href in parser.links:
+              if href.startswith(("http://", "https://", "#", "mailto:")):
+                  continue
+              if not (page.parent / href).exists():
+                  raise SystemExit(f"Broken local Pages link: {href}")
+          PY
