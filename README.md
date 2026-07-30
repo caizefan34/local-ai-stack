@@ -62,7 +62,7 @@ bash scripts/setup.sh
 
 > 💻 **Code mode:** add `-CodeMode` on Windows or `--code-mode` on Linux/WSL to pull Qwen2.5-Coder 7B (generation) and 1.5B (inline completion). See the [code intelligence guide](docs/code-intelligence.md).
 
-> 🛡️ **Authenticated Dashboard:** create the first administrator with `python -m control_plane bootstrap-admin --username admin`, then run `python -m control_plane serve` and open [http://127.0.0.1:18080](http://127.0.0.1:18080). See the [access-control guide](docs/multi-user-access.md) and [model manager](docs/model-manager.md).
+> 🛡️ **One-click desktop app:** double-click [`Start Local AI Stack.cmd`](Start%20Local%20AI%20Stack.cmd). It starts the local control plane, opens the desktop window, and shows a first-run administrator setup. See the [desktop guide](docs/getting-started.md).
 
 <p align="center">
 <a href="https://caizefan34.github.io/local-ai-stack/" style="display:inline-block;padding:10px 28px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;font-size:16px;font-weight:600;text-decoration:none">▶ Explore the walkthrough</a>
@@ -119,13 +119,12 @@ Monitor all services in real time:
 ⚫ docker    ✔️ running
 ```
 
-Start the authenticated Dashboard control plane, then open **http://127.0.0.1:18080**:
+For daily use, double-click [`Start Local AI Stack.cmd`](Start%20Local%20AI%20Stack.cmd). For a terminal-based launch:
 ```powershell
-python -m control_plane bootstrap-admin --username admin
 python -m control_plane serve
 ```
 
-The first command is needed only once. The Dashboard requires sign-in; see the [access-control guide](docs/multi-user-access.md) for roles and remote-access guidance.
+Open **http://127.0.0.1:18080**. The first browser visit creates the administrator; see the [access-control guide](docs/multi-user-access.md) for roles and remote-access guidance.
 
 ## 📈 Use Cases
 
