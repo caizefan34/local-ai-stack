@@ -209,7 +209,7 @@ local-ai-stack/
 - [x] Knowledge base auto-sync pipeline
 - [x] Desktop service dashboard
 - [x] GitHub Pages documentation site
-- [ ] MCP (Model Context Protocol) support
+- [x] MCP (Model Context Protocol) support — local stdio server in [`mcp_server/`](mcp_server/README.md)
 - [ ] Agent workflows and multi-step reasoning
 - [ ] Multi-user support and access control
 - [ ] Mobile-friendly dashboard

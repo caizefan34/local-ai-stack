@@ -110,10 +110,11 @@ jobs:
           if [ -f reranker/requirements.txt ]; then
             pip install -r reranker/requirements.txt -q
           fi
+          pip install -r mcp_server/requirements.txt -q
 
       - name: Python syntax sanity check
         run: |
-          python -m compileall -q reranker knowledge-base/sync tests
+          python -m compileall -q reranker knowledge-base/sync mcp_server tests
           echo "All Python files compile correctly."
 
       - name: Run unit tests
