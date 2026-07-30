@@ -13,7 +13,7 @@ $ErrorActionPreference = "Stop"
 $rootDir = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $python = Join-Path $rootDir ".venv\Scripts\python.exe"
 if (-not (Test-Path -LiteralPath $python)) { $python = "python" }
-$url = "http://127.0.0.1:$Port/"
+$url = "http://127.0.0.1:$Port"
 
 function Test-ControlPlane {
     try {

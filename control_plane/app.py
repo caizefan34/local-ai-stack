@@ -155,6 +155,10 @@ def create_app(database: Path | None = None, root: Path = ROOT, model_manager: M
     def dashboard() -> FileResponse:
         return FileResponse(root / "desktop-app" / "dashboard.html")
 
+    @app.get("/favicon.ico", include_in_schema=False)
+    def favicon() -> FileResponse:
+        return FileResponse(asset_dir / "nailong-mascot.svg", media_type="image/svg+xml")
+
     return app
 
 

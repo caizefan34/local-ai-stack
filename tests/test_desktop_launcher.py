@@ -12,6 +12,7 @@ class DesktopLauncherTests(unittest.TestCase):
         self.assertIn("--app=$url", launcher)
         self.assertIn("Start-Process $url", launcher)
         self.assertIn("127.0.0.1", launcher)
+        self.assertNotIn('Port/"', launcher)
 
 
 if __name__ == "__main__":
