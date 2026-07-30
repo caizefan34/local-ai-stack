@@ -12,6 +12,16 @@ An authenticated, responsive dashboard for monitoring and controlling your Local
 
 ## Usage
 
+For a one-click desktop-style window on Windows, run:
+
+```powershell
+.\desktop-app\launch.ps1
+```
+
+The launcher starts the local control plane when needed and opens the dashboard in Edge/Chrome App mode. It falls back to the default browser if neither browser is installed. It does not install or modify Docker/Ollama.
+
+For a browser-only launch, use `.\desktop-app\launch.ps1 -BrowserOnly`.
+
 Serve the dashboard locally. On the first visit, the browser shows a one-time form for creating the administrator; no separate bootstrap command is required:
 
 ```bash
