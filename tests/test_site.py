@@ -28,3 +28,11 @@ class PublicSiteTests(unittest.TestCase):
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("Explore the live walkthrough", readme)
         self.assertIn(".\\scripts\\setup.ps1", readme)
+
+    def test_dashboard_is_responsive_and_uses_authenticated_api(self):
+        dashboard = (ROOT / "desktop-app" / "dashboard.html").read_text(encoding="utf-8")
+        self.assertIn('name="viewport"', dashboard)
+        self.assertIn('/api/auth/login', dashboard)
+        self.assertIn('Authorization:`Bearer ${token}`', dashboard)
+        self.assertIn('@media(max-width:760px)', dashboard)
+        self.assertNotIn('innerHTML', dashboard)
