@@ -18,6 +18,8 @@ For a one-click desktop-style window on Windows, run:
 .\desktop-app\launch.ps1
 ```
 
+You can also double-click [`Start Local AI Stack.cmd`](../Start%20Local%20AI%20Stack.cmd) in the repository root. It launches the same desktop window without opening a terminal.
+
 The launcher starts the local control plane when needed and opens the dashboard in Edge/Chrome App mode. It falls back to the default browser if neither browser is installed. It does not install or modify Docker/Ollama.
 
 For a browser-only launch, use `.\desktop-app\launch.ps1 -BrowserOnly`.
