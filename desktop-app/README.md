@@ -12,14 +12,15 @@ An authenticated, responsive dashboard for monitoring and controlling your Local
 
 ## Usage
 
-Create an administrator and serve the dashboard locally:
+Serve the dashboard locally. On the first visit, the browser shows a one-time form for creating the administrator; no separate bootstrap command is required:
 
 ```bash
 python -m pip install -r control_plane/requirements.txt
-python -m control_plane bootstrap-admin --username admin
 python -m control_plane serve
 # Open http://127.0.0.1:18080/
 ```
+
+The dashboard then guides you through service checks, allowlisted model downloads, service actions, and user management according to the signed-in user's role.
 
 Do not open `dashboard.html` directly: it needs the authenticated control-plane API. See [`docs/multi-user-access.md`](../docs/multi-user-access.md) for user roles and remote-access guidance.
 

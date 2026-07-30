@@ -49,6 +49,10 @@ class Store:
                 );
             """)
 
+    def has_users(self) -> bool:
+        with self._connect() as connection:
+            return connection.execute("SELECT 1 FROM users LIMIT 1").fetchone() is not None
+
     def create_user(self, username: str, password: str, role: str) -> None:
         username = username.strip().lower()
         if not username or len(username) > 64 or not username.replace("_", "").replace("-", "").isalnum():

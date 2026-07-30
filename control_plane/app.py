@@ -25,6 +25,11 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class SetupRequest(BaseModel):
+    username: str = "admin"
+    password: str = Field(min_length=12)
+
+
 class UserCreateRequest(BaseModel):
     username: str
     password: str = Field(min_length=12)
@@ -81,6 +86,20 @@ def create_app(database: Path | None = None, root: Path = ROOT, model_manager: M
         token = new_token()
         expires_at = store.create_session(token, user["username"], session_hours)
         return {"token": token, "user": user, "expires_at": expires_at}
+
+    @app.get("/api/setup/status")
+    def setup_status() -> dict[str, bool]:
+        return {"initialized": store.has_users()}
+
+    @app.post("/api/setup/bootstrap", status_code=status.HTTP_201_CREATED)
+    def bootstrap(payload: SetupRequest) -> dict[str, str]:
+        if store.has_users():
+            raise HTTPException(status.HTTP_409_CONFLICT, "Administrator setup is already complete")
+        try:
+            store.create_user(payload.username, payload.password, "admin")
+        except (StoreError, ValueError) as error:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, str(error)) from error
+        return {"username": payload.username.strip().lower(), "role": "admin"}
 
     @app.get("/api/auth/me")
     def me(user: dict[str, str] = Depends(current_user)) -> dict[str, str]:

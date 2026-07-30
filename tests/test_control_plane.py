@@ -31,6 +31,21 @@ class ControlPlaneTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         return {"Authorization": f"Bearer {response.json()['token']}"}
 
+    def test_setup_endpoint_is_one_time_only(self):
+        self.assertEqual(self.client.get("/api/setup/status").json(), {"initialized": True})
+        response = self.client.post("/api/setup/bootstrap", json={"username": "late", "password": "long-enough-password"})
+        self.assertEqual(response.status_code, 409)
+
+    def test_setup_creates_first_administrator(self):
+        first_db = Path(self.directory.name) / "first.sqlite3"
+        app = create_app(first_db, self.root)
+        with TestClient(app) as client:
+            self.assertEqual(client.get("/api/setup/status").json(), {"initialized": False})
+            response = client.post("/api/setup/bootstrap", json={"username": "first-admin", "password": "correct-horse-battery-staple"})
+            self.assertEqual(response.status_code, 201)
+            self.assertEqual(client.get("/api/setup/status").json(), {"initialized": True})
+            self.assertEqual(client.post("/api/auth/login", json={"username": "first-admin", "password": "correct-horse-battery-staple"}).status_code, 200)
+
     def test_authentication_and_roles(self):
         self.assertEqual(self.client.get("/api/health").status_code, 401)
         admin_headers = self.login()
