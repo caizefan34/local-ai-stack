@@ -73,6 +73,12 @@ Write-Host "[3/4] Installing Python packages..." -ForegroundColor Yellow
 $reqFile = Join-Path $rootDir "reranker\requirements.txt"
 python -m pip install -r $reqFile -q
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+$mcpReqFile = Join-Path $rootDir "mcp_server\requirements.txt"
+python -m pip install -r $mcpReqFile -q
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+$controlReqFile = Join-Path $rootDir "control_plane\requirements.txt"
+python -m pip install -r $controlReqFile -q
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 Write-Host "  [v] Python deps installed" -ForegroundColor Green
 
 # Start reranker

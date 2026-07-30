@@ -213,7 +213,7 @@ local-ai-stack/
 - [x] Agent workflows and multi-step reasoning — bounded read-only workflows in [`agent_workflows/`](docs/agent-workflows.md)
 - [x] Multi-user support and access control — authenticated local control plane with viewer, operator, and admin roles
 - [x] Mobile-friendly dashboard — responsive authenticated control plane UI
-- [ ] One-click model download manager
+- [x] One-click model download manager — allowlisted background Ollama downloads in the authenticated Dashboard
 
 ---
 

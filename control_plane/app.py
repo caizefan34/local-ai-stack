@@ -12,6 +12,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from .actions import ActionError, run_action
+from .models import ModelError, ModelManager
 from .security import new_token
 from .store import Store, StoreError
 
@@ -43,8 +44,9 @@ def _probe(url: str) -> bool:
         return False
 
 
-def create_app(database: Path | None = None, root: Path = ROOT) -> FastAPI:
+def create_app(database: Path | None = None, root: Path = ROOT, model_manager: ModelManager | None = None) -> FastAPI:
     store = Store(database or Path(os.getenv("CONTROL_PLANE_DB", root / "data" / "control-plane.sqlite3")))
+    manager = model_manager or ModelManager()
     session_hours = int(os.getenv("CONTROL_PLANE_SESSION_HOURS", "8"))
 
     @asynccontextmanager
@@ -113,6 +115,17 @@ def create_app(database: Path | None = None, root: Path = ROOT) -> FastAPI:
         try:
             return {"output": run_action(name, root)}
         except ActionError as error:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, str(error)) from error
+
+    @app.get("/api/models")
+    def models(_user: dict[str, str] = Depends(require("viewer", "operator", "admin"))) -> dict[str, object]:
+        return {"catalog": manager.catalog(), "installed": manager.installed(), "jobs": manager.jobs()}
+
+    @app.post("/api/models/pull/{model_id}", status_code=status.HTTP_202_ACCEPTED)
+    def pull_model(model_id: str, _user: dict[str, str] = Depends(require("operator", "admin"))) -> dict[str, object]:
+        try:
+            return manager.start_pull(model_id)
+        except ModelError as error:
             raise HTTPException(status.HTTP_400_BAD_REQUEST, str(error)) from error
 
     @app.get("/")

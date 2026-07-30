@@ -33,6 +33,8 @@ class PublicSiteTests(unittest.TestCase):
         dashboard = (ROOT / "desktop-app" / "dashboard.html").read_text(encoding="utf-8")
         self.assertIn('name="viewport"', dashboard)
         self.assertIn('/api/auth/login', dashboard)
+        self.assertIn('/api/models', dashboard)
+        self.assertIn('Download', dashboard)
         self.assertIn('Authorization:`Bearer ${token}`', dashboard)
         self.assertIn('@media(max-width:760px)', dashboard)
         self.assertNotIn('innerHTML', dashboard)

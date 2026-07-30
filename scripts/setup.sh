@@ -48,6 +48,8 @@ docker compose --env-file "$ROOT_DIR/.env" -f "$ROOT_DIR/docker/docker-compose.y
 # Install Python deps
 echo "Installing Python packages..."
 python3 -m pip install -r "$ROOT_DIR/reranker/requirements.txt" -q
+python3 -m pip install -r "$ROOT_DIR/mcp_server/requirements.txt" -q
+python3 -m pip install -r "$ROOT_DIR/control_plane/requirements.txt" -q
 
 # Start reranker
 echo "Starting reranker..."

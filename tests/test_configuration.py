@@ -46,3 +46,9 @@ class ConfigurationTests(unittest.TestCase):
     def test_example_environment_documents_reranker_limit(self):
         example = (ROOT / ".env.example").read_text(encoding="utf-8-sig")
         self.assertIn("RERANKER_MAX_DOCUMENTS=256", example)
+
+    def test_setup_scripts_install_roadmap_component_dependencies(self):
+        for script in (ROOT / "scripts" / "setup.ps1", ROOT / "scripts" / "setup.sh"):
+            source = script.read_text(encoding="utf-8")
+            self.assertIn("mcp_server", source)
+            self.assertIn("control_plane", source)

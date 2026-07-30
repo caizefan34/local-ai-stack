@@ -66,6 +66,23 @@ class ControlPlaneTests(unittest.TestCase):
         response = self.client.post("/api/users", headers=headers, json={"username": "short", "password": "too-short", "role": "viewer"})
         self.assertEqual(response.status_code, 422)
 
+    def test_model_catalog_is_visible_to_viewers_but_download_requires_operator(self):
+        class FakeManager:
+            def catalog(self): return [{"id": "main"}]
+            def installed(self): return {"models": [], "error": None}
+            def jobs(self): return []
+            def start_pull(self, model_id): return {"id": "job", "model_id": model_id, "status": "running"}
+        self.client_context.__exit__(None, None, None)
+        self.app = create_app(self.database, self.root, FakeManager())
+        self.client_context = TestClient(self.app)
+        self.client = self.client_context.__enter__()
+        admin_headers = self.login()
+        self.client.post("/api/users", headers=admin_headers, json={"username": "viewer", "password": "viewer-password-long", "role": "viewer"})
+        viewer_headers = self.login("viewer", "viewer-password-long")
+        self.assertEqual(self.client.get("/api/models", headers=viewer_headers).status_code, 200)
+        self.assertEqual(self.client.post("/api/models/pull/main", headers=viewer_headers).status_code, 403)
+        self.assertEqual(self.client.post("/api/models/pull/main", headers=admin_headers).status_code, 202)
+
 
 if __name__ == "__main__":
     unittest.main()
