@@ -1,0 +1,7 @@
+.vscode/**
+test/**
+tests/**
+lora-finetune/**
+**/feedback.jsonl
+*.log
+*.vsix

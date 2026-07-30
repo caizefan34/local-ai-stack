@@ -19,7 +19,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Verify model availability
-        run: ollama show "${{ inputs.model }}"
+        shell: powershell
+        env:
+          MODEL: ${{ inputs.model }}
+        run: ollama show $env:MODEL
       - name: Run local code benchmark
         shell: powershell
         env:

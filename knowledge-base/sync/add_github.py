@@ -47,14 +47,16 @@ def main():
 
     repo_dir_name = owner + "-" + repo
     dest_dir = os.path.join(REPOS_DIR, repo_dir_name)
+    should_clone = not os.path.exists(dest_dir)
     if os.path.exists(dest_dir):
         print("Warning: Repository already exists at " + dest_dir)
         overwrite = input("Re-clone? (y/N): ").strip().lower()
         if overwrite == "y":
             shutil.rmtree(dest_dir)
+            should_clone = True
         else:
             print("Using existing clone.")
-    else:
+    if should_clone:
         os.makedirs(REPOS_DIR, exist_ok=True)
         print("Cloning " + url + " (depth=1)...")
         result = subprocess.run(

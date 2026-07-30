@@ -4,7 +4,7 @@
     container_name: ${PG_CONTAINER_NAME:-fastgpt-pg}
     restart: always
     ports:
-      - "${BIND_ADDRESS:-127.0.0.1}:${PG_HOST_PORT:-5432}:5432"
+      - "${DATABASE_BIND_ADDRESS:-127.0.0.1}:${PG_HOST_PORT:-5432}:5432"
     environment:
       POSTGRES_USER: ${PG_USER:-postgres}
       POSTGRES_PASSWORD: ${PG_PASSWORD:-postgres}
@@ -30,7 +30,7 @@
     restart: always
     command: ["mongod", "--replSet", "rs0"]
     ports:
-      - "${BIND_ADDRESS:-127.0.0.1}:${MONGO_HOST_PORT:-27017}:27017"
+      - "${DATABASE_BIND_ADDRESS:-127.0.0.1}:${MONGO_HOST_PORT:-27017}:27017"
     volumes:
       - fastgpt-mongo:/data/db
     healthcheck:
@@ -51,7 +51,7 @@
     container_name: ${REDIS_CONTAINER_NAME:-fastgpt-redis}
     restart: always
     ports:
-      - "${BIND_ADDRESS:-127.0.0.1}:${REDIS_HOST_PORT:-6379}:6379"
+      - "${DATABASE_BIND_ADDRESS:-127.0.0.1}:${REDIS_HOST_PORT:-6379}:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s

@@ -51,6 +51,39 @@ def completion_prompt(text: str, line: int, character: int) -> str:
     return "Complete only the next code tokens. Do not explain.\n\n" + prefix[-12000:]
 
 
+def apply_content_changes(text: str, changes: list[dict]) -> str:
+    """Apply LSP full or ranged changes in the order received."""
+    for change in changes:
+        if "range" not in change:
+            text = change.get("text", "")
+            continue
+        lines = text.splitlines(keepends=True)
+
+        def offset(position: dict) -> int:
+            line = min(max(position.get("line", 0), 0), len(lines))
+            if line >= len(lines):
+                return len(text)
+            units = max(position.get("character", 0), 0)
+            index = 0
+            consumed = 0
+            for index, character in enumerate(lines[line]):
+                width = 2 if ord(character) > 0xFFFF else 1
+                if consumed + width > units:
+                    break
+                consumed += width
+                index += 1
+                if consumed == units:
+                    break
+            else:
+                index = len(lines[line])
+            return sum(len(value) for value in lines[:line]) + index
+
+        start = offset(change["range"]["start"])
+        end = offset(change["range"]["end"])
+        text = text[:start] + change.get("text", "") + text[end:]
+    return text
+
+
 def ollama_completion(prompt: str) -> str:
     if prompt in COMPLETION_CACHE:
         COMPLETION_CACHE.move_to_end(prompt)
@@ -69,11 +102,19 @@ def handle(message: dict) -> dict | None:
     method = message.get("method")
     params = message.get("params", {})
     if method == "initialize":
-        return {"capabilities": {"completionProvider": {"triggerCharacters": [".", "(", " "]}}}
-    if method in {"textDocument/didOpen", "textDocument/didChange"}:
+        return {"capabilities": {"textDocumentSync": {"openClose": True, "change": 1}, "completionProvider": {"triggerCharacters": [".", "(", " "]}}}
+    if method == "textDocument/didOpen":
+        document = params.get("textDocument", {})
+        DOCUMENTS[document.get("uri", "")] = document.get("text", "")
+        return None
+    if method == "textDocument/didChange":
         document = params.get("textDocument", {})
         changes = params.get("contentChanges", [])
-        DOCUMENTS[document.get("uri", "")] = changes[-1].get("text", document.get("text", "")) if changes else document.get("text", "")
+        uri = document.get("uri", "")
+        DOCUMENTS[uri] = apply_content_changes(DOCUMENTS.get(uri, ""), changes)
+        return None
+    if method == "textDocument/didClose":
+        DOCUMENTS.pop(params.get("textDocument", {}).get("uri", ""), None)
         return None
     if method == "textDocument/completion":
         document = params.get("textDocument", {})

@@ -19,6 +19,8 @@ def convert(source: Path) -> list[dict[str, str]]:
             item = json.loads(line)
         except json.JSONDecodeError as exc:
             raise ValueError(f"Invalid JSON on line {number}") from exc
+        if item.get("approved") is not True:
+            continue
         prompt = str(item.get("prompt", "")).strip()
         rating = item.get("rating")
         answer = str(item.get("correction") if rating == "down" else item.get("response", "")).strip()

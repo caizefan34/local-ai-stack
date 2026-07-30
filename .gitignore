@@ -6,5 +6,6 @@ __pycache__/
 .DS_Store
 outputs/
 lora-finetune/data/feedback.jsonl
+**/lora-finetune/data/feedback.jsonl
 *.safetensors
 *.gguf

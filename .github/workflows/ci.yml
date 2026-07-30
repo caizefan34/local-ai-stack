@@ -23,6 +23,11 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
       - name: Install lint tools
         run: |
           python -m pip install --upgrade pip
@@ -48,9 +53,8 @@ jobs:
 
       - name: Flake8 — Python syntax & style
         run: |
-          find . -name '*.py' -not -path './.git/*' -not -path '*/__pycache__/*' -exec flake8 {} \; \
-            --max-line-length=120 --ignore=E501,W503,E402,F401 2>&1 | head -30
-          echo "Flake8 checks complete (non-blocking)."
+          python -m flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics \
+            --exclude=.git,__pycache__
 
       - name: ESLint — JavaScript style check
         run: |
@@ -95,6 +99,11 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -124,6 +133,9 @@ jobs:
             echo "Found e2e_test.py — checking syntax only (requires running services)."
             python -c "import ast; ast.parse(open('tests/e2e_test.py').read())"
           fi
+
+      - name: Run VS Code extension helper tests
+        run: node --test ide/vscode/test/*.test.js
 
   docker:
     name: Docker Build Check

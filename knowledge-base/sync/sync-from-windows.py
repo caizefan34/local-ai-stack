@@ -4,7 +4,10 @@ KB_HOME = os.path.expanduser("~/knowledge-base")
 COURSES_DIR = os.path.join(KB_HOME, "01_courses")
 REFS_DIR = os.path.join(KB_HOME, "03_references")
 SYNC_LOG = os.path.join(KB_HOME, "_scripts", ".sync_log.json")
-SOURCES = [{"path": "os.environ.get('KB_WINDOWS_SOURCE', '/mnt/d/knowledge')", "target": COURSES_DIR, "type": "course"}, {"path": "os.environ.get('KB_WINDOWS_REF_SOURCE', '/mnt/d/references')", "target": REFS_DIR, "type": "reference"}]
+SOURCES = [
+    {"path": os.environ.get("KB_WINDOWS_SOURCE", "/mnt/d/knowledge"), "target": COURSES_DIR, "type": "course"},
+    {"path": os.environ.get("KB_WINDOWS_REF_SOURCE", "/mnt/d/references"), "target": REFS_DIR, "type": "reference"},
+]
 SUPPORTED_EXTS = {".md", ".pdf", ".ppt", ".pptx", ".txt", ".doc", ".docx", ".png", ".jpg", ".jpeg", ".zip"}
 def load_log():
     if os.path.isfile(SYNC_LOG):

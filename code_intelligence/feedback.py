@@ -26,6 +26,7 @@ def main() -> None:
         "response": args.response,
         "rating": args.rating,
         "correction": args.correction,
+        "approved": True,
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with args.output.open("a", encoding="utf-8") as handle:

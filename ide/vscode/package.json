@@ -3,7 +3,9 @@
   "publisher": "caizefan34",
   "displayName": "Local AI Stack",
   "description": "Local Ollama-backed code chat, completion, explanation, and safe fix suggestions.",
-  "version": "0.1.5",
+  "version": "0.2.0",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/caizefan34/local-ai-stack.git", "directory": "ide/vscode" },
   "engines": { "vscode": "^1.85.0" },
   "categories": ["Programming Languages", "Machine Learning"],
   "main": "./extension.js",
@@ -43,6 +45,8 @@
         "localAiStack.ollamaUrl": { "type": "string", "default": "http://127.0.0.1:11434/api/generate" },
         "localAiStack.codeModel": { "type": "string", "default": "qwen2.5-coder:7b" },
         "localAiStack.completionModel": { "type": "string", "default": "qwen2.5-coder:1.5b" },
+        "localAiStack.inlineCompletionsEnabled": { "type": "boolean", "default": false, "description": "Opt in to sending code context to Ollama for inline completions." },
+        "localAiStack.requestTimeoutMs": { "type": "integer", "default": 60000, "minimum": 1000, "maximum": 300000, "description": "Maximum time to wait for a local model response." },
         "localAiStack.feedbackPath": { "type": "string", "default": "lora-finetune/data/feedback.jsonl", "description": "Workspace-relative path for feedback recorded with the thumbs buttons." }
       }
     }

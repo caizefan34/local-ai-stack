@@ -10,7 +10,10 @@ log = logging.getLogger('reranker')
 app = FastAPI(title='Local Reranker - BGE')
 MODEL_NAME = os.getenv('RERANKER_MODEL', 'BAAI/bge-reranker-v2-m3')
 RERANKER_PORT = int(os.getenv('RERANKER_PORT', '18888'))
+RERANKER_HOST = os.getenv('RERANKER_HOST', '0.0.0.0')
 MAX_DOCUMENTS = int(os.getenv('RERANKER_MAX_DOCUMENTS', '256'))
+MAX_DOCUMENT_CHARS = int(os.getenv('RERANKER_MAX_DOCUMENT_CHARS', '20000'))
+MAX_TOTAL_CHARS = int(os.getenv('RERANKER_MAX_TOTAL_CHARS', '200000'))
 model = None
 tokenizer = None
 device = 'cpu'
@@ -30,9 +33,9 @@ async def load_model():
     device = 'cuda' if torch.cuda.is_available() else ('mps' if torch.backends.mps.is_available() else 'cpu')
     log.info(f'Loading {MODEL_NAME} on {device}...')
     t0 = time.time()
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=False)
     model = AutoModelForSequenceClassification.from_pretrained(
-        MODEL_NAME, trust_remote_code=True,
+        MODEL_NAME, trust_remote_code=False,
         torch_dtype=torch.float16 if device == 'cuda' else torch.float32,
         low_cpu_mem_usage=True
     )
@@ -59,6 +62,10 @@ def _rerank(query: str, texts: List[str]):
         return []
     if len(texts) > MAX_DOCUMENTS:
         raise HTTPException(413, f'Too many documents; maximum is {MAX_DOCUMENTS}')
+    if any(len(text) > MAX_DOCUMENT_CHARS for text in texts):
+        raise HTTPException(413, f'A document exceeds the {MAX_DOCUMENT_CHARS} character limit')
+    if sum(len(text) for text in texts) > MAX_TOTAL_CHARS:
+        raise HTTPException(413, f'Documents exceed the {MAX_TOTAL_CHARS} total character limit')
     pairs = [[query, doc] for doc in texts]
     with torch.no_grad():
         inputs = tokenizer(pairs, padding=True, truncation=True, return_tensors='pt', max_length=512)
@@ -98,4 +105,4 @@ def health():
 health.start_time = time.time()
 
 if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=RERANKER_PORT, log_level='info')
+    uvicorn.run(app, host=RERANKER_HOST, port=RERANKER_PORT, log_level='info')

@@ -2,6 +2,7 @@ import importlib.util
 from pathlib import Path
 import tempfile
 import unittest
+from unittest import mock
 from code_intelligence import lsp_server
 
 
@@ -84,11 +85,30 @@ class CodeIntelligenceTests(unittest.TestCase):
         self.assertIn('CODE_INDEX_ENABLED', sync)
         self.assertIn('index_codebase.py', sync)
 
+    def test_windows_sync_reads_source_paths_from_environment(self):
+        module_path = ROOT / "knowledge-base" / "sync" / "sync-from-windows.py"
+        spec = importlib.util.spec_from_file_location("sync_from_windows", module_path)
+        module = importlib.util.module_from_spec(spec)
+        with mock.patch.dict("os.environ", {"KB_WINDOWS_SOURCE": "/custom/courses", "KB_WINDOWS_REF_SOURCE": "/custom/references"}):
+            spec.loader.exec_module(module)
+        self.assertEqual([item["path"] for item in module.SOURCES], ["/custom/courses", "/custom/references"])
+
     def test_lsp_completion_prompt_bounds_editor_context(self):
         prompt = lsp_server.completion_prompt("line0\nline1", 1, 5)
         self.assertIn("line1", prompt)
         self.assertIn("Complete only the next code tokens", prompt)
         self.assertIn('MAX_CACHE_ENTRIES', (ROOT / "code_intelligence" / "lsp_server.py").read_text(encoding="utf-8"))
+
+    def test_lsp_applies_incremental_changes_and_cleans_up_closed_documents(self):
+        original = "alpha\nbeta\n"
+        changed = lsp_server.apply_content_changes(original, [{"range": {"start": {"line": 1, "character": 0}, "end": {"line": 1, "character": 4}}, "text": "gamma"}])
+        self.assertEqual(changed, "alpha\ngamma\n")
+        unicode_changed = lsp_server.apply_content_changes("😀beta\n", [{"range": {"start": {"line": 0, "character": 2}, "end": {"line": 0, "character": 6}}, "text": "gamma"}])
+        self.assertEqual(unicode_changed, "😀gamma\n")
+        uri = "file:///sample.py"
+        lsp_server.handle({"method": "textDocument/didOpen", "params": {"textDocument": {"uri": uri, "text": original}}})
+        lsp_server.handle({"method": "textDocument/didClose", "params": {"textDocument": {"uri": uri}}})
+        self.assertNotIn(uri, lsp_server.DOCUMENTS)
 
     def test_codebert_embedder_consumes_ast_index(self):
         source = (ROOT / "code_intelligence" / "embed_chunks.py").read_text(encoding="utf-8")
@@ -117,6 +137,6 @@ class CodeIntelligenceTests(unittest.TestCase):
     def test_feedback_preparation_uses_only_approved_corrections_or_answers(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "feedback.jsonl"
-            path.write_text('{"prompt":"fix it","response":"bad","rating":"down","correction":"good"}\n{"prompt":"explain","response":"answer","rating":"up"}\n', encoding="utf-8")
+            path.write_text('{"prompt":"fix it","response":"bad","rating":"down","correction":"good","approved":true}\n{"prompt":"explain","response":"answer","rating":"up","approved":true}\n{"prompt":"ignore","response":"unreviewed","rating":"up"}\n', encoding="utf-8")
             result = feedback_prep.convert(path)
         self.assertEqual([item["output"] for item in result], ["good", "answer"])

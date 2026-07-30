@@ -35,6 +35,8 @@ class ConfigurationTests(unittest.TestCase):
         reranker = (ROOT / "reranker" / "server.py").read_text(encoding="utf-8")
         self.assertIn("RERANKER_MAX_DOCUMENTS", reranker)
         self.assertIn("max_length=8192", reranker)
+        self.assertIn("RERANKER_MAX_DOCUMENT_CHARS", reranker)
+        self.assertIn("RERANKER_HOST", reranker)
 
     def test_login_helper_has_no_default_password(self):
         helper = (ROOT / "scripts" / "automation" / "fastgpt_login.py").read_text(encoding="utf-8")
