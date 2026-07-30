@@ -20,7 +20,9 @@ For coding models, use `.\scripts\setup.ps1 -CodeMode`.
 
 ## Daily use
 
-Double-click [`Start Local AI Stack.cmd`](../Start%20Local%20AI%20Stack.cmd). The launcher starts the local control plane and opens an independent Edge/Chrome application window. If no Chromium browser is installed, it opens the default browser instead.
+Run `.\desktop-app\install-shortcut.ps1` once to create the **Local AI Stack** desktop shortcut. After that, double-click the desktop icon. It starts the local control plane and opens an independent Edge/Chrome application window. If no Chromium browser is installed, it opens the default browser instead.
+
+The repository also includes [`Start Local AI Stack.cmd`](../Start%20Local%20AI%20Stack.cmd) as a portable fallback when the shortcut has not been installed.
 
 On the first visit, create the administrator in the browser. This replaces the old command-line bootstrap step. The setup endpoint is automatically disabled after the first account is created.
 

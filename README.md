@@ -62,7 +62,7 @@ bash scripts/setup.sh
 
 > 💻 **Code mode:** add `-CodeMode` on Windows or `--code-mode` on Linux/WSL to pull Qwen2.5-Coder 7B (generation) and 1.5B (inline completion). See the [code intelligence guide](docs/code-intelligence.md).
 
-> 🛡️ **One-click desktop app:** double-click [`Start Local AI Stack.cmd`](Start%20Local%20AI%20Stack.cmd). It starts the local control plane, opens the desktop window, and shows a first-run administrator setup. See the [desktop guide](docs/getting-started.md).
+> 🛡️ **One-click desktop app:** run `.\desktop-app\install-shortcut.ps1` once to create the **Local AI Stack** desktop icon; after that, daily use is simply double-clicking the desktop app. See the [desktop guide](docs/getting-started.md).
 
 <p align="center">
 <a href="https://caizefan34.github.io/local-ai-stack/" style="display:inline-block;padding:10px 28px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;font-size:16px;font-weight:600;text-decoration:none">▶ Explore the walkthrough</a>
@@ -119,7 +119,7 @@ Monitor all services in real time:
 ⚫ docker    ✔️ running
 ```
 
-For daily use, double-click [`Start Local AI Stack.cmd`](Start%20Local%20AI%20Stack.cmd). For a terminal-based launch:
+For daily use, double-click the **Local AI Stack** desktop shortcut. If it has not been installed yet, run `.\desktop-app\install-shortcut.ps1` once. For a terminal-based launch:
 ```powershell
 python -m control_plane serve
 ```
