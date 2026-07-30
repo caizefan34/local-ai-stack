@@ -98,6 +98,26 @@ class ControlPlaneTests(unittest.TestCase):
         self.assertEqual(self.client.post("/api/models/pull/main", headers=viewer_headers).status_code, 403)
         self.assertEqual(self.client.post("/api/models/pull/main", headers=admin_headers).status_code, 202)
 
+    def test_agent_workbench_is_admin_only(self):
+        class FakeAgents:
+            def config(self): return {"workspace": "stack", "models": ["qwen3:8b"], "workflows": ["workspace-investigate"]}
+            def jobs(self): return []
+            def start(self, task, workflow, model, max_steps):
+                return {"id": "job-1", "task": task, "workflow": workflow, "model": model, "max_steps": max_steps, "status": "running"}
+            def get(self, job_id): return {"id": job_id, "status": "completed", "answer": "done"}
+        self.client_context.__exit__(None, None, None)
+        self.app = create_app(self.database, self.root, agent_manager=FakeAgents())
+        self.client_context = TestClient(self.app)
+        self.client = self.client_context.__enter__()
+        admin_headers = self.login()
+        self.client.post("/api/users", headers=admin_headers, json={"username": "operator", "password": "operator-password-long", "role": "operator"})
+        operator_headers = self.login("operator", "operator-password-long")
+        self.assertEqual(self.client.get("/api/agents", headers=operator_headers).status_code, 403)
+        self.assertEqual(self.client.get("/api/agents", headers=admin_headers).status_code, 200)
+        response = self.client.post("/api/agents", headers=admin_headers, json={"task": "Inspect the workspace", "workflow": "workspace-investigate", "model": "qwen3:8b", "max_steps": 3})
+        self.assertEqual(response.status_code, 202)
+        self.assertEqual(self.client.get("/api/agents/job-1", headers=admin_headers).json()["answer"], "done")
+
 
 if __name__ == "__main__":
     unittest.main()

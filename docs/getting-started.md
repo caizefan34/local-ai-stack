@@ -32,6 +32,9 @@ The Dashboard provides:
 - start/stop and knowledge-base actions for operators;
 - allowlisted Ollama model downloads;
 - user and role management for administrators.
+- an administrator-only Agent workbench for bounded, read-only workspace investigation and code diagnosis.
+
+The Agent workbench uses the configured server-side workspace rather than a browser-selected folder. Set `CONTROL_PLANE_AGENT_WORKSPACE` and `CONTROL_PLANE_AGENT_MODELS` in `.env`, then restart the desktop app to change its workspace or model allowlist. See [Agent workflows](agent-workflows.md) for details.
 
 ## Optional integrations
 

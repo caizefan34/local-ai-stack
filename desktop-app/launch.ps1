@@ -15,6 +15,17 @@ $python = Join-Path $rootDir ".venv\Scripts\python.exe"
 if (-not (Test-Path -LiteralPath $python)) { $python = "python" }
 $url = "http://127.0.0.1:$Port"
 
+# The desktop launcher inherits only the current process environment. Load the
+# two dashboard Agent settings from the repository .env without evaluating it.
+$envFile = Join-Path $rootDir ".env"
+if (Test-Path -LiteralPath $envFile) {
+    Get-Content -LiteralPath $envFile | ForEach-Object {
+        if ($_ -match '^\s*(CONTROL_PLANE_AGENT_(?:WORKSPACE|MODELS))\s*=\s*(.*?)\s*$') {
+            Set-Item -Path "Env:$($matches[1])" -Value $matches[2]
+        }
+    }
+}
+
 function Test-ControlPlane {
     try {
         $response = Invoke-WebRequest -Uri "$url/api/setup/status" -TimeoutSec 2 -UseBasicParsing

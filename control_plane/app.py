@@ -13,6 +13,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from .actions import ActionError, run_action
+from .agents import AgentManager
 from .models import ModelError, ModelManager
 from .security import new_token
 from .store import Store, StoreError
@@ -42,6 +43,13 @@ class UserUpdateRequest(BaseModel):
     active: bool | None = None
 
 
+class AgentRunRequest(BaseModel):
+    task: str = Field(min_length=1, max_length=4_000)
+    workflow: str = "workspace-investigate"
+    model: str = "qwen3:8b"
+    max_steps: int = Field(default=8, ge=1, le=20)
+
+
 def _probe(url: str) -> bool:
     try:
         with urllib.request.urlopen(url, timeout=3) as response:
@@ -50,9 +58,19 @@ def _probe(url: str) -> bool:
         return False
 
 
-def create_app(database: Path | None = None, root: Path = ROOT, model_manager: ModelManager | None = None) -> FastAPI:
+def create_app(
+    database: Path | None = None,
+    root: Path = ROOT,
+    model_manager: ModelManager | None = None,
+    agent_manager: AgentManager | None = None,
+) -> FastAPI:
     store = Store(database or Path(os.getenv("CONTROL_PLANE_DB", root / "data" / "control-plane.sqlite3")))
     manager = model_manager or ModelManager()
+    configured_workspace = os.getenv("CONTROL_PLANE_AGENT_WORKSPACE", "")
+    workspace = Path(configured_workspace) if configured_workspace else root
+    if configured_workspace and not workspace.is_absolute():
+        workspace = root / workspace
+    agents = agent_manager or AgentManager(workspace)
     session_hours = int(os.getenv("CONTROL_PLANE_SESSION_HOURS", "8"))
 
     @asynccontextmanager
@@ -150,6 +168,24 @@ def create_app(database: Path | None = None, root: Path = ROOT, model_manager: M
             return manager.start_pull(model_id)
         except ModelError as error:
             raise HTTPException(status.HTTP_400_BAD_REQUEST, str(error)) from error
+
+    @app.get("/api/agents")
+    def agent_config(_user: dict[str, str] = Depends(require("admin"))) -> dict[str, object]:
+        return {**agents.config(), "jobs": agents.jobs()}
+
+    @app.post("/api/agents", status_code=status.HTTP_202_ACCEPTED)
+    def run_agent(payload: AgentRunRequest, _user: dict[str, str] = Depends(require("admin"))) -> dict[str, object]:
+        try:
+            return agents.start(payload.task, payload.workflow, payload.model, payload.max_steps)
+        except ValueError as error:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, str(error)) from error
+
+    @app.get("/api/agents/{job_id}")
+    def agent_job(job_id: str, _user: dict[str, str] = Depends(require("admin"))) -> dict[str, object]:
+        job = agents.get(job_id)
+        if not job:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "Agent job not found")
+        return job
 
     @app.get("/")
     def dashboard() -> FileResponse:

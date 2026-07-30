@@ -78,7 +78,7 @@ bash scripts/setup.sh
 <td width="50%"><h3>🎹 Practical RAG</h3><p>Visual workflows with FastGPT, pgvector search, and an optional BGE-Reranker-v2-M3 service.</p></td></tr>
 <tr><td><h3>💪 LoRA Fine-Tuning</h3><p>PEFT + TRL pipeline. Fine-tune Qwen3-8B on 8GB VRAM with QLoRA. Turn your conversations into a custom model.</p></td>
 <td><h3>🔄 Auto-Sync Pipeline</h3><p>Weekly sync from Windows folders to FastGPT. Import papers, courses, and GitHub repos automatically.</p></td></tr>
-<tr><td><h3>💻 Authenticated Dashboard</h3><p>Responsive service monitor with role-gated controls, user management, KB sync, and allowlisted model downloads.</p></td>
+<tr><td><h3>💻 Authenticated Dashboard</h3><p>Responsive service monitor with role-gated controls, user management, KB sync, allowlisted model downloads, and an administrator-only Agent workbench.</p></td>
 <td><h3>🌐 Multi-Model</h3><p>Switch between Qwen3, LLaMA, Mistral via config. 4 models pre-configured for different workloads.</p></td></tr>
 <tr><td><h3>🔌 MCP Server</h3><p>Connect MCP-compatible clients over local stdio for model, generation, reranking, and health tools.</p></td>
 <td><h3>🤖 Bounded Agent Workflows</h3><p>Use explicit, step-limited, read-only investigation workflows for workspace and code diagnosis.</p></td></tr>
