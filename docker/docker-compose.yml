@@ -95,7 +95,7 @@
       retries: 10
       start_period: 30s
     volumes:
-      - ../config/fastgpt-config.json:/app/data/config.json:ro
+      - ${FASTGPT_CONFIG:-../config/fastgpt-config.json}:/app/data/config.json:ro
     deploy:
       resources:
         limits:

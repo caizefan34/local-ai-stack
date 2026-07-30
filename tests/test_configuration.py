@@ -10,8 +10,14 @@ COMPOSE = (ROOT / "docker" / "docker-compose.yml").read_text(encoding="utf-8")
 
 class ConfigurationTests(unittest.TestCase):
     def test_compose_uses_repo_config_mount(self):
-        mount_lines = [line.strip() for line in COMPOSE.splitlines() if "fastgpt-config.json:" in line]
-        self.assertEqual(mount_lines, ["- ../config/fastgpt-config.json:/app/data/config.json:ro"])
+        self.assertIn(
+            "${FASTGPT_CONFIG:-../config/fastgpt-config.json}:/app/data/config.json:ro",
+            COMPOSE,
+        )
+
+    def test_example_config_path_matches_compose_file_location(self):
+        example = (ROOT / ".env.example").read_text(encoding="utf-8-sig")
+        self.assertIn("FASTGPT_CONFIG=../config/fastgpt-config.json", example)
 
 
     def test_compose_uses_service_dns_for_dependencies(self):
