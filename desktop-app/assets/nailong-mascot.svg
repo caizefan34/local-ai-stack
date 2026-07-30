@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Local AI Stack mascot</title>
+  <desc id="desc">A friendly original yellow baby dragon with a blue AI accent.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7c83ff"/><stop offset="1" stop-color="#454bd1"/></linearGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ffe98a"/><stop offset="1" stop-color="#f6b94f"/></linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="58" fill="url(#bg)"/>
+  <path d="M54 103 37 73l37 11 17-31 17 30c10-4 22-6 34-6 13 0 25 2 36 7l18-31 16 32 34-12-17 33c9 13 14 29 14 47 0 48-38 76-92 76s-92-28-92-76c0-18 5-35 15-48Z" fill="url(#body)" stroke="#8f5d2b" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M46 119c-18-10-25-1-31 9 15-1 26 5 32 13M210 119c18-10 25-1 31 9-15-1-26 5-32 13" fill="#ff9e72" stroke="#8f5d2b" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="91" cy="139" rx="13" ry="17" fill="#272849"/><ellipse cx="165" cy="139" rx="13" ry="17" fill="#272849"/>
+  <circle cx="95" cy="134" r="4" fill="#fff"/><circle cx="169" cy="134" r="4" fill="#fff"/>
+  <path d="M111 169c11 10 23 10 34 0" fill="none" stroke="#8f5d2b" stroke-width="6" stroke-linecap="round"/>
+  <path d="M118 91h20l-10 18z" fill="#6ee7f9" stroke="#2454a6" stroke-width="4"/>
+  <circle cx="128" cy="92" r="6" fill="#fff" opacity=".9"/>
+</svg>

@@ -9,6 +9,7 @@ import urllib.request
 
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from .actions import ActionError, run_action
@@ -60,6 +61,9 @@ def create_app(database: Path | None = None, root: Path = ROOT, model_manager: M
         yield
 
     app = FastAPI(title="Local AI Stack Control Plane", lifespan=lifespan)
+    asset_dir = root / "desktop-app" / "assets"
+    if asset_dir.is_dir():
+        app.mount("/assets", StaticFiles(directory=asset_dir), name="assets")
 
     def current_user(request: Request) -> dict[str, str]:
         authorization = request.headers.get("authorization", "")
