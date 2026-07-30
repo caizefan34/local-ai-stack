@@ -112,6 +112,12 @@ This stack gives you a **production-grade RAG system** that's fully local, fully
 ### Service Dashboard
 Monitor all services in real time:
 
+<p align="center">
+  <img src="docs/assets/dashboard-control-plane.png" alt="Local AI Stack authenticated desktop dashboard" width="100%">
+</p>
+
+The dashboard combines service health, role-based operations, model downloads, activity logs, and user access in one responsive view.
+
 ```
 ⚫ ollama    ✔️ online     FastGPT:  http://localhost:3000
 ⚫ fastgpt   ✔️ online     Reranker: http://localhost:18888
