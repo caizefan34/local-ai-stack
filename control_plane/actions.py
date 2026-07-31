@@ -13,6 +13,8 @@ class ActionError(RuntimeError):
 def run_action(name: str, root: Path) -> str:
     root = root.resolve()
     env_file = root / ".env"
+    if not env_file.is_file():
+        env_file = root / ".env.example"
     compose_file = root / "docker" / "docker-compose.yml"
     if name == "start-all":
         command = ["powershell", "-File", str(root / "scripts" / "start-all.ps1")] if os.name == "nt" else ["docker", "compose", "--env-file", str(env_file), "-f", str(compose_file), "up", "-d"]
