@@ -25,7 +25,10 @@ if (-not (Test-Path $envFile)) {
 # 1. Start FastGPT stack
 Write-Host "[1/3] Starting FastGPT + Databases..." -ForegroundColor Yellow
 $composeFile = Join-Path $rootDir "docker\docker-compose.yml"
-docker compose --env-file $envFile -f $composeFile up -d 2>&1 | Out-Null
+$composeProject = (docker inspect fastgpt-pg --format "{{ index .Config.Labels \"com.docker.compose.project\" }}" 2>$null | Out-String).Trim()
+$projectArgs = @()
+if ($composeProject) { $projectArgs = @("--project-name", $composeProject) }
+docker compose @projectArgs --env-file $envFile -f $composeFile up -d 2>&1 | Out-Null
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 Write-Host "  [v] FastGPT running on http://localhost:3000" -ForegroundColor Green
 

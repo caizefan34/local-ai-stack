@@ -1,4 +1,4 @@
-﻿services:
+services:
   pg:
     image: ${PG_IMAGE:-registry.cn-hangzhou.aliyuncs.com/fastgpt/pgvector:v0.7.0}
     container_name: ${PG_CONTAINER_NAME:-fastgpt-pg}
@@ -47,7 +47,7 @@
       - fastgpt-net
 
   redis:
-    image: ${REDIS_IMAGE:-redis:7.0.11-alpine}
+    image: ${REDIS_IMAGE:-docker.m.daocloud.io/library/redis:7.0.11-alpine}
     container_name: ${REDIS_CONTAINER_NAME:-fastgpt-redis}
     restart: always
     ports:

@@ -5,6 +5,7 @@ from unittest import mock
 
 from fastapi.testclient import TestClient
 
+from control_plane import actions
 from control_plane.app import create_app
 from control_plane.store import Store
 
@@ -119,5 +120,15 @@ class ControlPlaneTests(unittest.TestCase):
         self.assertEqual(self.client.get("/api/agents/job-1", headers=admin_headers).json()["answer"], "done")
 
 
+
+class ActionProjectTests(unittest.TestCase):
+    def test_stop_action_targets_existing_compose_project(self):
+        with mock.patch("control_plane.actions._compose_project", return_value="temp"):
+            with mock.patch("control_plane.actions.subprocess.run") as run:
+                run.return_value = mock.Mock(stdout="", stderr="", returncode=0)
+                actions.run_action("stop-all", Path(".").resolve())
+                command = run.call_args.args[0]
+                self.assertIn("--project-name=temp", command)
+                self.assertEqual(command[-1], "down")
 if __name__ == "__main__":
     unittest.main()
