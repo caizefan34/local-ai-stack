@@ -1,0 +1,95 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>Local AI Stack</title>
+<style>
+  :root {
+    --bg1: #070b16;
+    --bg2: #0d1530;
+    --accent: #38bdf8;
+    --accent2: #818cf8;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: "Segoe UI", "Microsoft YaHei UI", system-ui, sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(1200px 500px at 80% -20%, rgba(56,189,248,.16), transparent 60%),
+      radial-gradient(900px 420px at -10% 110%, rgba(129,140,248,.14), transparent 60%),
+      linear-gradient(160deg, var(--bg1), var(--bg2));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    user-select: none;
+    -webkit-app-region: drag;
+  }
+  .win-btns { position: fixed; top: 8px; right: 10px; display: flex; gap: 6px; -webkit-app-region: no-drag; }
+  .win-btn {
+    width: 22px; height: 22px; border: none; border-radius: 6px; cursor: pointer;
+    background: rgba(148,163,184,.14); color: var(--muted); font-size: 12px; line-height: 1;
+    transition: background .15s ease, color .15s ease;
+  }
+  .win-btn:hover { background: rgba(56,189,248,.35); color: #fff; }
+  .win-btn.close:hover { background: rgba(239,68,68,.75); }
+
+  .mascot {
+    width: 96px; height: 96px; border-radius: 50%;
+    background: rgba(56,189,248,.08);
+    border: 1px solid rgba(56,189,248,.25);
+    box-shadow: 0 0 45px rgba(56,189,248,.25), inset 0 0 28px rgba(129,140,248,.12);
+    display: flex; align-items: center; justify-content: center;
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  .mascot img { width: 66px; height: 66px; }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.06); opacity: .85; }
+  }
+
+  h1 { font-size: 20px; font-weight: 600; letter-spacing: .5px; }
+  h1 span { background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sub { font-size: 12px; color: var(--muted); margin-top: -12px; }
+
+  .bar {
+    width: 260px; height: 5px; border-radius: 99px; overflow: hidden;
+    background: rgba(148,163,184,.15);
+  }
+  .bar i {
+    display: block; height: 100%; width: 40%; border-radius: 99px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    animation: slide 1.2s ease-in-out infinite;
+  }
+  @keyframes slide {
+    0% { margin-left: -40%; }
+    100% { margin-left: 100%; }
+  }
+  #status { font-size: 11.5px; color: var(--muted); min-height: 16px; letter-spacing: .3px; }
+</style>
+</head>
+<body>
+  <div class="win-btns">
+    <button class="win-btn" id="btn-min" title="最小化">&#8211;</button>
+    <button class="win-btn close" id="btn-close" title="关闭">&#10005;</button>
+  </div>
+
+  <div class="mascot"><img src="../assets/nailong-mascot.svg" alt="mascot" draggable="false" /></div>
+  <h1>Local <span>AI</span> Stack</h1>
+  <div class="sub">本地私有 AI 控制台 · 桌面版</div>
+  <div class="bar"><i></i></div>
+  <div id="status">正在连接本地服务…</div>
+
+  <script>
+    document.getElementById("btn-close").addEventListener("click", () => window.desktop.window.close());
+    document.getElementById("btn-min").addEventListener("click", () => window.desktop.window.minimize());
+    if (window.desktop && window.desktop.onStatus) {
+      window.desktop.onStatus((msg) => { document.getElementById("status").textContent = msg; });
+    }
+  </script>
+</body>
+</html>

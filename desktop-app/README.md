@@ -53,3 +53,27 @@ Copy `config.template.json` to `~/.ai-desktop/config.json` and adjust:
   "syncDay": "Sunday"
 }
 ```
+
+## Native Desktop App (Electron)
+
+The repository now ships a native Electron desktop shell (`desktop-app/electron/`) so the dashboard opens as a real desktop application instead of a browser tab:
+
+- Custom dark splash screen with the mascot, then a 1280x820 application window
+- Automatically starts the control plane when it is not running (no duplicate instances)
+- Single-instance lock, hidden menu bar, external links open in the default browser
+- Desktop shortcuts `Local AI Stack` and `AI Desktop` point here
+
+First run installs the Electron runtime automatically (~100 MB). In China, if the download fails, run once with the mirror:
+
+```powershell
+$env:ELECTRON_MIRROR = "https://npmmirror.com/mirrors/electron/"
+npm install --save-dev electron@latest
+```
+
+Recreate/update the desktop shortcuts:
+
+```powershell
+.\desktop-app\electron\install-shortcuts.ps1
+```
+
+The legacy browser-mode launcher (`.\desktop-app\launch.ps1`) is kept as a fallback.

@@ -1,0 +1,15 @@
+{
+  "name": "local-ai-stack-desktop",
+  "version": "1.0.0",
+  "description": "Native Electron desktop app for the Local AI Stack control plane",
+  "main": "main.js",
+  "author": "Local AI Stack",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^43.2.0"
+  }
+}
