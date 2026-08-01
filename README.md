@@ -9,6 +9,10 @@
 <p align="center">
   <img src="docs/assets/hero-screenshot.png" alt="Local AI Stack" width="100%">
 </p>
+<p align="center">
+  <video src="docs/assets/demo-walkthrough.mp4" poster="docs/assets/demo-poster.jpg" controls width="100%"></video>
+</p>
+<p align="center"><em>Watch the stack in action — <a href="https://caizefan34.github.io/local-ai-stack/">full live walkthrough on GitHub Pages</a>.</em></p>
 
 <p align="center">
 <a href="#-quick-start"><b>Quick Start</b></a> · <a href="#-why-local-ai-stack"><b>Why Local</b></a> · <a href="#-use-cases"><b>Use Cases</b></a> · <a href="#-architecture"><b>Architecture</b></a> · <a href="https://caizefan34.github.io/local-ai-stack/"><b>Live Walkthrough</b></a> · <a href="https://github.com/caizefan34/local-ai-stack/discussions"><b>Discuss</b></a></p>
@@ -108,14 +112,6 @@ Most RAG solutions leave you compromising on something:
 This stack gives you a **production-grade RAG system** that's fully local, fully private, and completely free — running on hardware you already own.
 
 ## 🎬 Demo
-
-### Live Walkthrough
-Watch the stack in action:
-
-<p align="center">
-  <video src="docs/assets/demo-walkthrough.mp4" poster="docs/assets/demo-poster.jpg" controls width="100%"></video>
-</p>
-<p align="center"><em>Video not playing? Watch the <a href="https://caizefan34.github.io/local-ai-stack/">live walkthrough on GitHub Pages</a>.</em></p>
 
 ### Service Dashboard
 Monitor all services in real time:
