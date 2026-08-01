@@ -12,3 +12,5 @@ lora-finetune/data/feedback.jsonl
 *.gguf
 
 *.bak
+
+*.backup-*
