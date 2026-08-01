@@ -113,8 +113,9 @@ This stack gives you a **production-grade RAG system** that's fully local, fully
 Watch the stack in action:
 
 <p align="center">
-  <img src="docs/assets/demo-animation.gif" alt="Animated walkthrough of Local AI Stack" width="100%">
+  <video src="docs/assets/demo-walkthrough.mp4" poster="docs/assets/demo-poster.jpg" controls width="100%"></video>
 </p>
+<p align="center"><em>Video not playing? Watch the <a href="https://caizefan34.github.io/local-ai-stack/">live walkthrough on GitHub Pages</a>.</em></p>
 
 ### Service Dashboard
 Monitor all services in real time:
