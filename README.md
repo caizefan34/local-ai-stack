@@ -109,6 +109,13 @@ This stack gives you a **production-grade RAG system** that's fully local, fully
 
 ## 🎬 Demo
 
+### Live Walkthrough
+Watch the stack in action:
+
+<p align="center">
+  <img src="docs/assets/demo-animation.gif" alt="Animated walkthrough of Local AI Stack" width="100%">
+</p>
+
 ### Service Dashboard
 Monitor all services in real time:
 
@@ -371,4 +378,3 @@ Made with ❤️ for the open-source community.
 
 ---
 > **Local AI Stack** — Production-grade Local AI Workspace. 100% private. 100% free. No GPU required.
-
