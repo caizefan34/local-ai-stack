@@ -2,134 +2,318 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Local AI Stack</title>
 <style>
+  /* ============================================================
+     Local AI Stack — Shell Titlebar
+     Deep-space glassmorphism with sky-blue / indigo accents
+     Fully self-contained · no external dependencies
+     ============================================================ */
+
   :root {
-    --bg1: #070b16;
-    --bg2: #0d1530;
+    --bg-base: #060818;
+    --bg-deep: #0a0f28;
+    --surface: rgba(15, 21, 48, 0.78);
+    --surface-2: rgba(10, 15, 40, 0.6);
     --accent: #38bdf8;
-    --accent2: #818cf8;
-    --text: #e2e8f0;
-    --muted: #94a3b8;
+    --accent-2: #818cf8;
+    --text: #e8ecf5;
+    --muted: #7c8aa5;
+    --border: rgba(148, 163, 184, 0.14);
     --bar-h: 46px;
+    --font: "Segoe UI", "Microsoft YaHei UI", system-ui, -apple-system, sans-serif;
   }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; overflow: hidden; }
+
   body {
-    font-family: "Segoe UI", "Microsoft YaHei UI", system-ui, sans-serif;
+    font-family: var(--font);
     color: var(--text);
     background:
-      radial-gradient(1200px 500px at 80% -20%, rgba(56,189,248,.14), transparent 60%),
-      radial-gradient(900px 420px at -10% 110%, rgba(129,140,248,.12), transparent 60%),
-      linear-gradient(160deg, var(--bg1), var(--bg2));
+      radial-gradient(ellipse 70% 55% at 12% -5%, rgba(56,189,248,0.12), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 88% 105%, rgba(129,140,248,0.13), transparent 60%),
+      radial-gradient(ellipse 90% 70% at 50% 50%, rgba(20,28,64,0.4), transparent 70%),
+      linear-gradient(180deg, var(--bg-base) 0%, var(--bg-deep) 100%);
     user-select: none;
   }
 
+  /* ============================== TITLEBAR ============================== */
   #titlebar {
     height: var(--bar-h);
+    flex: 0 0 var(--bar-h);
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 0 10px 0 14px;
-    background: linear-gradient(180deg, rgba(13,21,48,.95), rgba(7,11,22,.92));
-    border-bottom: 1px solid rgba(56,189,248,.18);
-    box-shadow: 0 1px 14px rgba(0,0,0,.45);
+    gap: 12px;
+    padding: 0 6px 0 12px;
+    position: relative;
+    z-index: 50;
+    background: linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border-bottom: 1px solid rgba(56,189,248,0.18);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.04), 0 8px 26px rgba(0,0,0,0.38);
     -webkit-app-region: drag;
+    app-region: drag;
   }
 
-  .brand { display: flex; align-items: center; gap: 9px; min-width: 0; }
-  .brand img { width: 26px; height: 26px; }
-  .brand .name { font-size: 13px; font-weight: 600; letter-spacing: .5px; white-space: nowrap; }
+  /* sweeping highlight across the titlebar */
+  #titlebar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(56,189,248,0.07) 45%, rgba(129,140,248,0.1) 50%, rgba(56,189,248,0.07) 55%, transparent);
+    background-size: 250% 100%;
+    background-position: 220% 0;
+    animation: las-sweep 9s linear infinite;
+    pointer-events: none;
+  }
+
+  /* glowing hairline at the bottom of the titlebar */
+  #titlebar::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(56,189,248,0.5) 30%, rgba(129,140,248,0.5) 70%, transparent);
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  @keyframes las-sweep {
+    0%   { background-position: 220% 0; }
+    100% { background-position: -60% 0; }
+  }
+
+  /* ---- Brand ---- */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    user-select: none;
+  }
+  .brand img {
+    width: 26px; height: 26px;
+    border-radius: 7px;
+    flex: 0 0 auto;
+    filter: drop-shadow(0 2px 7px rgba(124,131,255,0.45));
+  }
+  .brand .name {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
   .brand .name span {
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text; background-clip: text; color: transparent;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 
-  .tabs { display: flex; gap: 6px; -webkit-app-region: no-drag; }
+  /* ---- Tabs ---- */
+  .tabs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 8px;
+    -webkit-app-region: no-drag;
+    app-region: no-drag;
+  }
   .tab {
-    border: 1px solid rgba(148,163,184,.18);
-    background: rgba(148,163,184,.06);
-    color: var(--muted);
-    font-size: 12px;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 13px;
     font-family: inherit;
-    padding: 5px 16px;
-    border-radius: 99px;
-    cursor: pointer;
-    transition: background .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease;
-  }
-  .tab:hover { color: var(--text); border-color: rgba(56,189,248,.4); }
-  .tab.active {
-    color: #fff;
-    border-color: transparent;
-    background: linear-gradient(90deg, rgba(56,189,248,.28), rgba(129,140,248,.28));
-    box-shadow: 0 0 14px rgba(56,189,248,.25), inset 0 0 0 1px rgba(56,189,248,.45);
-  }
-
-  .spacer { flex: 1; }
-
-  .nav-btns, .win-btns { display: flex; gap: 4px; -webkit-app-region: no-drag; }
-  .nav-btn, .win-btn {
-    width: 30px; height: 30px;
-    border: none; border-radius: 8px;
-    background: rgba(148,163,184,.10);
+    font-size: 12px;
+    font-weight: 500;
     color: var(--muted);
-    font-size: 13px; line-height: 1;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: rgba(255,255,255,0.025);
     cursor: pointer;
-    transition: background .15s ease, color .15s ease;
+    white-space: nowrap;
+    transition: color .15s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
   }
-  .nav-btn:hover { background: rgba(56,189,248,.28); color: #fff; }
-  .win-btn:hover { background: rgba(148,163,184,.2); color: #fff; }
-  .win-btn.close:hover { background: rgba(239,68,68,.8); }
+  .tab svg { width: 13px; height: 13px; opacity: .85; }
+  .tab:hover {
+    color: var(--text);
+    background: rgba(56,189,248,0.09);
+    border-color: rgba(56,189,248,0.14);
+  }
+  .tab.active {
+    color: #eaf6ff;
+    background: linear-gradient(135deg, rgba(56,189,248,0.28), rgba(129,140,248,0.28));
+    border-color: rgba(56,189,248,0.38);
+    box-shadow: 0 0 16px rgba(56,189,248,0.28), inset 0 1px 0 rgba(255,255,255,0.09);
+  }
+  .tab.active svg { opacity: 1; }
+  .tab.active::after {
+    content: "";
+    position: absolute;
+    left: 50%; bottom: -7px;
+    transform: translateX(-50%);
+    width: 20px; height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    animation: las-glow 2.4s ease-in-out infinite;
+  }
+  @keyframes las-glow {
+    0%, 100% { opacity: .65; box-shadow: 0 0 6px rgba(56,189,248,0.55); }
+    50%      { opacity: 1;   box-shadow: 0 0 13px rgba(56,189,248,0.9); }
+  }
 
-  #view-host { position: fixed; left: 0; top: var(--bar-h); right: 0; bottom: 0; }
+  .spacer { flex: 1 1 auto; }
+
+  /* ---- Navigation buttons ---- */
+  .nav-btns {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding-right: 4px;
+    -webkit-app-region: no-drag;
+    app-region: no-drag;
+  }
+  .nav-btn {
+    width: 28px; height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease, transform .1s ease;
+  }
+  .nav-btn svg { width: 15px; height: 15px; }
+  .nav-btn:hover { background: rgba(56,189,248,0.13); color: var(--text); }
+  .nav-btn:active { transform: scale(0.9); }
+
+  /* ---- Window controls ---- */
+  .win-btns {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    margin-left: 4px;
+    -webkit-app-region: no-drag;
+    app-region: no-drag;
+  }
+  .win-btn {
+    width: 36px; height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease, transform .1s ease;
+  }
+  .win-btn svg { width: 14px; height: 14px; }
+  .win-btn:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+  .win-btn.close:hover { background: #e5484d; color: #fff; }
+  .win-btn:active { transform: scale(0.94); }
+
+  /* ---- View host (WebContentsView overlay target) ---- */
+  #view-host {
+    position: fixed;
+    left: 0;
+    top: var(--bar-h);
+    right: 0;
+    bottom: 0;
+  }
+
+  /* ---- Reduced motion ---- */
+  @media (prefers-reduced-motion: reduce) {
+    #titlebar::before, .tab.active::after { animation: none !important; }
+  }
 </style>
 </head>
 <body>
   <div id="titlebar">
+    <!-- Brand -->
     <div class="brand">
       <img src="../assets/nailong-mascot.svg" alt="mascot" draggable="false" />
       <div class="name">Local <span>AI</span> Stack</div>
     </div>
 
+    <!-- Tab navigation -->
     <div class="tabs" id="tabs">
-      <button class="tab active" data-page="control">控制台</button>
-      <button class="tab" data-page="fastgpt">FastGPT</button>
+      <button class="tab active" data-page="control">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        控制台
+      </button>
+      <button class="tab" data-page="fastgpt">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>
+        FastGPT
+      </button>
     </div>
 
     <div class="spacer"></div>
 
+    <!-- Navigation buttons -->
     <div class="nav-btns">
-      <button class="nav-btn" id="btn-back" title="后退">&#8592;</button>
-      <button class="nav-btn" id="btn-forward" title="前进">&#8594;</button>
-      <button class="nav-btn" id="btn-reload" title="刷新">&#8635;</button>
+      <button class="nav-btn" id="btn-back" title="后退" aria-label="后退">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <button class="nav-btn" id="btn-forward" title="前进" aria-label="前进">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+      <button class="nav-btn" id="btn-reload" title="刷新" aria-label="刷新">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      </button>
     </div>
 
+    <!-- Window controls -->
     <div class="win-btns">
-      <button class="win-btn" id="btn-min" title="最小化">&#8211;</button>
-      <button class="win-btn" id="btn-max" title="最大化">&#9633;</button>
-      <button class="win-btn close" id="btn-close" title="关闭">&#10005;</button>
+      <button class="win-btn" id="btn-min" title="最小化" aria-label="最小化">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+      <button class="win-btn" id="btn-max" title="最大化" aria-label="最大化">
+        <svg id="icon-max" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+      </button>
+      <button class="win-btn close" id="btn-close" title="关闭" aria-label="关闭">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
   </div>
+
   <div id="view-host"></div>
 
   <script>
+    // ---- Navigation ----
     document.getElementById("btn-back").addEventListener("click", () => window.desktop.nav.back());
     document.getElementById("btn-forward").addEventListener("click", () => window.desktop.nav.forward());
     document.getElementById("btn-reload").addEventListener("click", () => window.desktop.nav.reload());
+
+    // ---- Window controls ----
     document.getElementById("btn-min").addEventListener("click", () => window.desktop.window.minimize());
     document.getElementById("btn-max").addEventListener("click", () => window.desktop.window.toggleMaximize());
     document.getElementById("btn-close").addEventListener("click", () => window.desktop.window.close());
 
+    // ---- Tab switching ----
     const tabs = document.querySelectorAll(".tab");
     tabs.forEach((t) =>
       t.addEventListener("click", () => window.desktop.nav.select(t.dataset.page))
     );
 
+    // ---- Sync tab highlight with actual navigation state ----
     window.desktop.nav.onState(({ page }) => {
       tabs.forEach((t) => t.classList.toggle("active", t.dataset.page === page));
     });
+
+    // ---- Sync maximize/restore icon ----
+    const iconMax = document.getElementById("icon-max");
+    const restoreSvg = '<path d="M8 8h12v12H8z"/><path d="M4 16V4h12"/>';
+    const maxSvg = '<rect x="4" y="4" width="16" height="16" rx="2"/>';
     window.desktop.window.onMaximized((max) => {
-      document.getElementById("btn-max").innerHTML = max ? "&#10530;" : "&#9633;";
+      iconMax.innerHTML = max ? restoreSvg : maxSvg;
     });
   </script>
 </body>
