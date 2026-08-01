@@ -1,357 +1,1730 @@
-<!doctype html>
-<html lang="zh-CN">
+<!DOCTYPE html>
+<html lang="zh-CN" data-viewport-mode="app-shell" class="light">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Local AI Stack</title>
-<style>
-  /* ============================================================
-     Local AI Stack — Splash / Loading
-     Deep-space glassmorphism with orbiting mascot animation
-     Fully self-contained · no external dependencies
-     ============================================================ */
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Splash · Loading</title>
+    <style id="theme-vars">
+/* ============================================================
+   Local AI Stack — Design Tokens
+   Deep-space glassmorphism with sky-blue / indigo accents
+   ============================================================ */
 
-  :root {
-    --bg-base: #060818;
-    --bg-deep: #0d1530;
-    --accent: #38bdf8;
-    --accent-2: #818cf8;
-    --text: #e8ecf5;
-    --muted: #94a3b8;
-    --font: "Segoe UI", "Microsoft YaHei UI", system-ui, -apple-system, sans-serif;
-  }
+:root {
+  /* ---- Core surfaces ---- */
+  --las-background: #060818;
+  --las-foreground: #e8ecf5;
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { height: 100%; overflow: hidden; }
+  --las-card: #0f1530;
+  --las-card-foreground: #e8ecf5;
 
-  body {
-    font-family: var(--font);
-    color: var(--text);
-    background-color: var(--bg-base);
-    background-image:
-      radial-gradient(ellipse 70% 60% at 80% -20%, rgba(56, 189, 248, 0.16), transparent 60%),
-      radial-gradient(ellipse 70% 60% at -10% 110%, rgba(129, 140, 248, 0.14), transparent 60%),
-      linear-gradient(180deg, var(--bg-base) 0%, var(--bg-deep) 100%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 18px;
-    user-select: none;
-    -webkit-app-region: drag;
-    position: relative;
-  }
+  --las-popover: #0c1128;
+  --las-popover-foreground: #e8ecf5;
 
-  /* ---- Faint grid texture overlay ---- */
-  .grid-overlay {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background-image:
-      linear-gradient(rgba(148, 163, 184, 0.045) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(148, 163, 184, 0.045) 1px, transparent 1px);
-    background-size: 26px 26px;
-    -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, #000 30%, transparent 80%);
-    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, #000 30%, transparent 80%);
-    opacity: 0.7;
-    z-index: 0;
-  }
+  /* ---- Primary (sky-blue → indigo) ---- */
+  --las-primary: #38bdf8;
+  --las-primary-foreground: #ffffff;
 
-  /* ---- Scanning line traveling down ---- */
-  .scanline {
-    position: fixed;
-    left: 0; right: 0; top: 0;
-    height: 120px;
-    pointer-events: none;
-    background: linear-gradient(180deg, transparent 0%, rgba(56, 189, 248, 0.06) 45%, rgba(129, 140, 248, 0.05) 55%, transparent 100%);
-    z-index: 0;
-    animation: scan 4.5s linear infinite;
-  }
-  @keyframes scan {
-    0%   { transform: translateY(-120px); opacity: 0; }
-    12%  { opacity: 1; }
-    88%  { opacity: 1; }
-    100% { transform: translateY(340px); opacity: 0; }
-  }
+  /* ---- Muted ---- */
+  --las-muted: #1a2244;
+  --las-muted-foreground: #7c8aa5;
 
-  /* ---- Window controls ---- */
-  .win-btns {
-    position: fixed;
-    top: 8px;
-    right: 10px;
-    display: flex;
-    gap: 6px;
-    -webkit-app-region: no-drag;
-    z-index: 20;
-  }
-  .win-btn {
-    width: 22px; height: 22px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    border-radius: 6px;
-    background: rgba(148, 163, 184, 0.08);
-    color: var(--muted);
-    cursor: pointer;
-    transition: background .18s ease, color .18s ease, transform .18s ease;
-  }
-  .win-btn:hover { background: rgba(148, 163, 184, 0.18); color: #cbd5e1; }
-  .win-btn:active { transform: scale(0.92); }
-  .win-btn.close:hover { background: rgba(244, 63, 94, 0.85); color: #fff; }
-  .win-btn svg { width: 12px; height: 12px; display: block; }
+  /* ---- Lines & inputs ---- */
+  --las-border: rgba(148, 163, 184, 0.14);
+  --las-input: rgba(148, 163, 184, 0.18);
+  --las-ring: #38bdf8;
 
-  /* ---- Mascot orbit system ---- */
-  .orbit-stage {
-    position: relative;
-    z-index: 5;
-    width: 132px;
-    height: 132px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  /* ---- Semantic states ---- */
+  --las-success: #34d399;
+  --las-danger: #f43f5e;
+  --las-warning: #fbbf24;
 
-  /* Outer dashed orbit ring */
-  .orbit-outer {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    border: 1.5px dashed rgba(56, 189, 248, 0.5);
-    animation: spin 9s linear infinite;
-    -webkit-mask-image: conic-gradient(#000 0deg 350deg, transparent 350deg 360deg);
-    mask-image: conic-gradient(#000 0deg 350deg, transparent 350deg 360deg);
-  }
+  /* ---- Radius scale ---- */
+  --las-radius-sm: 8px;
+  --las-radius-md: 12px;
+  --las-radius-lg: 18px;
 
-  /* Middle thin orbit ring */
-  .orbit-mid {
-    position: absolute;
-    inset: 10px;
-    border-radius: 50%;
-    border: 1px solid rgba(129, 140, 248, 0.22);
-    animation: spin-rev 14s linear infinite;
-  }
+  /* ---- Typography ---- */
+  --las-font-sans: "Segoe UI", "Microsoft YaHei UI", system-ui, -apple-system, sans-serif;
+  --las-font-mono: "Cascadia Code", "JetBrains Mono", ui-monospace, monospace;
 
-  /* Inner glow container holding the mascot */
-  .mascot-core {
-    position: relative;
-    width: 84px;
-    height: 84px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 50% 45%, rgba(56, 189, 248, 0.18), rgba(56, 189, 248, 0.04) 60%, transparent 75%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow:
-      0 0 0 1px rgba(56, 189, 248, 0.25),
-      0 0 22px 2px rgba(56, 189, 248, 0.28),
-      inset 0 0 18px rgba(129, 140, 248, 0.18);
-    animation: pulse 3.2s ease-in-out infinite;
-  }
-  .mascot-core::before {
-    content: "";
-    position: absolute;
-    inset: -3px;
-    border-radius: 50%;
-    border: 1px solid rgba(129, 140, 248, 0.35);
-    opacity: 0.6;
-    animation: pulse-ring 3.2s ease-in-out infinite;
-  }
-  .mascot-core img {
-    width: 66px; height: 66px;
-    border-radius: 16px;
-    display: block;
-    animation: breathe 3.2s ease-in-out infinite;
-    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
-  }
+  /* ---- Extended palette (design-only, not semantic aliases) ---- */
+  --las-accent-indigo: #818cf8;
+  --las-accent-glow: rgba(56, 189, 248, 0.25);
+  --las-surface-glass: rgba(15, 21, 48, 0.55);
+  --las-surface-elevated: rgba(22, 30, 66, 0.7);
+}
 
-  /* Orbiting particle dots */
-  .particle {
-    position: absolute;
-    top: 50%; left: 50%;
-    width: 5px; height: 5px;
-    margin: -2.5px 0 0 -2.5px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 6px 1px rgba(56, 189, 248, 0.9);
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--las-background);
+    --color-foreground: var(--las-foreground);
+    --color-card: var(--las-card);
+    --color-card-foreground: var(--las-card-foreground);
+    --color-popover: var(--las-popover);
+    --color-popover-foreground: var(--las-popover-foreground);
+    --color-primary: var(--las-primary);
+    --color-primary-foreground: var(--las-primary-foreground);
+    --color-muted: var(--las-muted);
+    --color-muted-foreground: var(--las-muted-foreground);
+    --color-border: var(--las-border);
+    --color-input: var(--las-input);
+    --color-ring: var(--las-ring);
+    --radius-sm: var(--las-radius-sm);
+    --radius-md: var(--las-radius-md);
+    --radius-lg: var(--las-radius-lg);
   }
-  .particle.p2 { background: var(--accent-2); box-shadow: 0 0 6px 1px rgba(129, 140, 248, 0.9); width: 4px; height: 4px; margin: -2px 0 0 -2px; }
-  .particle.p3 { background: #6ee7f9; box-shadow: 0 0 7px 1px rgba(110, 231, 249, 0.85); }
-  .particle.p4 { background: #a5b4fc; box-shadow: 0 0 5px 1px rgba(165, 180, 252, 0.85); width: 3.5px; height: 3.5px; margin: -1.75px 0 0 -1.75px; }
-  .particle.p1 { animation: orbit-a 5.5s linear infinite; }
-  .particle.p2 { animation: orbit-b 7.5s linear infinite; }
-  .particle.p3 { animation: orbit-c 6.2s linear infinite reverse; }
-  .particle.p4 { animation: orbit-d 9s linear infinite; }
-
-  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-  @keyframes spin-rev { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
-  @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 1px rgba(56,189,248,0.25), 0 0 18px 2px rgba(56,189,248,0.22), inset 0 0 16px rgba(129,140,248,0.15); }
-    50%      { box-shadow: 0 0 0 1px rgba(56,189,248,0.45), 0 0 30px 4px rgba(56,189,248,0.4),  inset 0 0 22px rgba(129,140,248,0.28); }
+  @layer base {
+    body { background: var(--las-background); color: var(--las-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
   }
-  @keyframes pulse-ring {
-    0%, 100% { opacity: 0.35; transform: scale(1); }
-    50%      { opacity: 0.7;  transform: scale(1.05); }
-  }
-  @keyframes breathe {
-    0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.96; }
-    50%      { transform: scale(1.06) rotate(-1.5deg); opacity: 1; }
-  }
-  @keyframes orbit-a { from { transform: rotate(0deg)   translateX(58px) rotate(0deg); }   to { transform: rotate(360deg) translateX(58px) rotate(-360deg); } }
-  @keyframes orbit-b { from { transform: rotate(45deg)  translateX(52px) rotate(-45deg); }  to { transform: rotate(405deg) translateX(52px) rotate(-405deg); } }
-  @keyframes orbit-c { from { transform: rotate(120deg) translateX(64px) rotate(-120deg); } to { transform: rotate(480deg) translateX(64px) rotate(-480deg); } }
-  @keyframes orbit-d { from { transform: rotate(200deg) translateX(48px) rotate(-200deg); } to { transform: rotate(560deg) translateX(48px) rotate(-560deg); } }
-
-  /* ---- Title ---- */
-  .titles { text-align: center; display: flex; flex-direction: column; gap: 5px; margin-top: 2px; z-index: 5; }
-  h1 {
-    font-size: 20px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    line-height: 1.2;
-    color: var(--text);
-  }
-  h1 span {
-    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-  }
-  .sub {
-    font-size: 12px;
-    color: var(--muted);
-    letter-spacing: 0.3px;
-    font-weight: 400;
-  }
-
-  /* ---- Loading bar ---- */
-  .loader { width: 260px; margin-top: 2px; display: flex; flex-direction: column; align-items: center; gap: 9px; z-index: 5; }
-  .bar {
-    position: relative;
-    width: 260px;
-    height: 5px;
-    border-radius: 99px;
-    background: rgba(148, 163, 184, 0.15);
-    overflow: hidden;
-    box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.08);
-  }
-  .bar-fill {
-    position: absolute;
-    top: 0; left: 0;
-    width: 42%;
-    height: 100%;
-    border-radius: 99px;
-    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
-    box-shadow: 0 0 10px 1px rgba(56, 189, 248, 0.55);
-    animation: load-slide 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-  }
-  .bar-shimmer {
-    position: absolute;
-    top: 0; left: -60%;
-    width: 60%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
-    animation: shimmer 1.8s ease-in-out infinite;
-  }
-  @keyframes load-slide { 0% { left: -42%; } 100% { left: 100%; } }
-  @keyframes shimmer { 0% { left: -60%; } 100% { left: 160%; } }
-
-  #status {
-    font-size: 11.5px;
-    color: var(--muted);
-    min-height: 16px;
-    letter-spacing: 0.3px;
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    font-weight: 400;
-  }
-  .status-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 6px 1px rgba(56, 189, 248, 0.8);
-    animation: blink 1.4s ease-in-out infinite;
-  }
-  @keyframes blink {
-    0%, 100% { opacity: 0.4; transform: scale(0.85); }
-    50%      { opacity: 1;   transform: scale(1.15); }
-  }
-
-  /* ---- Brand footer mark ---- */
-  .foot {
-    position: fixed;
-    bottom: 10px;
-    left: 0; right: 0;
-    text-align: center;
-    font-size: 9.5px;
-    color: rgba(124, 138, 165, 0.55);
-    letter-spacing: 0.6px;
-    z-index: 5;
-    pointer-events: none;
-  }
-
-  /* ---- Reduced motion ---- */
-  @media (prefers-reduced-motion: reduce) {
-    .orbit-outer, .orbit-mid, .mascot-core, .mascot-core::before, .mascot-core img,
-    .particle, .bar-fill, .bar-shimmer, .status-dot, .scanline {
-      animation: none !important;
-    }
-    .bar-fill { left: 0; width: 60%; }
-  }
-</style>
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--las-background); }
+      .text-background { color: var(--las-background); }
+      .border-background { border-color: var(--las-background); }
+      .ring-background { --tw-ring-color: var(--las-background); }
+      .bg-foreground { background-color: var(--las-foreground); }
+      .text-foreground { color: var(--las-foreground); }
+      .border-foreground { border-color: var(--las-foreground); }
+      .ring-foreground { --tw-ring-color: var(--las-foreground); }
+      .bg-card { background-color: var(--las-card); }
+      .text-card { color: var(--las-card); }
+      .border-card { border-color: var(--las-card); }
+      .ring-card { --tw-ring-color: var(--las-card); }
+      .bg-card-foreground { background-color: var(--las-card-foreground); }
+      .text-card-foreground { color: var(--las-card-foreground); }
+      .border-card-foreground { border-color: var(--las-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--las-card-foreground); }
+      .bg-popover { background-color: var(--las-popover); }
+      .text-popover { color: var(--las-popover); }
+      .border-popover { border-color: var(--las-popover); }
+      .ring-popover { --tw-ring-color: var(--las-popover); }
+      .bg-popover-foreground { background-color: var(--las-popover-foreground); }
+      .text-popover-foreground { color: var(--las-popover-foreground); }
+      .border-popover-foreground { border-color: var(--las-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--las-popover-foreground); }
+      .bg-primary { background-color: var(--las-primary); }
+      .text-primary { color: var(--las-primary); }
+      .border-primary { border-color: var(--las-primary); }
+      .ring-primary { --tw-ring-color: var(--las-primary); }
+      .bg-primary-foreground { background-color: var(--las-primary-foreground); }
+      .text-primary-foreground { color: var(--las-primary-foreground); }
+      .border-primary-foreground { border-color: var(--las-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--las-primary-foreground); }
+      .bg-muted { background-color: var(--las-muted); }
+      .text-muted { color: var(--las-muted); }
+      .border-muted { border-color: var(--las-muted); }
+      .ring-muted { --tw-ring-color: var(--las-muted); }
+      .bg-muted-foreground { background-color: var(--las-muted-foreground); }
+      .text-muted-foreground { color: var(--las-muted-foreground); }
+      .border-muted-foreground { border-color: var(--las-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--las-muted-foreground); }
+      .bg-border { background-color: var(--las-border); }
+      .text-border { color: var(--las-border); }
+      .border-border { border-color: var(--las-border); }
+      .ring-border { --tw-ring-color: var(--las-border); }
+      .bg-input { background-color: var(--las-input); }
+      .text-input { color: var(--las-input); }
+      .border-input { border-color: var(--las-input); }
+      .ring-input { --tw-ring-color: var(--las-input); }
+      .bg-ring { background-color: var(--las-ring); }
+      .text-ring { color: var(--las-ring); }
+      .border-ring { border-color: var(--las-ring); }
+      .ring-ring { --tw-ring-color: var(--las-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
 </head>
 <body>
-  <div class="grid-overlay" aria-hidden="true"></div>
-  <div class="scanline" aria-hidden="true"></div>
-
-  <div class="win-btns">
-    <button class="win-btn" id="btn-min" title="最小化" aria-label="最小化">
-      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="3" y="7.25" width="10" height="1.5" rx="0.75" fill="currentColor"/></svg>
-    </button>
-    <button class="win-btn close" id="btn-close" title="关闭" aria-label="关闭">
-      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-    </button>
-  </div>
-
-  <div class="orbit-stage" aria-label="应用图标动画">
-    <div class="orbit-mid" aria-hidden="true"></div>
-    <div class="orbit-outer" aria-hidden="true"></div>
-    <div class="mascot-core">
-      <img src="../assets/nailong-mascot.svg" alt="Local AI Stack 吉祥物" draggable="false" />
+    <!-- v3: Holographic frame border -->
+    <div class="holo-frame" aria-hidden="true">
+      <div class="holo-corner h-tl"></div>
+      <div class="holo-corner h-tr"></div>
+      <div class="holo-corner h-bl"></div>
+      <div class="holo-corner h-br"></div>
     </div>
-    <span class="particle p1" aria-hidden="true"></span>
-    <span class="particle p2" aria-hidden="true"></span>
-    <span class="particle p3" aria-hidden="true"></span>
-    <span class="particle p4" aria-hidden="true"></span>
-  </div>
+    <!-- v3: Subtle vignette -->
+    <div class="splash-vignette" aria-hidden="true"></div>
 
-  <div class="titles">
-    <h1>Local <span>AI</span> Stack</h1>
-    <div class="sub">本地私有 AI 控制台 · 桌面版</div>
-  </div>
-
-  <div class="loader">
-    <div class="bar" role="progressbar" aria-label="加载进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="42">
-      <div class="bar-fill"></div>
-      <div class="bar-shimmer" aria-hidden="true"></div>
+    <div class="splash-orb o1" aria-hidden="true"></div>
+    <div class="splash-orb o2" aria-hidden="true"></div>
+    <div class="splash-orb o3" aria-hidden="true"></div>
+    <div class="splash-grid" aria-hidden="true"></div>
+    <div class="splash-grain" aria-hidden="true"></div>
+    <div class="splash-starfield" aria-hidden="true">
+      <span style="top:6%;left:8%;width:1.5px;height:1.5px;animation-delay:0s;"></span>
+      <span style="top:10%;left:88%;width:2px;height:2px;animation-delay:-0.5s;"></span>
+      <span style="top:18%;left:22%;width:1.5px;height:1.5px;animation-delay:-1.2s;"></span>
+      <span style="top:22%;left:70%;width:1px;height:1px;animation-delay:-2s;"></span>
+      <span style="top:28%;left:44%;width:1.5px;height:1.5px;animation-delay:-0.8s;"></span>
+      <span style="top:34%;left:14%;width:2px;height:2px;animation-delay:-1.6s;"></span>
+      <span style="top:38%;left:92%;width:1.5px;height:1.5px;animation-delay:-0.3s;"></span>
+      <span style="top:46%;left:6%;width:1px;height:1px;animation-delay:-2.4s;"></span>
+      <span style="top:52%;left:96%;width:1.5px;height:1.5px;animation-delay:-1.1s;"></span>
+      <span style="top:58%;left:30%;width:1px;height:1px;animation-delay:-0.7s;"></span>
+      <span style="top:64%;left:84%;width:2px;height:2px;animation-delay:-1.9s;"></span>
+      <span style="top:70%;left:12%;width:1.5px;height:1.5px;animation-delay:-0.4s;"></span>
+      <span style="top:74%;left:58%;width:1px;height:1px;animation-delay:-2.2s;"></span>
+      <span style="top:80%;left:34%;width:1.5px;height:1.5px;animation-delay:-1.4s;"></span>
+      <span style="top:84%;left:76%;width:2px;height:2px;animation-delay:-0.9s;"></span>
+      <span style="top:90%;left:18%;width:1px;height:1px;animation-delay:-1.8s;"></span>
+      <span style="top:92%;left:50%;width:1.5px;height:1.5px;animation-delay:-0.2s;"></span>
+      <span style="top:96%;left:90%;width:1px;height:1px;animation-delay:-2.6s;"></span>
     </div>
-    <div id="status"><span class="status-dot" aria-hidden="true"></span><span id="status-text">正在连接本地服务…</span></div>
-  </div>
+    <div class="splash-scanline" aria-hidden="true"></div>
+    <div class="splash-holo-scan" aria-hidden="true"></div>
 
-  <div class="foot">LOCAL AI STACK · v1.0.0</div>
+    <div class="splash-wincontrols" role="group" aria-label="窗口控制">
+      <button type="button" class="splash-min" aria-label="最小化" title="最小化">
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <rect x="3" y="7.25" width="10" height="1.5" rx="0.75" fill="currentColor"/>
+        </svg>
+      </button>
+      <button type="button" class="splash-close" aria-label="关闭" title="关闭">
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
 
-  <script>
-    document.getElementById("btn-close").addEventListener("click", () => window.desktop.window.close());
-    document.getElementById("btn-min").addEventListener("click", () => window.desktop.window.minimize());
+    <main class="splash-shell">
+      <section class="splash-orbit-stage" aria-label="应用图标动画">
+        <div class="holo-ring field" aria-hidden="true"></div>
+        <div class="holo-ring dashed" aria-hidden="true"></div>
+        <div class="holo-ring solid" aria-hidden="true"></div>
+        <div class="holo-ring dotted" aria-hidden="true"></div>
 
-    // Status updates pushed from the main process (msg is a string)
-    if (window.desktop && window.desktop.onStatus) {
-      window.desktop.onStatus((msg) => {
-        document.getElementById("status-text").textContent = msg;
+        <div class="splash-mascot-core">
+          <span class="core-wave w1" aria-hidden="true"></span>
+          <span class="core-wave w2" aria-hidden="true"></span>
+          <span class="core-wave w3" aria-hidden="true"></span>
+          <span class="splash-spark s1" aria-hidden="true"></span>
+          <span class="splash-spark s2" aria-hidden="true"></span>
+          <svg class="splash-progress-ring" viewBox="0 0 100 100" aria-hidden="true">
+            <defs>
+              <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#38bdf8"/>
+                <stop offset="50%" stop-color="#818cf8"/>
+                <stop offset="100%" stop-color="#5eead4"/>
+              </linearGradient>
+            </defs>
+            <circle class="ring-track" cx="50" cy="50" r="48"/>
+            <circle class="ring-fill" cx="50" cy="50" r="48"/>
+          </svg>
+          <img class="splash-mascot" src="../assets/nailong-mascot.svg" alt="Local AI Stack 吉祥物" draggable="false"/>
+        </div>
+
+        <span class="splash-particle p1" aria-hidden="true"></span>
+        <span class="splash-particle p2" aria-hidden="true"></span>
+        <span class="splash-particle p3" aria-hidden="true"></span>
+        <span class="splash-particle p4" aria-hidden="true"></span>
+        <span class="splash-particle p5" aria-hidden="true"></span>
+        <span class="splash-particle p6" aria-hidden="true"></span>
+      </section>
+
+      <section class="splash-titles">
+        <h1 class="splash-title">Local <span class="ai-grad">AI</span> Stack</h1>
+        <p class="splash-subtitle">本地私有 AI 控制台 · 桌面版</p>
+        <p class="splash-tagline">LOCAL · PRIVATE · READY</p>
+      </section>
+
+      <section class="splash-loader" aria-live="polite">
+        <div class="splash-bar-wrap">
+          <div class="splash-bar-glow" aria-hidden="true"></div>
+          <div class="splash-bar" role="progressbar" aria-label="加载进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="splash-bar-fill"></div>
+            <div class="splash-bar-shimmer" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="splash-bar-row">
+          <p class="splash-status">
+            <span class="splash-status-dot" aria-hidden="true"></span>
+            <span class="splash-status-text">正在连接本地服务…</span>
+          </p>
+          <span class="splash-pct" aria-hidden="true">
+            <span class="splash-pct-num"></span><span class="splash-pct-sign">%</span>
+          </span>
+        </div>
+      </section>
+    </main>
+
+    <div class="splash-foot">
+      <div class="splash-foot-line" aria-hidden="true"></div>
+      <p class="splash-foot-text">LOCAL AI STACK · v2.0.0</p>
+    </div>
+
+    <script>
+      /* Electron desktop bridge — guarded so the page also renders in a plain browser. */
+      (function () {
+        var win = typeof window !== 'undefined' ? window : null;
+        var desktop = win && typeof win.desktop === 'object' ? win.desktop : null;
+
+        var minBtn = document.querySelector('.splash-min');
+        var closeBtn = document.querySelector('.splash-close');
+        var statusText = document.querySelector('.splash-status-text');
+        var barEl = document.querySelector('.splash-bar');
+
+        /* Window controls via window.desktop.window */
+        if (minBtn) {
+          minBtn.addEventListener('click', function () {
+            if (desktop && desktop.window && typeof desktop.window.minimize === 'function') {
+              desktop.window.minimize();
+            }
+          });
+        }
+        if (closeBtn) {
+          closeBtn.addEventListener('click', function () {
+            if (desktop && desktop.window && typeof desktop.window.close === 'function') {
+              desktop.window.close();
+            }
+          });
+        }
+
+        /* Decorative status cycling — paused when a real status arrives via IPC */
+        var messages = ['正在连接本地服务…', '加载 AI 模型…', '初始化控制台…'];
+        var msgIdx = 0;
+        var ipcActive = false;
+        var ipcTimer = null;
+
+        function setStatus(text) {
+          if (statusText && typeof text === 'string' && text.length) {
+            statusText.textContent = text;
+          }
+        }
+        function cycleStatus() {
+          if (ipcActive) return;
+          setStatus(messages[msgIdx % messages.length]);
+          msgIdx++;
+        }
+        cycleStatus();
+        setInterval(cycleStatus, 3200);
+
+        /* Real status updates from the main process.
+           onStatus(cb) — cb receives a string message. */
+        if (desktop && typeof desktop.onStatus === 'function') {
+          try {
+            desktop.onStatus(function (message) {
+              var text = '';
+              if (typeof message === 'string') {
+                text = message;
+              } else if (message && typeof message.message === 'string') {
+                /* backward-compatible object payload */
+                text = message.message;
+              }
+              if (!text) return;
+              ipcActive = true;
+              setStatus(text);
+              if (ipcTimer) clearTimeout(ipcTimer);
+              ipcTimer = setTimeout(function () { ipcActive = false; }, 6000);
+            });
+          } catch (e) { /* status updates are non-critical */ }
+        }
+
+        /* Keep aria-valuenow roughly in sync with the CSS-driven progress cycle */
+        if (barEl) {
+          var CYCLE = 3200;
+          setInterval(function () {
+            var t = (performance.now() % CYCLE) / CYCLE;
+            var pct = t < 0.85 ? Math.round((t / 0.85) * 100) : 100;
+            barEl.setAttribute('aria-valuenow', String(pct));
+          }, 250);
+        }
+      })();
+    </script>
+
+    <style>
+    /* ============================================================
+       Local AI Stack — Splash v2 (Premium)
+       Deep-space glassmorphism · holographic orbit system
+       Fully self-contained (no CDN, no external fonts)
+       Electron frameless window: 460x340, alwaysOnTop
+       ============================================================ */
+
+    :root {
+      /* ---- Core surfaces ---- */
+      --las-background: #060818;
+      --las-deep: #0d1530;
+      --las-foreground: #e8ecf5;
+
+      /* ---- Accent palette ---- */
+      --las-primary: #38bdf8;      /* sky-blue */
+      --las-secondary: #818cf8;    /* indigo */
+      --las-accent: #5eead4;       /* teal */
+      --las-cyan: #22d3ee;
+      --las-muted-fg: #94a3b8;
+
+      /* ---- Typography ---- */
+      --las-font-sans: "Segoe UI", "Microsoft YaHei UI", system-ui, -apple-system, sans-serif;
+      --las-font-mono: "Cascadia Code", "JetBrains Mono", ui-monospace, "Consolas", monospace;
+    }
+
+    /* Animated integer for the percentage counter (Chromium/Electron safe) */
+    @property --pct {
+      syntax: '<integer>';
+      inherits: false;
+      initial-value: 0;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: var(--las-font-sans);
+      color: var(--las-foreground);
+      background-color: #060818;
+      /* Gradient mesh: 4 overlapping radial gradients + base linear */
+      background-image:
+        radial-gradient(circle at 18% 22%, rgba(56, 189, 248, 0.16), transparent 45%),
+        radial-gradient(circle at 82% 28%, rgba(129, 140, 248, 0.15), transparent 50%),
+        radial-gradient(circle at 28% 86%, rgba(94, 234, 212, 0.11), transparent 50%),
+        radial-gradient(circle at 78% 82%, rgba(56, 189, 248, 0.10), transparent 45%),
+        linear-gradient(180deg, #060818 0%, #0a0f24 55%, #0d1530 100%);
+      -webkit-app-region: drag;
+      -webkit-user-select: none;
+      user-select: none;
+      position: relative;
+    }
+
+    /* ---- Floating background orbs (large blurred drifting circles) ---- */
+    .splash-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(42px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .splash-orb.o1 {
+      width: 190px; height: 190px; left: -46px; top: 18px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.42), transparent 70%);
+      animation: orb-drift1 15s ease-in-out infinite;
+    }
+    .splash-orb.o2 {
+      width: 220px; height: 220px; right: -64px; bottom: -34px;
+      background: radial-gradient(circle, rgba(129, 140, 248, 0.38), transparent 70%);
+      animation: orb-drift2 19s ease-in-out infinite;
+    }
+    .splash-orb.o3 {
+      width: 140px; height: 140px; left: 42%; top: 58%;
+      background: radial-gradient(circle, rgba(94, 234, 212, 0.22), transparent 70%);
+      animation: orb-drift3 17s ease-in-out infinite;
+    }
+
+    /* ---- Faint grid texture ---- */
+    .splash-grid {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+      background-size: 30px 30px;
+      -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, #000 30%, transparent 80%);
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, #000 30%, transparent 80%);
+      opacity: 0.6;
+    }
+
+    /* ---- Subtle animated grain overlay (CSS-only) ---- */
+    .splash-grain {
+      position: fixed; inset: 0; pointer-events: none; z-index: 1;
+      opacity: 0.45;
+      mix-blend-mode: overlay;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(148,163,184,0.03) 0, rgba(148,163,184,0.03) 1px, transparent 1px, transparent 3px),
+        repeating-linear-gradient(90deg, rgba(148,163,184,0.022) 0, rgba(148,163,184,0.022) 1px, transparent 1px, transparent 3px);
+      animation: grain-shift 0.6s steps(4) infinite;
+    }
+
+    /* ---- Refined dual-color scanline ---- */
+    .splash-scanline {
+      position: fixed; left: 0; right: 0; top: 0;
+      height: 140px; pointer-events: none; z-index: 1;
+      background: linear-gradient(180deg,
+        transparent 0%,
+        rgba(56, 189, 248, 0.05) 30%,
+        rgba(129, 140, 248, 0.08) 50%,
+        rgba(56, 189, 248, 0.04) 70%,
+        transparent 100%);
+      animation: splash-scan 5s linear infinite;
+    }
+
+    @keyframes orb-drift1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(22px, 16px); } }
+    @keyframes orb-drift2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-20px, -14px); } }
+    @keyframes orb-drift3 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(16px, -20px); } }
+    @keyframes grain-shift {
+      0%   { transform: translate(0,0); }
+      25%  { transform: translate(-1px, 1px); }
+      50%  { transform: translate(1px, -1px); }
+      75%  { transform: translate(-1px, -1px); }
+      100% { transform: translate(0,0); }
+    }
+    @keyframes splash-scan {
+      0%   { transform: translateY(-140px); opacity: 0; }
+      12%  { opacity: 1; }
+      88%  { opacity: 1; }
+      100% { transform: translateY(340px); opacity: 0; }
+    }
+
+    /* ---- Window controls (non-draggable) ---- */
+    .splash-wincontrols {
+      position: fixed; top: 8px; right: 10px;
+      display: flex; gap: 6px;
+      -webkit-app-region: no-drag;
+      z-index: 20;
+    }
+    .splash-wincontrols button {
+      width: 22px; height: 22px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border: none; border-radius: 6px;
+      background: rgba(148, 163, 184, 0.08);
+      color: #94a3b8; cursor: pointer;
+      transition: background-color .18s ease, color .18s ease, transform .18s ease;
+    }
+    .splash-wincontrols button:hover { background: rgba(148, 163, 184, 0.18); color: #cbd5e1; }
+    .splash-wincontrols button:active { transform: scale(0.92); }
+    .splash-wincontrols button.splash-close:hover { background: rgba(244, 63, 94, 0.85); color: #ffffff; }
+    .splash-wincontrols svg { width: 12px; height: 12px; display: block; }
+
+    /* ---- Centered shell ---- */
+    .splash-shell {
+      position: relative; z-index: 5;
+      height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px;
+      padding: 24px 24px 24px;
+    }
+
+    /* ---- Orbit stage ---- */
+    .splash-orbit-stage {
+      position: relative;
+      width: 148px; height: 148px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Holographic rings — conic gradient color shift (sky-blue → indigo → teal) */
+    .holo-ring {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      will-change: transform;
+    }
+
+    /* Outermost energy field — faint, pulsing */
+    .holo-ring.field {
+      inset: 0;
+      background: conic-gradient(from 0deg,
+        rgba(56,189,248,0.25), rgba(129,140,248,0.20),
+        rgba(94,234,212,0.18), rgba(56,189,248,0.25));
+      -webkit-mask: radial-gradient(circle at center, transparent 70px, #000 71px, #000 73px, transparent 74px);
+      mask: radial-gradient(circle at center, transparent 70px, #000 71px, #000 73px, transparent 74px);
+      animation: holo-spin 24s linear infinite, field-pulse 4.5s ease-in-out infinite;
+    }
+
+    /* Outer dashed ring */
+    .holo-ring.dashed {
+      inset: 4px;
+      background-image:
+        repeating-conic-gradient(#fff 0deg 8deg, transparent 8deg 16deg),
+        conic-gradient(from 45deg, #38bdf8, #818cf8, #5eead4, #38bdf8);
+      background-blend-mode: destination-in, normal;
+      -webkit-mask: radial-gradient(circle at center, transparent 66px, #000 67px, #000 69px, transparent 70px);
+      mask: radial-gradient(circle at center, transparent 66px, #000 67px, #000 69px, transparent 70px);
+      opacity: 0.88;
+      animation: holo-spin-rev 16s linear infinite;
+    }
+
+    /* Middle solid gradient ring */
+    .holo-ring.solid {
+      inset: 20px;
+      background: conic-gradient(from 120deg,
+        rgba(56,189,248,0.78), rgba(129,140,248,0.78),
+        rgba(94,234,212,0.72), rgba(56,189,248,0.78));
+      -webkit-mask: radial-gradient(circle at center, transparent 50px, #000 51px, #000 53px, transparent 54px);
+      mask: radial-gradient(circle at center, transparent 50px, #000 51px, #000 53px, transparent 54px);
+      animation: holo-spin 13s linear infinite;
+    }
+
+    /* Inner dotted ring */
+    .holo-ring.dotted {
+      inset: 28px;
+      background-image:
+        repeating-conic-gradient(#fff 0deg 2deg, transparent 2deg 7deg),
+        conic-gradient(from 200deg, #38bdf8, #818cf8, #5eead4, #38bdf8);
+      background-blend-mode: destination-in, normal;
+      -webkit-mask: radial-gradient(circle at center, transparent 42px, #000 43px, #000 45px, transparent 46px);
+      mask: radial-gradient(circle at center, transparent 42px, #000 43px, #000 45px, transparent 46px);
+      opacity: 0.85;
+      animation: holo-spin-rev 11s linear infinite;
+    }
+
+    @keyframes holo-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes holo-spin-rev { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+    @keyframes field-pulse { 0%,100% { opacity: 0.35; } 50% { opacity: 0.8; } }
+
+    /* ---- Energy core: multi-layer glow + animated conic border ---- */
+    .splash-mascot-core {
+      position: relative;
+      width: 84px; height: 84px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 45%,
+        rgba(56, 189, 248, 0.24), rgba(56, 189, 248, 0.06) 60%, transparent 75%);
+      display: flex; align-items: center; justify-content: center;
+      /* inner soft glow + outer energy aura */
+      box-shadow:
+        0 0 0 1px rgba(56, 189, 248, 0.30),
+        0 0 20px 3px rgba(56, 189, 248, 0.32),
+        0 0 44px 8px rgba(129, 140, 248, 0.20),
+        inset 0 0 20px rgba(129, 140, 248, 0.20);
+      animation: core-pulse 3.4s ease-in-out infinite;
+    }
+
+    /* Animated rotating conic-gradient border on the core edge */
+    .splash-mascot-core::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, #38bdf8, #818cf8, #5eead4, #22d3ee, #38bdf8);
+      -webkit-mask: radial-gradient(circle at center, transparent calc(50% - 1.5px), #000 calc(50% - 1px), #000 calc(50% + 1px), transparent calc(50% + 1.5px));
+      mask: radial-gradient(circle at center, transparent calc(50% - 1.5px), #000 calc(50% - 1px), #000 calc(50% + 1px), transparent calc(50% + 1.5px));
+      opacity: 0.9;
+      animation: core-conic-rotate 6s linear infinite;
+      z-index: 1;
+    }
+
+    /* Pulsing concentric waves emanating from the core (staggered) */
+    .core-wave {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid transparent;
+      background:
+        linear-gradient(135deg, rgba(56,189,248,0.6), rgba(129,140,248,0.5), rgba(94,234,212,0.4)) border-box;
+      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      z-index: 1;
+      /* subtle distortion + multi-layer energy glow */
+      box-shadow:
+        0 0 8px rgba(56,189,248,0.28),
+        inset 0 0 6px rgba(129,140,248,0.22),
+        0 0 16px rgba(94,234,212,0.16);
+      animation: core-wave 3.6s ease-out infinite;
+    }
+    .core-wave.w1 { animation-delay: 0s;   background: linear-gradient(135deg, rgba(56,189,248,0.75), rgba(56,189,248,0.3)) border-box; }
+    .core-wave.w2 { animation-delay: 1.2s; background: linear-gradient(135deg, rgba(129,140,248,0.75), rgba(129,140,248,0.3)) border-box; }
+    .core-wave.w3 { animation-delay: 2.4s; background: linear-gradient(135deg, rgba(94,234,212,0.70), rgba(94,234,212,0.3)) border-box; }
+
+    .splash-mascot {
+      position: relative;
+      z-index: 2;
+      width: 66px; height: 66px;
+      border-radius: 16px;
+      display: block;
+      animation: mascot-breathe 3.4s ease-in-out infinite;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
+    }
+
+    @keyframes core-pulse {
+      0%, 100% {
+        box-shadow:
+          0 0 0 1px rgba(56, 189, 248, 0.30),
+          0 0 18px 2px rgba(56, 189, 248, 0.26),
+          0 0 38px 6px rgba(129, 140, 248, 0.16),
+          inset 0 0 18px rgba(129, 140, 248, 0.18);
+      }
+      50% {
+        box-shadow:
+          0 0 0 1px rgba(56, 189, 248, 0.50),
+          0 0 28px 4px rgba(56, 189, 248, 0.42),
+          0 0 56px 10px rgba(129, 140, 248, 0.28),
+          inset 0 0 24px rgba(129, 140, 248, 0.30);
+      }
+    }
+    @keyframes core-conic-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes core-wave {
+      0%   { transform: scale(0.92); opacity: 0; }
+      18%  { opacity: 0.7; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+    @keyframes mascot-breathe {
+      0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.96; }
+      50%      { transform: scale(1.06) rotate(-1.5deg); opacity: 1; }
+    }
+
+    /* ---- Enhanced orbiting particles (6, varied size/color/radius + trailing glow) ---- */
+    .splash-particle {
+      --r: 56px;
+      position: absolute;
+      top: 50%; left: 50%;
+      border-radius: 50%;
+      animation: particle-orbit 6s linear infinite;
+      animation-delay: 0s;
+      will-change: transform;
+    }
+    @keyframes particle-orbit {
+      from { transform: rotate(0deg)   translateX(var(--r)) rotate(0deg); }
+      to   { transform: rotate(360deg) translateX(var(--r)) rotate(-360deg); }
+    }
+
+    .splash-particle.p1 { --r: 64px; width: 6px;  height: 6px;  margin: -3px 0 0 -3px;     background: #38bdf8; box-shadow: 0 0 8px 2px rgba(56,189,248,0.9), 0 0 15px 4px rgba(56,189,248,0.4);  animation-duration: 6s;   animation-delay: -1s; }
+    .splash-particle.p2 { --r: 52px; width: 4px;  height: 4px;  margin: -2px 0 0 -2px;     background: #818cf8; box-shadow: 0 0 7px 2px rgba(129,140,248,0.9),0 0 13px 3px rgba(129,140,248,0.4); animation-duration: 7.5s; animation-delay: -2.5s; }
+    .splash-particle.p3 { --r: 68px; width: 5px;  height: 5px;  margin: -2.5px 0 0 -2.5px; background: #5eead4; box-shadow: 0 0 8px 2px rgba(94,234,212,0.85),0 0 14px 4px rgba(94,234,212,0.35); animation-duration: 5.5s; animation-delay: -0.5s; }
+    .splash-particle.p4 { --r: 44px; width: 4.5px;height: 4.5px;margin: -2.25px 0 0 -2.25px;background:#22d3ee; box-shadow: 0 0 7px 2px rgba(34,211,238,0.85),0 0 12px 3px rgba(34,211,238,0.35); animation-duration: 8s;   animation-delay: -3s; }
+    .splash-particle.p5 { --r: 58px; width: 3px;  height: 3px;  margin: -1.5px 0 0 -1.5px; background: #38bdf8; box-shadow: 0 0 6px 2px rgba(56,189,248,0.85),0 0 10px 3px rgba(56,189,248,0.35);  animation-duration: 6.8s; animation-delay: -1.8s; }
+    .splash-particle.p6 { --r: 40px; width: 5.5px;height: 5.5px;margin: -2.75px 0 0 -2.75px;background:#818cf8; box-shadow: 0 0 8px 2px rgba(129,140,248,0.9),0 0 13px 4px rgba(129,140,248,0.4);  animation-duration: 7s;   animation-delay: -4s; }
+
+    /* ---- Twinkling sparks near the core ---- */
+    .splash-spark {
+      position: absolute;
+      z-index: 3;
+      width: 2px; height: 2px;
+      margin: -1px 0 0 -1px;
+      border-radius: 50%;
+      background: #e8ecf5;
+      box-shadow: 0 0 4px 1px rgba(255, 255, 255, 0.9);
+      animation: spark-twinkle 1.8s ease-in-out infinite;
+    }
+    .splash-spark.s1 { top: 12%; left: 78%; animation-delay: 0s; }
+    .splash-spark.s2 { top: 74%; left: 16%; animation-delay: -0.9s; }
+    @keyframes spark-twinkle {
+      0%, 100% { opacity: 0; transform: scale(0.5); }
+      50%      { opacity: 1; transform: scale(1.3); }
+    }
+
+    /* ---- Typography ---- */
+    .splash-titles {
+      text-align: center;
+      display: flex; flex-direction: column;
+      gap: 5px;
+      margin-top: 2px;
+    }
+    .splash-title {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      line-height: 1.2;
+      color: #e8ecf5;
+      margin: 0;
+      text-shadow:
+        0 0 4px rgba(232, 236, 245, 0.8),
+        0 0 10px rgba(56, 189, 248, 0.6),
+        0 0 22px rgba(56, 189, 248, 0.45),
+        0 0 38px rgba(129, 140, 248, 0.35),
+        0 2px 8px rgba(0, 0, 0, 0.5);
+      animation: title-glow 3.4s ease-in-out infinite, title-spacing 4.5s ease-in-out infinite;
+    }
+    .splash-title .ai-grad {
+      background: linear-gradient(90deg, #38bdf8 0%, #818cf8 50%, #5eead4 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      animation: ai-grad-shimmer 4s ease-in-out infinite;
+    }
+    @keyframes ai-grad-shimmer {
+      0%, 100% { background-position: 0% center; }
+      50%      { background-position: 100% center; }
+    }
+    .splash-subtitle {
+      font-size: 12px;
+      color: #94a3b8;
+      letter-spacing: 0.3px;
+      margin: 0;
+      font-weight: 400;
+    }
+    .splash-tagline {
+      font-family: var(--las-font-mono);
+      font-size: 8.5px;
+      letter-spacing: 3px;
+      color: rgba(148, 163, 184, 0.6);
+      margin: 3px 0 0;
+      font-weight: 400;
+    }
+
+    /* ---- Premium loading sequence (4-layer bar) ---- */
+    .splash-loader {
+      width: 260px;
+      margin-top: 2px;
+      display: flex; flex-direction: column;
+      align-items: stretch;
+      gap: 9px;
+    }
+    .splash-bar-wrap {
+      position: relative;
+      width: 260px;
+      height: 10px;
+      display: flex; align-items: center;
+    }
+    /* glow underneath the fill */
+    .splash-bar-glow {
+      position: absolute;
+      top: 50%; left: 0;
+      transform: translateY(-50%);
+      height: 8px;
+      width: 0%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, rgba(56,189,248,0.65), rgba(129,140,248,0.65));
+      filter: blur(5px);
+      animation: load-fill 3.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+    }
+    .splash-bar {
+      position: relative;
+      width: 100%;
+      height: 5px;
+      border-radius: 99px;
+      background: rgba(148, 163, 184, 0.15); /* base track */
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.1);
+    }
+    .splash-bar-fill {
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%;
+      width: 0%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #38bdf8, #6ee7f9, #818cf8, #5eead4, #38bdf8);
+      background-size: 200% 100%;
+      box-shadow: 0 0 8px 1px rgba(56, 189, 248, 0.6);
+      animation: load-fill 3.2s cubic-bezier(0.65, 0, 0.35, 1) infinite, bar-flow 2s linear infinite;
+    }
+    .splash-bar-shimmer {
+      position: absolute;
+      top: 0; left: -60%;
+      width: 45%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+      animation: bar-shimmer 1.6s ease-in-out infinite;
+    }
+    @keyframes load-fill {
+      0%   { width: 0%; }
+      85%  { width: 100%; }
+      100% { width: 100%; }
+    }
+    @keyframes bar-shimmer {
+      0%   { left: -60%; }
+      100% { left: 160%; }
+    }
+
+    /* status row + percentage counter */
+    .splash-bar-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 260px;
+    }
+    .splash-status {
+      font-size: 11.5px;
+      color: #94a3b8;
+      letter-spacing: 0.3px;
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-weight: 400;
+    }
+    .splash-status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #38bdf8;
+      box-shadow: 0 0 6px 1px rgba(56, 189, 248, 0.8);
+      animation: status-blink 1.4s ease-in-out infinite;
+    }
+    @keyframes status-blink {
+      0%, 100% { opacity: 0.4; transform: scale(0.85); }
+      50%      { opacity: 1;   transform: scale(1.15); }
+    }
+    .splash-pct {
+      font-family: var(--las-font-mono);
+      font-size: 10.5px;
+      color: rgba(56, 189, 248, 0.9);
+      letter-spacing: 0.5px;
+      font-variant-numeric: tabular-nums;
+    }
+    .splash-pct-num {
+      --pct: 0;
+      counter-reset: pct var(--pct);
+      animation: pct-cycle 3.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+    }
+    .splash-pct-num::after { content: counter(pct); }
+    @keyframes pct-cycle {
+      0%   { --pct: 0; }
+      85%  { --pct: 100; }
+      100% { --pct: 100; }
+    }
+
+    /* ---- Enhanced footer ---- */
+    .splash-foot {
+      position: fixed;
+      bottom: 10px; left: 0; right: 0;
+      text-align: center;
+      z-index: 5;
+      pointer-events: none;
+    }
+    .splash-foot-line {
+      width: 120px; height: 1px;
+      margin: 0 auto 6px;
+      background: linear-gradient(90deg, transparent, rgba(56,189,248,0.5), rgba(129,140,248,0.5), transparent);
+    }
+    .splash-foot-text {
+      font-family: var(--las-font-mono);
+      font-size: 9px;
+      color: rgba(124, 138, 165, 0.6);
+      letter-spacing: 0.8px;
+      margin: 0;
+    }
+
+    /* ---- Reduced motion ---- */
+    @media (prefers-reduced-motion: reduce) {
+      .holo-ring, .core-wave, .splash-mascot-core, .splash-mascot-core::before,
+      .splash-mascot, .splash-particle, .splash-spark, .splash-orb,
+      .splash-bar-fill, .splash-bar-glow, .splash-bar-shimmer, .splash-pct-num,
+      .splash-status-dot, .splash-scanline, .splash-grain,
+      .holo-frame, .holo-corner, .splash-vignette, .splash-title .ai-grad,
+      .splash-progress-ring .ring-fill, .splash-starfield span, .splash-title {
+        animation: none !important;
+      }
+      .splash-bar-fill, .splash-bar-glow { width: 60%; }
+      .splash-pct-num { --pct: 60; }
+      .splash-progress-ring .ring-fill { stroke-dashoffset: 120.64; }
+    }
+
+    /* ============================================================
+       v3 ENHANCEMENTS — Holographic frame, vignette
+       ============================================================ */
+
+    /* ---- Holographic frame border ---- */
+    .holo-frame {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 15;
+      border-radius: 0;
+    }
+    .holo-frame::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 1px solid transparent;
+      border-image: linear-gradient(135deg,
+        rgba(56,189,248,0.4),
+        rgba(129,140,248,0.2),
+        rgba(94,234,212,0.3),
+        rgba(129,140,248,0.2),
+        rgba(56,189,248,0.4)) 1;
+      opacity: 0.5;
+    }
+    .holo-frame::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 1px solid transparent;
+      background:
+        linear-gradient(135deg, rgba(56,189,248,0.12), transparent 20%, transparent 80%, rgba(94,234,212,0.1)) border-box;
+      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: holo-border-shift 8s ease-in-out infinite;
+    }
+    @keyframes holo-border-shift {
+      0%, 100% { opacity: 0.3; }
+      50%      { opacity: 0.7; }
+    }
+
+    /* ---- Holographic corner brackets ---- */
+    .holo-corner {
+      position: fixed;
+      width: 18px; height: 18px;
+      z-index: 16;
+      pointer-events: none;
+    }
+    .holo-corner::before, .holo-corner::after {
+      content: "";
+      position: absolute;
+      background: linear-gradient(90deg, rgba(56,189,248,0.6), rgba(94,234,212,0.4));
+      box-shadow: 0 0 6px rgba(56,189,248,0.3);
+    }
+    .holo-corner::before { width: 100%; height: 2px; }
+    .holo-corner::after  { width: 2px; height: 100%; }
+    .h-tl { top: 6px; left: 6px; }
+    .h-tl::before { top: 0; left: 0; }
+    .h-tl::after  { top: 0; left: 0; }
+    .h-tr { top: 6px; right: 6px; }
+    .h-tr::before { top: 0; right: 0; }
+    .h-tr::after  { top: 0; right: 0; }
+    .h-bl { bottom: 6px; left: 6px; }
+    .h-bl::before { bottom: 0; left: 0; }
+    .h-bl::after  { bottom: 0; left: 0; }
+    .h-br { bottom: 6px; right: 6px; }
+    .h-br::before { bottom: 0; right: 0; }
+    .h-br::after  { bottom: 0; right: 0; }
+
+    /* ---- Subtle vignette ---- */
+    .splash-vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 14;
+      background: radial-gradient(ellipse 100% 100% at 50% 50%,
+        transparent 50%,
+        rgba(6, 8, 24, 0.15) 80%,
+        rgba(6, 8, 24, 0.4) 100%);
+    }
+
+    /* ============================================================
+       v4 ENHANCEMENTS — Progress ring, particle trails, flowing bar,
+       gradient waves, starfield, neon title glow
+       ============================================================ */
+
+    /* ---- v4: Circular progress ring around the mascot core ---- */
+    .splash-progress-ring {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 100px; height: 100px;
+      margin: -50px 0 0 -50px;
+      transform: rotate(-90deg); /* start fill stroke from 12 o'clock */
+      z-index: 3;
+      pointer-events: none;
+      overflow: visible;
+    }
+    .splash-progress-ring .ring-track {
+      fill: none;
+      stroke: rgba(148, 163, 184, 0.12);
+      stroke-width: 2.5;
+    }
+    .splash-progress-ring .ring-fill {
+      fill: none;
+      stroke: url(#ringGrad);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-dasharray: 301.6;
+      stroke-dashoffset: 301.6;
+      filter: drop-shadow(0 0 3px rgba(56, 189, 248, 0.55));
+      animation: ring-progress 3.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+    }
+    @keyframes ring-progress {
+      0%   { stroke-dashoffset: 301.6; }
+      85%  { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: 0; }
+    }
+
+    /* ---- v4: Particle comet glow trails ---- */
+    .splash-particle::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: 50%;
+      width: 16px;
+      height: 1px;
+      transform: translateY(-50%);
+      border-radius: 99px;
+      background: linear-gradient(90deg, rgba(232, 236, 245, 0.6), rgba(56, 189, 248, 0.2), transparent);
+      opacity: 0.5;
+      pointer-events: none;
+      filter: blur(0.4px);
+    }
+
+    /* ---- v4: Flowing gradient shift on the loading bar ---- */
+    @keyframes bar-flow {
+      0%   { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    /* ---- v4: Starfield background ---- */
+    .splash-starfield {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .splash-starfield span {
+      position: absolute;
+      display: block;
+      width: 1.5px; height: 1.5px;
+      border-radius: 50%;
+      background: #e8ecf5;
+      box-shadow: 0 0 3px 1px rgba(232, 236, 245, 0.7);
+      opacity: 0;
+      animation: star-twinkle 3s ease-in-out infinite;
+    }
+    @keyframes star-twinkle {
+      0%, 100% { opacity: 0.1; transform: scale(0.6); }
+      50%      { opacity: 0.9; transform: scale(1.1); }
+    }
+
+    /* ---- v4: Neon title glow pulse + letter-spacing breathe ---- */
+    @keyframes title-glow {
+      0%, 100% {
+        text-shadow:
+          0 0 4px rgba(232, 236, 245, 0.7),
+          0 0 8px rgba(56, 189, 248, 0.45),
+          0 0 18px rgba(56, 189, 248, 0.3),
+          0 0 30px rgba(129, 140, 248, 0.22),
+          0 2px 8px rgba(0, 0, 0, 0.5);
+      }
+      50% {
+        text-shadow:
+          0 0 6px rgba(232, 236, 245, 0.95),
+          0 0 14px rgba(56, 189, 248, 0.75),
+          0 0 28px rgba(56, 189, 248, 0.55),
+          0 0 48px rgba(129, 140, 248, 0.45),
+          0 2px 8px rgba(0, 0, 0, 0.5);
+      }
+    }
+    @keyframes title-spacing {
+      0%, 100% { letter-spacing: 0.5px; }
+      50%      { letter-spacing: 0.9px; }
+    }
+
+/* ============================================================
+   v5 ULTRA VISUAL ENHANCEMENTS — Splash Screen
+   Liquid wave bar · Particle connections · Holographic scan
+   Typing effect · Enhanced energy core · Premium polish
+   ============================================================ */
+
+/* ---- V5-1: Liquid wave loading bar ---- */
+.splash-bar {
+  height: 7px;
+  border-radius: 99px;
+  background: rgba(148, 163, 184, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.08), inset 0 1px 2px rgba(0,0,0,0.3);
+  overflow: hidden;
+  position: relative;
+}
+.splash-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #38bdf8, #6ee7f9, #818cf8, #5eead4, #38bdf8);
+  background-size: 200% 100%;
+  box-shadow: 0 0 10px 2px rgba(56, 189, 248, 0.6), 0 0 20px rgba(129, 140, 248, 0.3);
+  animation: load-fill 3.2s cubic-bezier(0.65, 0, 0.35, 1) infinite, bar-flow 2s linear infinite;
+  position: relative;
+  overflow: hidden;
+}
+/* Liquid wave overlay inside the fill */
+.splash-bar-fill::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background:
+    radial-gradient(ellipse 30px 4px at 20% 50%, rgba(255,255,255,0.3), transparent),
+    radial-gradient(ellipse 25px 3px at 60% 50%, rgba(255,255,255,0.2), transparent),
+    radial-gradient(ellipse 35px 4px at 85% 50%, rgba(94,234,212,0.3), transparent);
+  animation: liquidWave 1.5s linear infinite;
+  border-radius: inherit;
+}
+@keyframes liquidWave {
+  0% { transform: translateX(-30px); }
+  100% { transform: translateX(30px); }
+}
+
+/* Enhanced shimmer */
+.splash-bar-shimmer {
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.5),
+    rgba(94, 234, 212, 0.3),
+    rgba(255, 255, 255, 0.5),
+    transparent);
+  animation: bar-shimmer 1.4s ease-in-out infinite;
+  height: 100%;
+  top: 0;
+}
+
+/* ---- V5-2: Holographic scan line — sweeping vertical light ---- */
+.splash-holo-scan {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(56, 189, 248, 0.1) 20%,
+    rgba(94, 234, 212, 0.4) 50%,
+    rgba(129, 140, 248, 0.1) 80%,
+    transparent 100%);
+  filter: blur(1px);
+  z-index: 12;
+  pointer-events: none;
+  animation: holoScan 4s linear infinite;
+}
+@keyframes holoScan {
+  0% { top: -2px; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 340px; opacity: 0; }
+}
+
+/* ---- V5-3: Enhanced energy core — extra glow layers ---- */
+.splash-mascot-core {
+  box-shadow:
+    0 0 0 1px rgba(56, 189, 248, 0.35),
+    0 0 16px 2px rgba(56, 189, 248, 0.3),
+    0 0 32px 6px rgba(129, 140, 248, 0.22),
+    0 0 56px 12px rgba(56, 189, 248, 0.12),
+    0 0 80px 20px rgba(94, 234, 212, 0.08),
+    inset 0 0 20px rgba(129, 140, 248, 0.2);
+}
+@keyframes core-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px rgba(56, 189, 248, 0.35),
+      0 0 16px 2px rgba(56, 189, 248, 0.28),
+      0 0 32px 6px rgba(129, 140, 248, 0.18),
+      0 0 56px 12px rgba(56, 189, 248, 0.1),
+      inset 0 0 18px rgba(129, 140, 248, 0.18);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(56, 189, 248, 0.55),
+      0 0 24px 4px rgba(56, 189, 248, 0.45),
+      0 0 48px 10px rgba(129, 140, 248, 0.3),
+      0 0 80px 18px rgba(56, 189, 248, 0.18),
+      0 0 110px 28px rgba(94, 234, 212, 0.1),
+      inset 0 0 26px rgba(129, 140, 248, 0.32);
+  }
+}
+
+/* ---- V5-4: Enhanced particle trails — longer comet tails ---- */
+.splash-particle::after {
+  width: 22px;
+  height: 1.5px;
+  background: linear-gradient(90deg,
+    rgba(232, 236, 245, 0.7),
+    rgba(56, 189, 248, 0.3),
+    rgba(94, 234, 212, 0.15),
+    transparent);
+  opacity: 0.6;
+  filter: blur(0.3px);
+}
+
+/* ---- V5-5: Enhanced progress ring — dual layer with glow ---- */
+.splash-progress-ring .ring-fill {
+  stroke-width: 3;
+  filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.7)) drop-shadow(0 0 8px rgba(129, 140, 248, 0.3));
+}
+.splash-progress-ring .ring-track {
+  stroke-width: 3;
+  stroke: rgba(148, 163, 184, 0.08);
+}
+
+/* ---- V5-6: Enhanced title — layered neon glow with color shift ---- */
+.splash-title {
+  text-shadow:
+    0 0 4px rgba(232, 236, 245, 0.8),
+    0 0 10px rgba(56, 189, 248, 0.6),
+    0 0 22px rgba(56, 189, 248, 0.45),
+    0 0 38px rgba(129, 140, 248, 0.35),
+    0 0 60px rgba(94, 234, 212, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.5);
+}
+@keyframes title-glow {
+  0%, 100% {
+    text-shadow:
+      0 0 4px rgba(232, 236, 245, 0.7),
+      0 0 8px rgba(56, 189, 248, 0.45),
+      0 0 18px rgba(56, 189, 248, 0.3),
+      0 0 30px rgba(129, 140, 248, 0.22),
+      0 0 48px rgba(94, 234, 212, 0.1),
+      0 2px 8px rgba(0, 0, 0, 0.5);
+  }
+  50% {
+    text-shadow:
+      0 0 6px rgba(232, 236, 245, 0.95),
+      0 0 14px rgba(56, 189, 248, 0.75),
+      0 0 28px rgba(56, 189, 248, 0.55),
+      0 0 48px rgba(129, 140, 248, 0.45),
+      0 0 72px rgba(94, 234, 212, 0.2),
+      0 2px 8px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* AI gradient with enhanced shimmer */
+.splash-title .ai-grad {
+  background: linear-gradient(90deg, #38bdf8 0%, #818cf8 35%, #5eead4 65%, #38bdf8 100%);
+  background-size: 250% auto;
+  animation: ai-grad-shimmer 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.4));
+}
+
+/* ---- V5-7: Enhanced holo rings — brighter with glow ---- */
+.holo-ring.solid {
+  background: conic-gradient(from 120deg,
+    rgba(56,189,248,0.85), rgba(129,140,248,0.85),
+    rgba(94,234,212,0.8), rgba(56,189,248,0.85));
+  filter: drop-shadow(0 0 4px rgba(56,189,248,0.3));
+}
+
+/* ---- V5-8: Enhanced starfield — larger glow ---- */
+.splash-starfield span {
+  box-shadow: 0 0 4px 1px rgba(232, 236, 245, 0.8), 0 0 8px rgba(56,189,248,0.3);
+  animation: star-twinkle 3s ease-in-out infinite, starDrift 12s linear infinite;
+}
+@keyframes starDrift {
+  0% { transform: translateY(0) translateX(0); }
+  100% { transform: translateY(-10px) translateX(3px); }
+}
+
+/* ---- V5-9: Enhanced orbs — brighter with color shift ---- */
+.splash-orb.o1 {
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.5), transparent 70%);
+  animation: orb-drift1 15s ease-in-out infinite, orb-color1 8s ease-in-out infinite;
+}
+.splash-orb.o2 {
+  background: radial-gradient(circle, rgba(129, 140, 248, 0.45), transparent 70%);
+  animation: orb-drift2 19s ease-in-out infinite, orb-color2 10s ease-in-out infinite;
+}
+.splash-orb.o3 {
+  background: radial-gradient(circle, rgba(94, 234, 212, 0.28), transparent 70%);
+  animation: orb-drift3 17s ease-in-out infinite, orb-color3 9s ease-in-out infinite;
+}
+@keyframes orb-color1 {
+  0%, 100% { background: radial-gradient(circle, rgba(56, 189, 248, 0.5), transparent 70%); }
+  50% { background: radial-gradient(circle, rgba(34, 211, 238, 0.4), transparent 70%); }
+}
+@keyframes orb-color2 {
+  0%, 100% { background: radial-gradient(circle, rgba(129, 140, 248, 0.45), transparent 70%); }
+  50% { background: radial-gradient(circle, rgba(167, 139, 250, 0.35), transparent 70%); }
+}
+@keyframes orb-color3 {
+  0%, 100% { background: radial-gradient(circle, rgba(94, 234, 212, 0.28), transparent 70%); }
+  50% { background: radial-gradient(circle, rgba(104, 245, 194, 0.22), transparent 70%); }
+}
+
+/* ---- V5-10: Enhanced footer — glowing line ---- */
+.splash-foot-line {
+  width: 140px;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(56,189,248,0.4),
+    rgba(94,234,212,0.5),
+    rgba(129,140,248,0.4),
+    transparent);
+  background-size: 200% 100%;
+  animation: footLineGlow 4s linear infinite;
+  box-shadow: 0 0 4px rgba(56,189,248,0.2);
+}
+@keyframes footLineGlow {
+  0% { background-position: 0% 0; }
+  100% { background-position: 200% 0; }
+}
+.splash-foot-text {
+  color: rgba(124, 138, 165, 0.5);
+  text-shadow: 0 0 6px rgba(56,189,248,0.15);
+}
+
+/* ---- V5-11: Enhanced status dot — dual pulse ---- */
+.splash-status-dot {
+  background: #38bdf8;
+  box-shadow: 0 0 6px 1px rgba(56, 189, 248, 0.8), 0 0 12px rgba(56,189,248,0.4);
+  animation: status-blink 1.4s ease-in-out infinite, statusSonar 2.8s ease-out infinite;
+}
+@keyframes statusSonar {
+  0% { box-shadow: 0 0 6px 1px rgba(56, 189, 248, 0.8), 0 0 0 0 rgba(56,189,248,0.3); }
+  100% { box-shadow: 0 0 6px 1px rgba(56, 189, 248, 0.8), 0 0 0 8px rgba(56,189,248,0); }
+}
+
+/* ---- V5-12: Enhanced percentage counter glow ---- */
+.splash-pct {
+  color: rgba(56, 189, 248, 1);
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.5), 0 0 16px rgba(56, 189, 248, 0.2);
+  font-weight: 600;
+}
+
+/* ---- V5-13: Holographic frame — enhanced with glow ---- */
+.holo-frame::before {
+  border-image: linear-gradient(135deg,
+    rgba(56,189,248,0.5),
+    rgba(129,140,248,0.25),
+    rgba(94,234,212,0.4),
+    rgba(129,140,248,0.25),
+    rgba(56,189,248,0.5)) 1;
+  opacity: 0.6;
+  box-shadow: inset 0 0 20px rgba(56,189,248,0.03);
+}
+
+/* ---- V5-14: Corner brackets — enhanced with glow ---- */
+.holo-corner::before, .holo-corner::after {
+  box-shadow: 0 0 8px rgba(56,189,248,0.4), 0 0 4px rgba(94,234,212,0.3);
+}
+
+/* ---- V5-15: Spark enhancement — larger with color ---- */
+.splash-spark {
+  width: 3px; height: 3px;
+  box-shadow: 0 0 5px 1px rgba(255, 255, 255, 1), 0 0 10px rgba(56,189,248,0.5);
+}
+.splash-spark.s1 { background: #38bdf8; }
+.splash-spark.s2 { background: #5eead4; }
+
+/* ---- V5-16: Window controls — enhanced glass ---- */
+.splash-wincontrols button {
+  background: rgba(148, 163, 184, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background-color .2s ease, color .2s ease, transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.splash-wincontrols button:hover {
+  background: rgba(56, 189, 248, 0.12);
+  color: #eaf6ff;
+  border-color: rgba(56, 189, 248, 0.2);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.15);
+}
+.splash-wincontrols button.splash-close:hover {
+  background: rgba(244, 63, 94, 0.8);
+  color: #ffffff;
+  border-color: rgba(244, 63, 94, 0.4);
+  box-shadow: 0 0 10px rgba(244, 63, 94, 0.3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-bar-fill::after,
+  .splash-holo-scan,
+  .splash-starfield span,
+  .splash-orb,
+  .splash-foot-line,
+  .splash-status-dot,
+  .splash-title .ai-grad {
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   v6 GENESIS — Splash Screen
+   Liquid metal core · Sound waves · Prismatic edge
+   Energy shockwaves · Boot sequence · Magnetic field
+   ============================================================ */
+
+/* V6-1: Liquid metal mercury core effect */
+.splash-mascot-core {
+  background: radial-gradient(circle at 35% 30%,
+    rgba(94, 234, 212, 0.35),
+    rgba(56, 189, 248, 0.2) 40%,
+    rgba(129, 140, 248, 0.08) 70%,
+    transparent 85%);
+  animation: core-pulse 3.4s ease-in-out infinite, v6-liquid-metal 4s ease-in-out infinite;
+}
+@keyframes v6-liquid-metal {
+  0%, 100% {
+    background: radial-gradient(circle at 35% 30%,
+      rgba(94, 234, 212, 0.35),
+      rgba(56, 189, 248, 0.2) 40%,
+      rgba(129, 140, 248, 0.08) 70%, transparent 85%);
+  }
+  33% {
+    background: radial-gradient(circle at 65% 35%,
+      rgba(56, 189, 248, 0.35),
+      rgba(129, 140, 248, 0.2) 40%,
+      rgba(94, 234, 212, 0.08) 70%, transparent 85%);
+  }
+  66% {
+    background: radial-gradient(circle at 50% 60%,
+      rgba(129, 140, 248, 0.35),
+      rgba(94, 234, 212, 0.2) 40%,
+      rgba(56, 189, 248, 0.08) 70%, transparent 85%);
+  }
+}
+
+/* V6-2: Sound wave emanating ripples */
+.splash-mascot-core::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  opacity: 0;
+  animation: v6-sound-wave 2.5s ease-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes v6-sound-wave {
+  0% { transform: scale(0.9); opacity: 0.6; border-color: rgba(56,189,248,0.4); }
+  100% { transform: scale(2.2); opacity: 0; border-color: rgba(94,234,212,0.1); }
+}
+
+/* V6-3: Energy shockwaves */
+.splash-orbit-stage::before {
+  content: "";
+  position: absolute;
+  inset: 20px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  background: linear-gradient(135deg, rgba(56,189,248,0.4), rgba(94,234,212,0.3), rgba(129,140,248,0.4)) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  animation: v6-shockwave 3s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes v6-shockwave {
+  0% { transform: scale(0.8); opacity: 0; }
+  20% { opacity: 0.5; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+/* V6-4: Prismatic edge refraction on frame */
+.holo-frame::after {
+  background:
+    linear-gradient(135deg,
+      rgba(56,189,248,0.15),
+      rgba(94,234,212,0.1) 25%,
+      rgba(129,140,248,0.12) 50%,
+      rgba(167,139,250,0.1) 75%,
+      rgba(56,189,248,0.15)) border-box;
+  animation: holo-border-shift 8s ease-in-out infinite, v6-prism-shift 6s linear infinite;
+}
+@keyframes v6-prism-shift {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(30deg); }
+}
+
+/* V6-5: Enhanced core conic with multi-color */
+.splash-mascot-core::before {
+  background: conic-gradient(from 0deg,
+    #38bdf8, #22d3ee, #5eead4, #818cf8, #a78bfa, #38bdf8);
+  animation: core-conic-rotate 6s linear infinite, v6-conic-glow 3s ease-in-out infinite;
+}
+@keyframes v6-conic-glow {
+  0%, 100% { opacity: 0.85; filter: blur(0.5px) brightness(1); }
+  50% { opacity: 1; filter: blur(0.5px) brightness(1.3); }
+}
+
+/* V6-6: Enhanced orbit particles with size pulse */
+.splash-particle {
+  animation: particle-orbit var(--dur, 6s) linear infinite, v6-particle-pulse 1.5s ease-in-out infinite;
+}
+.splash-particle.p1 { --dur: 6s; }
+.splash-particle.p2 { --dur: 7.5s; }
+.splash-particle.p3 { --dur: 5.5s; }
+.splash-particle.p4 { --dur: 8s; }
+.splash-particle.p5 { --dur: 6.8s; }
+.splash-particle.p6 { --dur: 7s; }
+@keyframes v6-particle-pulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.5); }
+}
+
+/* V6-7: Enhanced holo ring with color shift */
+.holo-ring.field {
+  animation: holo-spin 24s linear infinite, field-pulse 4.5s ease-in-out infinite, v6-ring-hue 10s linear infinite;
+}
+.holo-ring.dashed {
+  animation: holo-spin-rev 16s linear infinite, v6-ring-hue 8s linear infinite;
+}
+@keyframes v6-ring-hue {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(40deg); }
+}
+
+/* V6-8: Boot sequence terminal text */
+.boot-seq {
+  position: fixed;
+  bottom: 32px;
+  left: 16px;
+  right: 16px;
+  font-family: var(--las-font-mono, "Cascadia Code", monospace);
+  font-size: 8px;
+  line-height: 1.5;
+  color: rgba(94, 234, 212, 0.5);
+  text-align: left;
+  z-index: 6;
+  pointer-events: none;
+  height: 36px;
+  overflow: hidden;
+}
+.boot-seq-line {
+  opacity: 0;
+  animation: v6-boot-fade 0.3s ease forwards;
+}
+@keyframes v6-boot-fade {
+  to { opacity: 1; }
+}
+
+/* V6-9: Enhanced loading bar with pulse glow */
+.splash-bar-fill {
+  box-shadow: 0 0 10px 2px rgba(56, 189, 248, 0.6),
+              0 0 20px rgba(129, 140, 248, 0.3),
+              0 0 30px rgba(94, 234, 212, 0.15);
+}
+
+/* V6-10: Enhanced footer with animated dots */
+.splash-foot-text::before {
+  content: "● ";
+  color: rgba(52, 211, 153, 0.6);
+  animation: v6-foot-dot 2s ease-in-out infinite;
+}
+@keyframes v6-foot-dot {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* V6-11: Enhanced vignette with color tint */
+.splash-vignette {
+  background: radial-gradient(ellipse 100% 100% at 50% 50%,
+    transparent 45%,
+    rgba(6, 8, 24, 0.1) 70%,
+    rgba(56, 8, 24, 0.15) 85%,
+    rgba(6, 8, 24, 0.45) 100%);
+}
+
+/* V6-12: Magnetic field indicator */
+.splash-orbit-stage::after {
+  content: "";
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, transparent 60%, rgba(56,189,248,0.03) 80%, transparent 100%);
+  animation: v6-magnetic 5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes v6-magnetic {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-mascot-core,
+  .splash-mascot-core::after,
+  .splash-mascot-core::before,
+  .splash-orbit-stage::before,
+  .splash-orbit-stage::after,
+  .holo-frame::after,
+  .splash-particle,
+  .holo-ring.field,
+  .holo-ring.dashed,
+  .splash-foot-text::before {
+    animation: none !important;
+  }
+}
+
+    </style>
+<script>
+/* v5: Typing effect for status text */
+(function () {
+  var statusText = document.querySelector('.splash-status-text');
+  if (!statusText) return;
+  var originalText = statusText.textContent;
+  var typingTimer = null;
+
+  function typeText(text) {
+    if (typingTimer) clearInterval(typingTimer);
+    statusText.textContent = '';
+    var i = 0;
+    typingTimer = setInterval(function () {
+      if (i < text.length) {
+        statusText.textContent = text.substring(0, i + 1);
+        i++;
+      } else {
+        clearInterval(typingTimer);
+      }
+    }, 40);
+  }
+
+  /* Override the original setStatus to add typing */
+  var originalSetStatus = window.setStatus;
+  if (typeof originalSetStatus === 'function') {
+    window.setStatus = function (text) {
+      typeText(text);
+    };
+  } else {
+    typeText(originalText);
+  }
+})();
+</script>
+
+<script>
+/* ============================================================
+   v6 GENESIS — Interactive Enhancements
+   Boot sequence · Magnetic particles
+   ============================================================ */
+(function () {
+  /* Boot sequence terminal text */
+  var bootContainer = document.createElement('div');
+  bootContainer.className = 'boot-seq';
+  document.body.appendChild(bootContainer);
+
+  var bootLines = [
+    '> initializing kernel modules...',
+    '> loading ai inference engine...',
+    '> establishing local network bridge...',
+    '> mounting model registry...',
+    '> calibrating quantum renderer...',
+    '> system ready.'
+  ];
+
+  var lineIdx = 0;
+  function addBootLine() {
+    if (lineIdx >= bootLines.length) {
+      setTimeout(function () {
+        bootContainer.innerHTML = '';
+        lineIdx = 0;
+        addBootLine();
+      }, 3000);
+      return;
+    }
+    var line = document.createElement('div');
+    line.className = 'boot-seq-line';
+    line.textContent = bootLines[lineIdx];
+    bootContainer.appendChild(line);
+    lineIdx++;
+    setTimeout(addBootLine, 600);
+  }
+  setTimeout(addBootLine, 800);
+
+  /* Magnetic particle attraction toward cursor */
+  var stage = document.querySelector('.splash-orbit-stage');
+  var particles = document.querySelectorAll('.splash-particle');
+  if (stage && particles.length) {
+    var mouseX = 0, mouseY = 0, inStage = false;
+    stage.addEventListener('mousemove', function (e) {
+      var rect = stage.getBoundingClientRect();
+      mouseX = e.clientX - rect.left - rect.width / 2;
+      mouseY = e.clientY - rect.top - rect.height / 2;
+      inStage = true;
+    });
+    stage.addEventListener('mouseleave', function () {
+      inStage = false;
+      particles.forEach(function (p) { p.style.transform = ''; });
+    });
+    /* Subtle magnetic pull — applied as a gentle nudge via CSS variable */
+    if (stage) {
+      stage.addEventListener('mousemove', function (e) {
+        var rect = stage.getBoundingClientRect();
+        var dx = (e.clientX - rect.left - rect.width / 2) / rect.width;
+        var dy = (e.clientY - rect.top - rect.height / 2) / rect.height;
+        stage.style.setProperty('--mag-x', (dx * 6).toFixed(1) + 'px');
+        stage.style.setProperty('--mag-y', (dy * 6).toFixed(1) + 'px');
       });
     }
-  </script>
+  }
+})();
+</script>
 </body>
 </html>
