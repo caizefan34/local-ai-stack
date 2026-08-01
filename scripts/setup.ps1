@@ -64,7 +64,11 @@ Write-Host "  [v] Models ready" -ForegroundColor Green
 # Start Docker stack
 Write-Host "[2/4] Starting FastGPT stack..." -ForegroundColor Yellow
 $composeFile = Join-Path $rootDir "docker\docker-compose.yml"
-docker compose --env-file $envFile -f $composeFile up -d
+# Reuse the existing compose project name so a project rename never mounts fresh empty volumes
+$composeProject = (docker inspect fastgpt-pg --format "{{ index .Config.Labels \"com.docker.compose.project\" }}" 2>$null | Out-String).Trim()
+$projectArgs = @()
+if ($composeProject) { $projectArgs = @("--project-name", $composeProject) }
+docker compose @projectArgs --env-file $envFile -f $composeFile up -d
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 Write-Host "  [v] FastGPT stack started" -ForegroundColor Green
 

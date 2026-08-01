@@ -278,6 +278,26 @@ docker compose --env-file .env -f docker/docker-compose.yml ps
 docker compose --env-file .env -f docker/docker-compose.yml restart fastgpt
 ```
 
+### FastGPT 登录报"密码错误"或请求一直卡住
+常见原因：FastGPT v4.8.9 用完整连接串 `PG_URL` 连接 PostgreSQL，如果 compose 里只配了 `PG_HOST`/`PG_PORT`，它会回退去连本机 localhost 的 5432，日志出现 `pg connect error` / `ECONNREFUSED`，登录接口随之失败。确认与修复：
+
+```bash
+docker logs fastgpt | findstr "pg connected"
+docker compose --env-file .env -f docker/docker-compose.yml up -d fastgpt   # 重建后生效
+```
+
+`docker/docker-compose.yml` 中 fastgpt 服务已默认拼接 `PG_URL`。默认账号：`admin / admin`，另一个内置账号：`root / 1234`（root 密码可在 Mongo 中按 FastGPT 双 SHA-256 规则重置）。
+
+### 重启后 FastGPT 数据"消失"（旧账号/知识库全没了）
+通常不是数据丢失，而是 compose 项目名变化（例如从 `temp` 变成 `docker`），容器挂到了**新的空数据卷**上。旧卷仍在磁盘上，可以恢复：
+
+```bash
+docker volume ls | findstr fastgpt
+docker inspect fastgpt-pg --format "{{ index .Config.Labels \"com.docker.compose.project\" }}"
+```
+
+恢复方法：停止容器后，把旧卷（如 `temp_fastgpt-mongo`、`temp_fastgpt-pg`）里的数据复制到当前卷（如 `docker_fastgpt-mongo`、`docker_fastgpt-pg`），再启动。`scripts\setup.ps1` 与 `scripts\start-all.ps1` 会自动复用已有项目名，请始终用它们启动，不要手动改 `-p`。
+
 ### Ollama models not found by FastGPT
 Make sure Ollama is running **outside** Docker (host install). FastGPT connects via `host.docker.internal`:
 ```bash

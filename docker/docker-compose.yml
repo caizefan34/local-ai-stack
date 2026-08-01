@@ -81,6 +81,8 @@ services:
     environment:
       DEFAULT_ROOT_PSW: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env before starting}
       MONGODB_URI: ${MONGODB_URI:-mongodb://mongo:27017/fastgpt}
+      # FastGPT v4.8.9 reads PG_URL; only PG_HOST/PG_PORT causes connection failure
+      PG_URL: postgresql://${PG_USER:-postgres}:${PG_PASSWORD:-postgres}@${PG_HOST:-pg}:${PG_PORT:-5432}/${PG_DB_NAME:-postgres}
       PG_HOST: ${PG_HOST:-pg}
       PG_PORT: ${PG_PORT:-5432}
       PG_USER: ${PG_USER:-postgres}
