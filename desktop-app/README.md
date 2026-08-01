@@ -1,4 +1,4 @@
-﻿# Desktop Dashboard
+# Desktop Dashboard
 
 An authenticated, responsive dashboard for monitoring and controlling your Local AI Stack.
 
@@ -58,9 +58,11 @@ Copy `config.template.json` to `~/.ai-desktop/config.json` and adjust:
 
 The repository now ships a native Electron desktop shell (`desktop-app/electron/`) so the dashboard opens as a real desktop application instead of a browser tab:
 
-- Custom dark splash screen with the mascot, then a 1280x820 application window
+- Custom dark splash screen with the mascot, then a frameless 1360x860 application window with a Codex-style top bar (drag to move, minimize / maximize / close)
+- One-click tabs in the top bar: `控制台` (control plane, port 18080) and `FastGPT` (port 3000), plus back / forward / reload
+- `Local AI Stack` shortcut opens the control plane; `AI Desktop` shortcut opens FastGPT directly (`--fastgpt`)
 - Automatically starts the control plane when it is not running (no duplicate instances)
-- Single-instance lock, hidden menu bar, external links open in the default browser
+- Single-instance lock, external links open in the default browser
 - Desktop shortcuts `Local AI Stack` and `AI Desktop` point here
 
 First run installs the Electron runtime automatically (~100 MB). In China, if the download fails, run once with the mirror:

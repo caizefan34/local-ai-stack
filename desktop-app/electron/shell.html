@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>Local AI Stack</title>
+<style>
+  :root {
+    --bg1: #070b16;
+    --bg2: #0d1530;
+    --accent: #38bdf8;
+    --accent2: #818cf8;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --bar-h: 46px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: "Segoe UI", "Microsoft YaHei UI", system-ui, sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(1200px 500px at 80% -20%, rgba(56,189,248,.14), transparent 60%),
+      radial-gradient(900px 420px at -10% 110%, rgba(129,140,248,.12), transparent 60%),
+      linear-gradient(160deg, var(--bg1), var(--bg2));
+    user-select: none;
+  }
+
+  #titlebar {
+    height: var(--bar-h);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 10px 0 14px;
+    background: linear-gradient(180deg, rgba(13,21,48,.95), rgba(7,11,22,.92));
+    border-bottom: 1px solid rgba(56,189,248,.18);
+    box-shadow: 0 1px 14px rgba(0,0,0,.45);
+    -webkit-app-region: drag;
+  }
+
+  .brand { display: flex; align-items: center; gap: 9px; min-width: 0; }
+  .brand img { width: 26px; height: 26px; }
+  .brand .name { font-size: 13px; font-weight: 600; letter-spacing: .5px; white-space: nowrap; }
+  .brand .name span {
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+
+  .tabs { display: flex; gap: 6px; -webkit-app-region: no-drag; }
+  .tab {
+    border: 1px solid rgba(148,163,184,.18);
+    background: rgba(148,163,184,.06);
+    color: var(--muted);
+    font-size: 12px;
+    font-family: inherit;
+    padding: 5px 16px;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease;
+  }
+  .tab:hover { color: var(--text); border-color: rgba(56,189,248,.4); }
+  .tab.active {
+    color: #fff;
+    border-color: transparent;
+    background: linear-gradient(90deg, rgba(56,189,248,.28), rgba(129,140,248,.28));
+    box-shadow: 0 0 14px rgba(56,189,248,.25), inset 0 0 0 1px rgba(56,189,248,.45);
+  }
+
+  .spacer { flex: 1; }
+
+  .nav-btns, .win-btns { display: flex; gap: 4px; -webkit-app-region: no-drag; }
+  .nav-btn, .win-btn {
+    width: 30px; height: 30px;
+    border: none; border-radius: 8px;
+    background: rgba(148,163,184,.10);
+    color: var(--muted);
+    font-size: 13px; line-height: 1;
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+  }
+  .nav-btn:hover { background: rgba(56,189,248,.28); color: #fff; }
+  .win-btn:hover { background: rgba(148,163,184,.2); color: #fff; }
+  .win-btn.close:hover { background: rgba(239,68,68,.8); }
+
+  #view-host { position: fixed; left: 0; top: var(--bar-h); right: 0; bottom: 0; }
+</style>
+</head>
+<body>
+  <div id="titlebar">
+    <div class="brand">
+      <img src="../assets/nailong-mascot.svg" alt="mascot" draggable="false" />
+      <div class="name">Local <span>AI</span> Stack</div>
+    </div>
+
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-page="control">控制台</button>
+      <button class="tab" data-page="fastgpt">FastGPT</button>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="nav-btns">
+      <button class="nav-btn" id="btn-back" title="后退">&#8592;</button>
+      <button class="nav-btn" id="btn-forward" title="前进">&#8594;</button>
+      <button class="nav-btn" id="btn-reload" title="刷新">&#8635;</button>
+    </div>
+
+    <div class="win-btns">
+      <button class="win-btn" id="btn-min" title="最小化">&#8211;</button>
+      <button class="win-btn" id="btn-max" title="最大化">&#9633;</button>
+      <button class="win-btn close" id="btn-close" title="关闭">&#10005;</button>
+    </div>
+  </div>
+  <div id="view-host"></div>
+
+  <script>
+    document.getElementById("btn-back").addEventListener("click", () => window.desktop.nav.back());
+    document.getElementById("btn-forward").addEventListener("click", () => window.desktop.nav.forward());
+    document.getElementById("btn-reload").addEventListener("click", () => window.desktop.nav.reload());
+    document.getElementById("btn-min").addEventListener("click", () => window.desktop.window.minimize());
+    document.getElementById("btn-max").addEventListener("click", () => window.desktop.window.toggleMaximize());
+    document.getElementById("btn-close").addEventListener("click", () => window.desktop.window.close());
+
+    const tabs = document.querySelectorAll(".tab");
+    tabs.forEach((t) =>
+      t.addEventListener("click", () => window.desktop.nav.select(t.dataset.page))
+    );
+
+    window.desktop.nav.onState(({ page }) => {
+      tabs.forEach((t) => t.classList.toggle("active", t.dataset.page === page));
+    });
+    window.desktop.window.onMaximized((max) => {
+      document.getElementById("btn-max").innerHTML = max ? "&#10530;" : "&#9633;";
+    });
+  </script>
+</body>
+</html>

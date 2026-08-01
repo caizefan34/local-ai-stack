@@ -20,5 +20,5 @@ if not exist "node_modules\electron\dist\electron.exe" (
   )
 )
 
-start "" "%~dp0node_modules\electron\dist\electron.exe" .
+start "" "%~dp0node_modules\electron\dist\electron.exe" . %*
 exit /b 0
